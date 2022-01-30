@@ -95,7 +95,7 @@
 {#                                {% include 'guardianapp/guardian_create.html' with asset=target_asset %}#}
 {#                            {% elif target_asset.asset_type == 'REITS' %}#}
 {#                                {% include 'reitsapp/reits_create.html' with asset=target_asset %}#}
-{#                            {% elif target_asset.asset_type == 'PENSION' %}#}
+{#                            {% elif target_asset.asset_type == 'PENSION_ASSET' %}#}
 {#                                <a href="{% url 'pensionapp:pensionasset_create' asset_pk=target_asset.pk %}" class="btn btn-info">Open Pension Position</a>#}
 {#                            {% elif target_asset.asset_type == 'CRYPTO' %}#}
 {#                                {% include 'cryptoapp/crypto_create.html' with asset=target_asset %}#}

@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'bootstrap4',
     'accountapp',
-    # 'masterinfoapp',
+    'masterinfoapp',
     # 'dashboardapp',
     # 'portfolioapp',
     # 'equityapp',

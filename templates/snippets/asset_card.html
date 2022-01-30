@@ -1,33 +1,17 @@
-{% if asset.asset_type == 'EQUITY' or asset.asset_type == 'ETF' or asset.asset_type == 'CRYPTO' %}
-<div class="asset_card_white_text_div">
-{% else %}
-<div class="asset_card_black_text_div">
-{% endif %}
-    <div style="display:inline-block; ">
-        <h5>
-            {{ asset.ticker }}
-        </h5>
+<div style="display: block; margin-bottom: 0.2rem;">
+    <div style="display: inline; margin-left: 0.5rem; margin-right: 1rem; font-size: 1.5rem; font-weight: bold; ">
+        {{ asset.ticker }}
     </div>
-    <div style="display:inline-block; ">
-        <h8>
-            {{ asset.asset_type }}
-        </h8>
+    <div style="display: inline; font-size: 0.9rem; font-weight: bold;">
+        {{ asset.asset_type }}
     </div>
 </div>
-
-
-{% if asset.asset_type == 'EQUITY' or asset.asset_type == 'ETF' or asset.asset_type == 'CRYPTO' %}
-<div class="asset_card_white_text_div">
-{% else %}
-<div class="asset_card_black_text_div">
-{% endif %}
-    <h7 style="display: block;">
-        {{ asset.name }}
-    </h7>
+<div>
+    <div style="display: inline; margin-left: 0.5rem; margin-bottom: 0.5rem; font-size: 1rem;">{{ asset.name }}</div>
 </div>
+<div>
+    <div style="width: 100%; height: 15rem; border-radius: 0; align-items: center; justify-content: center; background-color: #FFFFFF;">
+        <img src="{{ asset.image.url }}" alt="" style="width: 90%;">
+    </div>
 
-
-<div style="width: 250px; height: 250px; background-color: #FFFFFF; align-items: center; justify-content: center;
-            border-radius: 0;">
-    <img src="{{ asset.image.url }}" alt="" style="width: 90%;">
 </div>

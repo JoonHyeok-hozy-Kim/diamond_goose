@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <style>
+
+        .container {
+            width: 100%;
+        }
+
+        .container a {
+            width: 15rem;
+            text-decoration: none;
+        }
+
+        .container div {
+            width: 15rem;
+            display: flex;
+            justify-content: start;
+            border-radius: 0.5rem;
+        }
+
+    </style>
+
+    <div style="width:100%; text-align: center; margin-bottom: 1rem;">
+    {% if asset_master_list_view_flag %}
+        <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-warning">
+            Currencies
+        </a>
+        <a href="{% url 'masterinfoapp:pensionmaster_list' %}" class="btn btn-success">
+            Pensions
+        </a>
+    {% endif %}
+        <a href="{% url 'masterinfoapp:assetmaster_create' %}" class="btn btn-light btn-sm">
+            <span class="material-icons">add</span>
+        </a>
+    </div>
+
+    <div class="container">
+        {% if query_asset_master_list %}
+            {% for asset in query_asset_master_list %}
+                {% if asset.asset_type == 'EQUITY' %}
+                    <div style="background-color: #264257;">
+                {% elif asset.asset_type == 'GUARDIAN' %}
+                    <div style="background-color: #FFC000;">
+                {% elif asset.asset_type == 'REITS' %}
+                    <div style="background-color: #328BAB;">
+                {% elif asset.asset_type == 'PENSION_ASSET' %}
+                    <div style="background-color: #00C484;">
+                {% elif asset.asset_type == 'CRYPTO' %}
+                    <div style="background-color: #7A3156;">
+                {% endif %}
+                        {% if asset_master_list_view_flag %}
+                            <a href="{% url 'masterinfoapp:assetmaster_detail' pk=asset.id %}"
+                               {% if asset.asset_type == 'EQUITY' or asset.asset_type == 'CRYPTO' %} style="color: #FFFFFF;"
+                               {% else %} style="color: #081321;"
+                               {% endif %}>
+                        {% elif profile_assetmaster_list_flag %}
+                            <a href="{% url 'portfolioapp:portfolio_assetmaster_detail' pk=asset.id %}"
+                               style="color: #FFFFFF;">
+                        {% endif %}
+                                {% include 'snippets/asset_card.html' with asset=asset %}
+                            </a>
+                    </div>
+            {% endfor %}
+        {% else %}
+        {% endif %}
+    </div>
+
+    <script src="{% static 'js/magicgrid.js' %}"></script>
+
+{% endblock %}

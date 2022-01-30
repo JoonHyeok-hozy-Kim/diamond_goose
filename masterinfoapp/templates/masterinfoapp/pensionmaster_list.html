@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <style>
+
+        .container {
+            width: 100%;
+        }
+
+        .container a {
+            width: 250px;
+            text-decoration: none;
+        }
+
+        .container div {
+            width: 250px;
+            display: flex;
+            justify-content: start;
+            align-items: start;
+            border-radius: 5px;
+        }
+
+
+    </style>
+
+    <div style="width:100%; text-align: center; margin-bottom: 1rem;">
+        <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-info">
+            Assets
+        </a>
+        <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-warning">
+            Currencies
+        </a>
+        <a href="{% url 'masterinfoapp:pensionmaster_create' %}" class="btn btn-light btn-sm">
+            <span class="material-icons">add</span>
+        </a>
+    </div>
+
+    <div class="container">
+        {% if query_pension_master_list %}
+            {% for pension in query_pension_master_list %}
+                <div style="background-color: #00C484;">
+                    <a href="{% url 'masterinfoapp:pensionmaster_update' pk=pension.id %}">
+                        <div class="asset_card_black_text_div" style="text-align: center;">
+                            <div style="display:inline-block; ">
+                                <h5>{{ pension.pension_name }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+        {% endif %}
+    </div>
+
+    <script src="{% static 'js/magicgrid.js' %}"></script>
+
+{% endblock %}

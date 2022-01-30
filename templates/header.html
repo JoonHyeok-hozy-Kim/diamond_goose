@@ -1,13 +1,18 @@
-
+{% load static %}
 
 <div class="diamond_goose_header" style="text-align:left;" >
     <div>
-        <div>
-            <h1 style="font-size: 3rem;">Diamond Goose</h1>
+        <div style="display:block; height: 10rem; justify-content: center;">
+            <img src="{% static 'images/diamond_goose_logo_mk1.png' %}" alt="Logo Image"
+                 style="display: inline; height: 100%; margin-left: 1rem; margin-right: 1.5rem;">
+            <div style="display: inline; font-size: 2rem;">
+                <div style="display: inline-block;" >Diamond</div>
+                <div style="display: inline-block;" >Goose</div>
+            </div>
         </div>
 
-        <div style="font-size: 1.5rem;">
-{#            {% if user.is_authenticated %}#}
+        <div style="margin-left:2rem; font-size: 1.5rem;">
+            {% if user.is_authenticated %}
 {#                {% if user.dashboard %}#}
 {#                    <a href="{% url 'dashboardapp:detail' pk=user.pk %}" class="link-info" style="text-decoration-line: none;">#}
 {#                        <span>My Dashboard</span>#}
@@ -17,12 +22,11 @@
 {#                        <span>Create Dashboard</span>#}
 {#                    </a> |#}
 {#                {% endif %}#}
-{##}
-{#                <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="link-info" style="text-decoration-line: none;">#}
-{#                    <span>Master Info</span>#}
-{#                </a> |#}
-{##}
-{#            {% endif %}#}
+            {% endif %}
+
+            <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="link-info" style="text-decoration-line: none;">
+                <span>Master Info</span>
+            </a> |
 
             {% if user.is_authenticated %}
                 <a href="{% url 'accountapp:account_detail' pk=user.pk %}" class="link-info" style="text-decoration-line: none;">
