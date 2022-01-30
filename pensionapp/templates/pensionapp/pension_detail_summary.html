@@ -1,0 +1,54 @@
+{% load static %}
+{% load format_mask_pensionapp %}
+{% load bootstrap4 %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+{% endblock %}
+
+<div style="margin-bottom: 0.3rem;">
+    <table>
+        <colgroup>
+            <col span="1" style="width: 15rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            {% if pension.pension_master.risk_ratio_force_flag %}
+                <col span="1" style="width: 7rem;">
+            {% endif %}
+        </colgroup>
+        {% if pension.pension_master.pension_name == '퇴직연금' %}
+            <tr style="background-color: #005236; color: #081321;">
+        {% elif pension.pension_master.pension_name == '연금저축' %}
+            <tr style="background-color: #008558; color: #081321;">
+        {% elif pension.pension_master.pension_name == 'IRP' %}
+            <tr style="background-color: #00D18B; color: #081321;">
+        {% endif %}
+            <th rowspan="2" style="border: 1px solid black; text-align: center; font-size: larger; font-weight: bolder;">
+                {{ pension.pension_master.pension_name }}
+                {% if list_flag %}
+                    <a href="{% url 'pensionapp:pension_detail' pk=pension.pk %}" class="btn btn-dark btn-sm">
+                        <span class="material-icons">tune</span>
+                    </a>
+                {% endif %}
+            </th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재규모</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">납입총액</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">수익금(분배금포함)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">총수익률</th>
+            {% if pension.pension_master.risk_ratio_force_flag %}
+                <th style="border: 1px solid black; text-align: center; font-weight: bolder;">위험자산비중</th>
+            {% endif %}
+        </tr>
+        <tr>
+            <td style="border: 1px solid white; text-align: end;">{{ pension.total_amount|currency_krw }}</td>
+            <td style="border: 1px solid white; text-align: end;">{{ pension.total_paid_amount|currency_krw }}</td>
+            <td style="border: 1px solid white; text-align: end;">{{ pension.total_profit_amount|currency_krw }}</td>
+            <td style="border: 1px solid white; text-align: end;">{{ pension.rate_of_return|percentage_rate_format }}</td>
+            {% if pension.pension_master.risk_ratio_force_flag %}
+                <td style="border: 1px solid white; text-align: end;">{{ pension.current_risk_asset_ratio|percentage_rate_format }}</td>
+            {% endif %}
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem;">
+        <div style="width:100%;">
+            <div style="display: block; margin-bottom: 0.5rem;">
+                <a href="{% url 'portfolioapp:portfolio_detail' pk=my_portfolio_pk %}" class="btn btn-info btn-sm" style="display: inline-block;" >
+                    <span class="material-icons">table_chart</span>
+                </a>
+                <a href="{% url 'pensionapp:pension_create' %}" class="btn btn-light btn-sm" style="display: inline-block;" >
+                    <span class="material-icons">add</span>
+                </a>
+            </div>
+            <div style="display: block;">
+                <h3 class="pensionapp_main_title" style="width: 16rem;">Pension Summary</h3>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1rem; height: 20rem; border: 1px solid white; color: #FFFFFF;">
+            Pension Statistics
+        </div>
+
+        <div>
+            {% for pension in pension_list %}
+                {% if pension.owner == user %}
+                    <div style="color: #FFFFFF;">
+                        {% include 'pensionapp/pension_detail_summary.html' with pension=pension list_flag='Y'  %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

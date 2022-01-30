@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_pensionapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/equityapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="pensionapp_main_title">Delete Pension Transaction</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this transaction?</h6>
+            <div style="display: block; min-height: 5rem; background-color: #264257;">
+                <table class="equitytransaction_delete_inverted_table">
+                    <tr class="equitytransaction_delete_inverted_table_tr">
+                        <th class="equitytransaction_delete_inverted_table_th">거래일자</th>
+                        <th class="equitytransaction_delete_inverted_table_th">유형</th>
+                        <th class="equitytransaction_delete_inverted_table_th">금액</th>
+                    </tr>
+                    <tr class="equitytransaction_delete_inverted_table_tr">
+                        <td class="equitytransaction_delete_inverted_table_td">{{ target_pension_transaction.transaction_date|date:"Y.m.d h:i:s" }}</td>
+                        <td class="equitytransaction_delete_inverted_table_td">{{ target_pension_transaction.transaction_type }}</td>
+                        <td class="equitytransaction_delete_inverted_table_td">{{ target_pension_transaction.amount|currency_krw }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'pensionapp:pensiontransaction_delete' pk=target_pension_transaction.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <input type="hidden" name="pension_pk" value={{ target_pension_transaction.pension.pk }}>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

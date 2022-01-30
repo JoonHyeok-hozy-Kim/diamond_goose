@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem;">
+        <div style="margin-bottom: 1rem;">
+            <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-info btn-sm">
+                <span class="material-icons">list</span>
+            </a>
+        </div>
+        <div style="color: #FFFFFF;">
+            {% include 'pensionapp/pension_detail_summary.html' with pension=target_pension %}
+{#            {% include 'pensionapp/pension_detail_asset_list.html' with pension=target_pension pension_asset_list=pension_asset_list %}#}
+        </div>
+
+        <div style="display: block; height: 2rem;"></div>
+    
+        <div style="color:#FFFFFF;">
+            <div style="display: inline-block; width: 40%; float: left; margin-right: 1rem;">
+                {% include 'pensionapp/pensiontransaction_detail.html' with pension=target_pension %}
+            </div>
+            <div style="display: inline-block; height: 28rem; border: 1px solid white; width: 50%;">
+                Pension Statistics
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

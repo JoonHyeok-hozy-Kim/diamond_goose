@@ -29,7 +29,7 @@ urlpatterns = [
     path('dashboard/', include('dashboardapp.urls')),
     path('portfolio/', include('portfolioapp.urls')),
     path('assets/', include('assetapp.urls')),
-    # path('pensions/', include('pensionapp.urls')),
+    path('pensions/', include('pensionapp.urls')),
     # path('guardians/', include('guardianapp.urls')),
     # path('cryptoes/', include('cryptoapp.urls')),
     # path('reits/', include('reitsapp.urls')),

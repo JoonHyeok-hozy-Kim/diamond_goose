@@ -1,0 +1,53 @@
+{% load static %}
+{% load format_mask_pensionapp %}
+{% load bootstrap4 %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+{% endblock %}
+
+<div style="justify-content: start; height: 30rem;">
+    {% if pension.pension_type == '퇴직연금' %}
+        <div style="display: block; background-color: #005236; color: #081321;">
+    {% elif pension.pension_type == '연금저축' %}
+        <div style="display: block; background-color: #008558; color: #081321;">
+    {% elif pension.pension_type == 'IRP' %}
+        <div style="display: block; background-color: #00D18B; color: #081321;">
+    {% endif %}
+            <h4 style="font-weight: bold;">Pension Transaction</h4>
+        </div>
+    <div style="display: block;">
+        <div style="display: block; height: 20rem; width: 35%; margin-top: 0; margin-right: 0.5rem; float: left;">
+            {% include 'pensionapp/pensiontransaction_create.html' %}
+        </div>
+        <div style="display: inline-block; height: 30rem; width: 60%;">
+            <h5 style="font-weight: bold; text-decoration: underline;">Transaction 내역</h5>
+            <table>
+                <colgroup>
+                    <col style="width: 8rem;">
+                    <col style="width: 12rem;">
+                    <col style="width: 15rem;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <tr>
+                    <th style="text-align: center;">유형</th>
+                    <th style="text-align: center;">금액</th>
+                    <th style="text-align: center;">일자</th>
+                    <th style="text-align: center;"><span class="material-icons">delete</span></th>
+                </tr>
+                {% for transaction in pension.pension_transaction.all|dictsortreversed:"transaction_date" %}
+                    <tr style="color: #FFFFFF;">
+                        <td style="text-align: center;">{{ transaction.transaction_type }}</td>
+                        <td style="text-align: end;">{{ transaction.amount|currency_krw }}</td>
+                        <td style="text-align: center;">{{ transaction.transaction_date|date:"Y-m-d" }}</td>
+                        <td style="text-align: center;">
+                            <a href="{% url 'pensionapp:pensiontransaction_delete' pk=transaction.pk %}"
+                               style="color: #FA0067;text-decoration: none;">X</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div>
+</div>
