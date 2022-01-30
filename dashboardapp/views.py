@@ -13,6 +13,8 @@ from django.views.generic.edit import FormMixin
 from dashboardapp.decorators import dashboard_ownership_required
 from dashboardapp.forms import DashboardCreationForm
 from dashboardapp.models import Dashboard
+from portfolioapp.forms import PortfolioCreationForm
+from portfolioapp.models import Portfolio
 
 has_ownership = [login_required, dashboard_ownership_required]
 
@@ -35,11 +37,11 @@ class DashboardCreateView(CreateView):
 
 
 @method_decorator(has_ownership, 'get')
-# class DashboardDetailView(DetailView, FormMixin):
-class DashboardDetailView(DetailView):
+class DashboardDetailView(DetailView, FormMixin):
+# class DashboardDetailView(DetailView):
     model = Dashboard
     context_object_name = 'target_dashboard'
-    # form_class = PortfolioCreationForm
+    form_class = PortfolioCreationForm
     template_name = 'dashboardapp/detail.html'
 
     def get_context_data(self, **kwargs):
@@ -51,12 +53,12 @@ class DashboardDetailView(DetailView):
         d_day_count = time_diff.days
         context.update({'d_day_count': d_day_count})
 
-        # try:
-        #     queryset_my_portfolio = Portfolio.objects.get(owner=self.request.user,
-        #                                                   dashboard=self.object.pk)
-        #     context.update({'target_portfolio_pk': queryset_my_portfolio.pk})
-        # except Exception as identifier:
-        #     print('Dashboard Detail my_portfolio query :', identifier)
+        try:
+            queryset_my_portfolio = Portfolio.objects.get(owner=self.request.user,
+                                                          dashboard=self.object.pk)
+            context.update({'target_portfolio_pk': queryset_my_portfolio.pk})
+        except Exception as identifier:
+            print('Dashboard Detail my_portfolio query :', identifier)
 
 
         # queryset_my_exchange = MyExchange.objects.filter(owner=self.request.user,

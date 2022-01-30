@@ -17,15 +17,15 @@
 
         <div style="margin: 1rem;">
             <div style="display: inline-block">
-{#                {% if target_portfolio_pk %}#}
-{#                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-info">#}
-{#                        <span class="material-icons">table_chart</span>#}
-{#                    </a>#}
-{#                {% else %}#}
-{#                    <div style="display: inline-block;">#}
-{#                        {% include 'portfolioapp/portfolio_create.html' with dashboard=target_dashboard %}#}
-{#                    </div>#}
-{#                {% endif %}#}
+                {% if target_portfolio_pk %}
+                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-info">
+                        <span class="material-icons">table_chart</span>
+                    </a>
+                {% else %}
+                    <div style="display: inline-block;">
+                        {% include 'portfolioapp/portfolio_create.html' with dashboard=target_dashboard %}
+                    </div>
+                {% endif %}
 
 {#                {% if my_exchange_pk %}#}
 {#                    <a href="{% url 'exchangeapp:myexchange_detail' pk=my_exchange_pk %}" class="btn btn-info">#}

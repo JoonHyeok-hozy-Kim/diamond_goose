@@ -1,0 +1,10 @@
+{% load bootstrap4 %}
+
+<div>
+    <form action="{% url 'portfolioapp:portfolio_create' %}" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+            <input type="submit" class="btn btn-info" value="Create Portfolio">
+        <input type="hidden" name="dashboard_pk" value="{{ dashboard.pk }}">
+    </form>
+</div>

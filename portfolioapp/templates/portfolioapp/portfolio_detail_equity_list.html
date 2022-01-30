@@ -1,0 +1,74 @@
+{% load format_mask_portfolioapp %}
+
+{% if asset_count_equity > 1 %}
+    <td rowspan="{{ asset_count }}"
+        {% if asset_model == 'Equity' %}
+        style="text-align: center; border: .5px solid black; background-color: #264257; font-weight: bolder;"
+        {% elif asset_model == 'Guardian' %}
+        style="text-align: center; border: .5px solid black; background-color: #FFC000; color: #081321; font-weight: bolder;"
+        {% elif asset_model == 'Reits' %}
+        style="text-align: center; border: .5px solid black; background-color: #328BAB; font-weight: bolder;"
+        {% else %}
+        style="text-align: center; border: .5px solid black; background-color: #328BAB; font-weight: bolder;"
+        {% endif %}>
+        {{ asset_model }}</td>
+{% endif %}
+
+{% for asset_instance in queryset_asset %}
+    {% if asset_model == 'Equity' %}
+    <tr style="background-color: #264257; font-weight: bolder;">
+    {% elif asset_model == 'Guardian' %}
+    <tr style="background-color: #FFC000; color: #081321; font-weight: bolder;">
+    {% elif asset_model == 'Reits' %}
+    <tr style="background-color: #328BAB; font-weight: bolder;">
+    {% endif %}
+        <td style="text-align: center; border: .5px solid black;">
+            <a href="{% url 'equityapp:equity_detail' pk=asset_instance.pk %}" style="text-decoration: none;
+                {% if asset_model == 'Guardian' %}
+                    color: #081321;
+                {% else %}
+                    color: #FFFFFF;
+                {% endif %}
+            ">
+                {{ asset_instance.asset_master.ticker }}
+            </a>
+        </td>
+        <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
+            <a href="{% url 'equityapp:equity_detail' pk=asset_instance.pk %}" style="text-indent: 0.5rem; text-decoration: none;
+                {% if asset_model == 'Guardian' %}
+                    color: #081321;
+                {% else %}
+                    color: #FFFFFF;
+                {% endif %}
+            ">
+                {{ asset_instance.asset_master.name|asset_name_omit }}
+            </a>
+        </td>
+        <td style="text-align: center; border: 1px solid black;">{{ asset_instance.asset_master.currency.currency_code }}</td>
+        <td style="text-align: center; border: 1px solid black;">{{ asset_instance.quantity|int_number }}</td>
+        {% if asset_instance.asset_master.currency.currency_code == 'USD' %}
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|currency_usd }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|currency_usd }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|currency_usd }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|currency_usd }}</td>
+        {% elif asset_instance.asset_master.currency.currency_code == 'KRW' %}
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|currency_krw }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|currency_krw }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|currency_krw }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|currency_krw }}</td>
+        {% else %}
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|intcomma }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|intcomma }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|intcomma }}</td>
+            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|intcomma }}</td>
+        {% endif %}
+        <td style="text-align: center; border: 1px solid black;">{{ asset_instance.rate_of_return_mv|percentage_rate_format }}</td>
+        <td style="text-align: center; border: 1px solid black;">{{ asset_instance.rate_of_return_fifo|percentage_rate_format }}</td>
+        <td style="text-align: center; border: 1px solid black;">
+            <a href="{% url 'equityapp:equity_delete' pk=asset_instance.pk %}" style="text-decoration: none; color: #FA0067;">
+                X
+            </a>
+        </td>
+    </tr>
+{% endfor %}
+

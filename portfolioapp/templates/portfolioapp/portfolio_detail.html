@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_portfolioapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+
+        <div style="display: block">
+            <div style="display: block; margin-bottom: 1rem;">
+                <a href="{% url 'dashboardapp:detail' pk=target_portfolio.dashboard.pk %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">show_chart</span>
+                </a>
+{#                <a href="{% url 'portfolioapp:portfolio_refresh' %}" class="btn btn-light btn-sm">#}
+{#                    <span class="material-icons">refresh</span>#}
+{#                </a>#}
+            </div>
+            <div style="display: block">
+                <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">Portfolio Summary</h3>
+            </div>
+        </div>
+
+        <div style="margin: 1rem;">
+            <div style="margin-bottom: 1rem;">
+                <table class="portfolioapp_inverted_table">
+                    <tr class="portfolioapp_inverted_table_tr">
+                        <th class="portfolioapp_inverted_table_th_td">현재가치</th>
+                        <th class="portfolioapp_inverted_table_th_td">자본이득</th>
+                        <th class="portfolioapp_inverted_table_th_td">자본이득(환차 반영)</th>
+                        <th class="portfolioapp_inverted_table_th_td">자본이득률</th>
+                        <th class="portfolioapp_inverted_table_th_td">자본이득률(환차 반영)</th>
+                    </tr>
+                    <tr class="portfolioapp_inverted_table_tr">
+                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.current_value|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.capital_gain|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.rate_of_return|percentage_rate_format }}</td>
+                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.rate_of_return_foreign_exchange_adjusted|percentage_rate_format }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <a href="{% url 'portfolioapp:portfolio_assetmaster_list' %}" class="btn btn-light btn-sm" style="display: inline-block">
+                    <span class="material-icons">add_shopping_cart</span>
+                </a>
+{#                <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-light btn-sm" style="display: inline-block; height: 2.4rem;">Pension Management</a>#}
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <table style="border: 1px solid black;  color: #FFFFFF;">
+                    <colgroup>
+                        <col span="1" style="width: 6rem;">
+                        <col span="1" style="width: 4.5rem;">
+                        <col span="1" style="width: 17rem;">
+                        <col span="1" style="width: 3rem;">
+                        <col span="1" style="width: 4.5rem;">
+                        <col span="1" style="width: 7rem;">
+                        <col span="1" style="width: 7rem;">
+                        <col span="1" style="width: 7rem;">
+                        <col span="1" style="width: 8rem;">
+                        <col span="1" style="width: 6rem;">
+                        <col span="1" style="width: 6rem;">
+                        <col span="1" style="width: 2.5rem;">
+                    </colgroup>
+                    <tr style="text-align: center; background-color: #007D8A">
+                        <th style="border: 1px solid black;">자산구분</th>
+                        <th style="border: 1px solid black;">Ticker</th>
+                        <th style="border: 1px solid black;">Name</th>
+                        <th style="border: 1px solid black;">통화</th>
+                        <th style="border: 1px solid black;">보유수량</th>
+                        <th style="border: 1px solid black;">현재가</th>
+                        <th style="border: 1px solid black;">평균구매단가<br/>(MV)</th>
+                        <th style="border: 1px solid black;">평균구매단가<br/>(FIFO)</th>
+                        <th style="border: 1px solid black;">총보유가치<br/>(현지통화)</th>
+                        <th style="border: 1px solid black;">수익률<br/>(MV)</th>
+                        <th style="border: 1px solid black;">수익률<br/>(FIFO)</th>
+
+                        <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
+                    </tr>
+                    {% if queryset_my_equities %}
+{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_equity queryset_asset=queryset_my_equities asset_count=asset_count_equity %}#}
+                    {% endif %}
+                    {% if queryset_my_guardians %}
+{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_guardian queryset_asset=queryset_my_guardians asset_count=asset_count_guardians %}#}
+                    {% endif %}
+                    {% if queryset_my_reits %}
+{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_reits queryset_asset=queryset_my_reits asset_count=asset_count_reits %}#}
+                    {% endif %}
+{#                    {% include 'portfolioapp/portfolio_detail_crypto_list.html' %}#}
+{#                    {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' %}#}
+                </table>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+{% endblock %}

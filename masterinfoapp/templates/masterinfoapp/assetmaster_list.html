@@ -58,14 +58,15 @@
                 {% endif %}
                         {% if asset_master_list_view_flag %}
                             <a href="{% url 'masterinfoapp:assetmaster_detail' pk=asset.id %}"
-                               {% if asset.asset_type == 'EQUITY' or asset.asset_type == 'CRYPTO' %} style="color: #FFFFFF;"
-                               {% else %} style="color: #081321;"
-                               {% endif %}>
                         {% elif profile_assetmaster_list_flag %}
                             <a href="{% url 'portfolioapp:portfolio_assetmaster_detail' pk=asset.id %}"
-                               style="color: #FFFFFF;">
-                        {% endif %}
-                                {% include 'snippets/asset_card.html' with asset=asset %}
+                       {% endif %}
+                               {% if asset.asset_type == 'EQUITY' or asset.asset_type == 'CRYPTO' %}
+                                   style="color: #FFFFFF;"
+                               {% else %}
+                                   style="color: #081321;"
+                               {% endif %} >
+                                    {% include 'snippets/asset_card.html' with asset=asset %}
                             </a>
                     </div>
             {% endfor %}

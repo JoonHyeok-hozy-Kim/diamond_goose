@@ -1,0 +1,18 @@
+{% extends 'template_assetmaster_detail.html' %}
+{% load bootstrap4 %}
+
+{% block portfolio_assetmaster_detail %}
+
+    <div style="color: #FFFFFF;">
+        {% if my_asset_pk %}
+            <h3 style="color: #FA0067;">My Asset Exists</h3>
+        {% else %}
+            {% if asset_model == 'EQUITY' %}
+{#                {% include 'equityapp/equity_create.html' with asset=target_asset_master %}#}
+            {% else %}
+                OTHER ASSET MODEL
+            {% endif %}
+        {% endif %}
+    </div>
+
+{% endblock %}
