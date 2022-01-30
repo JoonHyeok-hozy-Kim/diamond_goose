@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/dashboardapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto;">
+        <div class="mb-2">
+            <h4 class="dashboardapp_main_title">Dashboard Setup</h4>
+        </div>
+        <div style="margin-bottom: 2rem; color:#FFFFFF;">
+            <h6>Do you want to create your Dashboard?</h6>
+        </div>
+        <div class="text-white">
+            <div style="display: inline-block">
+                <form action="{% url 'dashboardapp:create' %}" method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% if user.is_authenticated %}
+                        <input type="submit" class="btn btn-light" value="Create">
+                    {% endif %}
+                </form>
+            </div>
+            <div style="display: inline-block">
+                <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-dark">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

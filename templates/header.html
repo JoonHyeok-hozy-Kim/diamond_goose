@@ -13,15 +13,15 @@
 
         <div style="margin-left:2rem; font-size: 1.5rem;">
             {% if user.is_authenticated %}
-{#                {% if user.dashboard %}#}
-{#                    <a href="{% url 'dashboardapp:detail' pk=user.pk %}" class="link-info" style="text-decoration-line: none;">#}
-{#                        <span>My Dashboard</span>#}
-{#                    </a> |#}
-{#                {% else %}#}
-{#                    <a href="{% url 'dashboardapp:create' %}" class="link-info" style="text-decoration-line: none;">#}
-{#                        <span>Create Dashboard</span>#}
-{#                    </a> |#}
-{#                {% endif %}#}
+                {% if user.dashboard %}
+                    <a href="{% url 'dashboardapp:detail' pk=user.pk %}" class="link-info" style="text-decoration-line: none;">
+                        <span>My Dashboard</span>
+                    </a> |
+                {% else %}
+                    <a href="{% url 'dashboardapp:create' %}" class="link-info" style="text-decoration-line: none;">
+                        <span>Create Dashboard</span>
+                    </a> |
+                {% endif %}
             {% endif %}
 
             <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="link-info" style="text-decoration-line: none;">

@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'accountapp',
     'masterinfoapp',
-    # 'dashboardapp',
+    'dashboardapp',
     # 'portfolioapp',
     # 'equityapp',
     # 'pensionapp',

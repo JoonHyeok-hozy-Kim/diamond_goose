@@ -26,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accountapp.urls')),
     path('masterinfo/', include('masterinfoapp.urls')),
-    # path('dashboard/', include('dashboardapp.urls')),
+    path('dashboard/', include('dashboardapp.urls')),
     # path('portfolio/', include('portfolioapp.urls')),
     # path('equities/', include('equityapp.urls')),
     # path('pensions/', include('pensionapp.urls')),

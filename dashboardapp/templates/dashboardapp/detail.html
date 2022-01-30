@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/dashboardapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+
+        <div>
+            <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">My Dashboard</h3>
+            <h5 style="display: inline-block; margin-right: 1rem; color: #FFFFFF;">D+{{ d_day_count }}</h5>
+        </div>
+
+        <div style="margin: 1rem;">
+            <div style="display: inline-block">
+{#                {% if target_portfolio_pk %}#}
+{#                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-info">#}
+{#                        <span class="material-icons">table_chart</span>#}
+{#                    </a>#}
+{#                {% else %}#}
+{#                    <div style="display: inline-block;">#}
+{#                        {% include 'portfolioapp/portfolio_create.html' with dashboard=target_dashboard %}#}
+{#                    </div>#}
+{#                {% endif %}#}
+
+{#                {% if my_exchange_pk %}#}
+{#                    <a href="{% url 'exchangeapp:myexchange_detail' pk=my_exchange_pk %}" class="btn btn-info">#}
+{#                        <span class="material-icons">currency_exchange</span>#}
+{#                    </a>#}
+{#                {% else %}#}
+{#                    <a href="{% url 'exchangeapp:myexchange_create' %}" class="btn btn-info">#}
+{#                        Open Exchange#}
+{#                    </a>#}
+{#                {% endif %}#}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
