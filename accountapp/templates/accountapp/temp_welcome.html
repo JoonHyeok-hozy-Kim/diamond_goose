@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/accountapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div class="mb-2">
+            <h4 class="accountapp_main_title">Welcome</h4>
+        </div>
+    </div>
+
+{% endblock %}

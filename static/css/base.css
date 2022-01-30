@@ -1,0 +1,39 @@
+.diamond_goose_header {
+    margin: 1rem 0;
+    color: #FFFFFF;
+    text-align: left;
+}
+
+.diamond_goose_main_block {
+    max-width: 500px;
+    margin: 5rem;
+}
+
+.diamond_goose_main_block_center {
+    max-width: 500px;
+    margin: 5rem;
+
+}
+
+.diamond_goose_footer {
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    text-align: center;
+    color : #FFFFFF;
+}
+
+.diamond_goose_footer_logo {
+    font-size: 2rem;
+}
+
+.diamond_goose_footer_button {
+    font-size: 1rem;
+}
+
+
+
+@media screen and (max-width: 500px) {
+    html {
+        font-size: 13px;
+    }
+}

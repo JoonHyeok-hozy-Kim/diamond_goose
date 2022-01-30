@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_masterinfoapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem 2rem">
+        <div style="margin: 1rem auto;">
+            <div style="display: block; margin-bottom: 1rem;">
+                {% if assetmaster_detail_view_flag %}
+                    <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-light">
+                        <span class="material-icons">arrow_back</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'masterinfoapp:assetmaster_update' pk=target_asset_master.pk %}" class="btn btn-light">
+                            <span class="material-icons">edit</span>
+                        </a>
+                        <a href="{% url 'masterinfoapp:assetmaster_delete' pk=target_asset_master.pk %}" class="btn btn-light">
+                            <span class="material-icons">delete</span>
+                        </a>
+                    {% endif %}
+
+                {% elif profile_assetmaster_detail_flag %}
+                    <a href="{% url 'portfolioapp:portfolio_assetmaster_list' %}" class="btn btn-light">
+                        <span class="material-icons">arrow_back</span>
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+        <div style="display: inline-block; margin: 1rem auto;">
+            <div style="display: flex; float:left; width: 250px; height: 250px; margin-right: 2rem;
+                        align-items: center; justify-content: center; background-color: #FFFFFF;">
+                {% if target_asset_master.image %}
+                    <img src="{{ target_asset_master.image.url }}" alt="" style="width: 90%;">
+                {% else %}
+                    <img src="{{ default_image_url }}" alt="" style="width: 90%;">
+                {% endif %}
+            </div>
+            <div style="display: inline-block;">
+                <div>
+                    <h3 style="display: inline-block; margin-right: 1rem; color:#FFFFFF">
+                        {{ target_asset_master.name }}
+                    </h3>
+                    <h5 style="display: inline; background-color: #264257; color:#FFFFFF">
+                        {{ target_asset_master.ticker }}
+                    </h5>
+                </div>
+                <div style="margin: 1rem 1rem;">
+                    <div>
+                        <table class="assetmasterapp_inverted_table">
+                            <tr class="assetmasterapp_inverted_table_tr">
+                                <th class="assetmasterapp_inverted_table_th">Market</th>
+                                <th class="assetmasterapp_inverted_table_th">Currency</th>
+                                <th class="assetmasterapp_inverted_table_th">현재가</th>
+                                {% if target_asset_master.pension_asset_flag %}
+                                    <th class="assetmasterapp_inverted_table_th">연금자산분류</th>
+                                {% endif %}
+                            </tr>
+                            <tr class="assetmasterapp_inverted_table_tr">
+                                <td class="assetmasterapp_inverted_table_td">{{ target_asset_master.market }}</td>
+                                <td class="assetmasterapp_inverted_table_td">{{ target_asset_master.currency }}</td>
+                                {% if target_asset_master.currency.currency_code == 'USD' %}
+                                    <td class="assetmasterapp_inverted_table_td">{{ target_asset_master.current_price|currency_usd }}</td>
+                                {% elif target_asset_master.currency.currency_code == 'KRW' %}
+                                    <td class="assetmasterapp_inverted_table_td">{{ target_asset_master.current_price|currency_krw }}</td>
+                                {% else %}
+                                    <td class="assetmasterapp_inverted_table_td">{{ target_asset_master.current_price|intcomma }}</td>
+                                {% endif %}
+                                {% if target_asset_master.pension_asset_flag %}
+                                    <td class="assetmasterapp_inverted_table_td">
+                                        {% if target_asset_master.pension_risk_asset_flag %}
+                                            위험자산
+                                        {% else %}
+                                            안전자산
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+{#                <div style="display: block;">#}
+{#                    {% if user.is_authenticated %}#}
+{#                        {% if my_portfolio_pk and my_asset_pk != target_asset.pk %}#}
+{#                            {% if target_asset.asset_type == 'EQUITY' %}#}
+{#                                {% include 'equityapp/equity_create.html' with asset=target_asset %}#}
+{#                            {% elif target_asset.asset_type == 'GUARDIAN' %}#}
+{#                                {% include 'guardianapp/guardian_create.html' with asset=target_asset %}#}
+{#                            {% elif target_asset.asset_type == 'REITS' %}#}
+{#                                {% include 'reitsapp/reits_create.html' with asset=target_asset %}#}
+{#                            {% elif target_asset.asset_type == 'PENSION' %}#}
+{#                                <a href="{% url 'pensionapp:pensionasset_create' asset_pk=target_asset.pk %}" class="btn btn-info">Open Pension Position</a>#}
+{#                            {% elif target_asset.asset_type == 'CRYPTO' %}#}
+{#                                {% include 'cryptoapp/crypto_create.html' with asset=target_asset %}#}
+{#                            {% endif %}#}
+{#                        {% endif %}#}
+{#                    {% endif %}#}
+{#                </div>#}
+
+                {% if profile_assetmaster_detail_flag %}
+                    {% block portfolio_assetmaster_detail %}
+                    {% endblock %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

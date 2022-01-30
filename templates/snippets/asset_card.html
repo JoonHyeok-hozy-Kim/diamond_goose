@@ -1,0 +1,33 @@
+{% if asset.asset_type == 'EQUITY' or asset.asset_type == 'ETF' or asset.asset_type == 'CRYPTO' %}
+<div class="asset_card_white_text_div">
+{% else %}
+<div class="asset_card_black_text_div">
+{% endif %}
+    <div style="display:inline-block; ">
+        <h5>
+            {{ asset.ticker }}
+        </h5>
+    </div>
+    <div style="display:inline-block; ">
+        <h8>
+            {{ asset.asset_type }}
+        </h8>
+    </div>
+</div>
+
+
+{% if asset.asset_type == 'EQUITY' or asset.asset_type == 'ETF' or asset.asset_type == 'CRYPTO' %}
+<div class="asset_card_white_text_div">
+{% else %}
+<div class="asset_card_black_text_div">
+{% endif %}
+    <h7 style="display: block;">
+        {{ asset.name }}
+    </h7>
+</div>
+
+
+<div style="width: 250px; height: 250px; background-color: #FFFFFF; align-items: center; justify-content: center;
+            border-radius: 0;">
+    <img src="{{ asset.image.url }}" alt="" style="width: 90%;">
+</div>

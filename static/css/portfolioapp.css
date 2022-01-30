@@ -1,0 +1,21 @@
+.portfolioapp_main_title {
+    display: inline-block;
+    background-color: #FF9C00;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #FFFFFF
+}
+
+.portfolioapp_inverted_table{
+    border-collapse: collapse;
+    color:#FFFFFF;
+}
+
+.portfolioapp_inverted_table_tr {
+    display: block;
+    float: left;
+}
+
+.portfolioapp_inverted_table_th_td {
+    display: block;
+    width: 11rem;
+}

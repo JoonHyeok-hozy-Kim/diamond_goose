@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+{% include 'head.html' %}
+
+<body style="background-color: #081321; font-family: NanumSquareR">
+
+    {% include 'header.html' %}
+    <hr style="color: #FFFFFF">
+    {% block content %}
+    {% endblock %}
+    <hr style="color: #FFFFFF">
+    {% include 'footer.html' %}
+
+
+</body>
+</html>

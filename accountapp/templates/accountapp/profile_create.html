@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <style>
+        .main_title {
+            height: 2.5rem;
+            display: inline-block;
+            background-color: #FF9C00;
+            font-family: 'Nanum Gothic', sans-serif;
+            color: #FFFFFF
+        }
+    </style>
+
+    <div style="max-width: 500px; margin: 4rem auto;">
+        <div class="mb-2">
+            <h4 class="main_title">Profile Setup</h4>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'accountapp:profile_create' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% bootstrap_form form %}
+
+                <input type="submit" class="btn btn-light col-3">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

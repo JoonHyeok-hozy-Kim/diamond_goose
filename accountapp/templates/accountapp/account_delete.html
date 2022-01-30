@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/accountapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="accountapp_main_title">Delete Account</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete your account?</h6>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'accountapp:account_delete' pk=target_user.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'accountapp:account_detail' pk=target_user.pk %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

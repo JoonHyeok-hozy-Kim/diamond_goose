@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/accountapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div>
+            <h4 class="accountapp_main_title">Sign Up</h4>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'accountapp:account_create' %}" method="post">
+                {% csrf_token %}
+
+                {% bootstrap_form form %}
+
+                <input type="submit" class="btn btn-light col-3">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

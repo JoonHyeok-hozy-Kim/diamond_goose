@@ -1,0 +1,63 @@
+.equitytransaction_main_title {
+    display: inline-block;
+    background-color: #FF9C00;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #FFFFFF
+}
+
+.equityapp_inverted_table { border-collapse: collapse; color:#FFFFFF; }
+.equityapp_inverted_table_tr { display: block; float: left;}
+.equityapp_inverted_table_th { display: block; width: 9.5rem; }
+.equityapp_inverted_table_td { display: block; min-width: 5rem; margin-right: 1rem; }
+
+.equitytransaction_table {
+    width: 100%;
+    color: #FFFFFF;
+}
+
+.equitytransaction_table_th {
+    border: 1px solid black;
+    background-color: #007D8A;
+    text-align: center;
+}
+
+.equitytransaction_table_th_delete {
+    background-color: #FA0067;
+    text-align: center;
+}
+
+.equitytransaction_table_td_center {
+    background-color: #264257;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.equitytransaction_table_td_start {
+    background-color: #264257;
+    text-align: start;
+    border: 1px solid black;
+    text-indent: 0.5rem;
+}
+
+.equitytransaction_delete_inverted_table{
+    border-collapse: collapse;
+    color:#FFFFFF;
+}
+
+.equitytransaction_delete_inverted_table_tr {
+    display: block;
+    float: left;
+}
+
+.equitytransaction_delete_inverted_table_th {
+    display: block;
+    width: 9rem;
+    text-indent: 0.5rem;
+    border-bottom: 1px solid black;
+}
+
+.equitytransaction_delete_inverted_table_td {
+    display: block;
+    width: 20rem;
+    border-bottom: 1px solid black;
+}
