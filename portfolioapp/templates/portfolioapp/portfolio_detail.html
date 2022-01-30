@@ -84,15 +84,17 @@
                         <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
                     </tr>
                     {% if queryset_my_equities %}
-{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_equity queryset_asset=queryset_my_equities asset_count=asset_count_equity %}#}
+                        {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_equity queryset_asset=queryset_my_equities asset_count=asset_count_equity %}
                     {% endif %}
                     {% if queryset_my_guardians %}
-{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_guardian queryset_asset=queryset_my_guardians asset_count=asset_count_guardians %}#}
+                        {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_guardian queryset_asset=queryset_my_guardians asset_count=asset_count_guardians %}
                     {% endif %}
                     {% if queryset_my_reits %}
-{#                        {% include 'portfolioapp/portfolio_detail_equity_list.html' with asset_model=asset_model_reits queryset_asset=queryset_my_reits asset_count=asset_count_reits %}#}
+                        {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_reits queryset_asset=queryset_my_reits asset_count=asset_count_reits %}
                     {% endif %}
-{#                    {% include 'portfolioapp/portfolio_detail_crypto_list.html' %}#}
+                    {% if queryset_my_crypto %}
+                        {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_crypto queryset_asset=queryset_my_crypto asset_count=asset_count_crypto %}
+                    {% endif %}
 {#                    {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' %}#}
                 </table>
 

@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.utils.text import Truncator
 from django.views.generic import CreateView, DetailView, ListView
 
+from assetapp.models import Asset
 from dashboardapp.models import Dashboard
 from masterinfoapp.models import AssetMaster
 from portfolioapp.decorators import portfolio_ownership_required
@@ -43,42 +44,47 @@ class PortfolioDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PortfolioDetailView, self).get_context_data(**kwargs)
 
-        # queryset_my_equities = Equity.objects.filter(owner=self.request.user,
-        #                                              portfolio=self.object.pk,
-        #                                              asset_master__asset_type='EQUITY')
-        # if queryset_my_equities:
-        #     for equity in queryset_my_equities:
-        #         equity.update_statistics()
-        #     context.update({'asset_model_equity': 'Equity'})
-        #     context.update({'queryset_my_equities': queryset_my_equities})
-        #     context.update({'asset_count_equity': queryset_my_equities.count()+1})
-        #
-        # queryset_my_guardians = Equity.objects.filter(owner=self.request.user,
-        #                                               portfolio=self.object.pk,
-        #                                               asset_master__asset_type='GUARDIAN')
-        # if queryset_my_guardians:
-        #     for guardian in queryset_my_guardians:
-        #         guardian.update_statistics()
-        #     context.update({'asset_model_guardian': 'Guardian'})
-        #     context.update({'queryset_my_guardians': queryset_my_guardians})
-        #     context.update({'asset_count_guardians': queryset_my_guardians.count()+1})
-        #
-        # queryset_my_reits = Equity.objects.filter(owner=self.request.user,
-        #                                           portfolio=self.object.pk,
-        #                                           asset_master__asset_type='REITS')
-        # if queryset_my_reits:
-        #     for reits in queryset_my_reits:
-        #         reits.update_statistics()
-        #     context.update({'asset_model_reits': 'Reits'})
-        #     context.update({'queryset_my_reits': queryset_my_reits})
-        #     context.update({'asset_count_reits': queryset_my_reits.count()+1})
+        queryset_my_equities = Asset.objects.filter(owner=self.request.user,
+                                                    portfolio=self.object.pk,
+                                                    asset_master__asset_type='EQUITY')
+        if queryset_my_equities:
+            for equity in queryset_my_equities:
+                equity.update_statistics()
+            context.update({'asset_model_equity': 'Equity'})
+            context.update({'queryset_my_equities': queryset_my_equities})
+            context.update({'asset_count_equity': queryset_my_equities.count()+1})
+
+        queryset_my_guardians = Asset.objects.filter(owner=self.request.user,
+                                                     portfolio=self.object.pk,
+                                                     asset_master__asset_type='GUARDIAN')
+        if queryset_my_guardians:
+            for guardian in queryset_my_guardians:
+                guardian.update_statistics()
+            context.update({'asset_model_guardian': 'Guardian'})
+            context.update({'queryset_my_guardians': queryset_my_guardians})
+            context.update({'asset_count_guardians': queryset_my_guardians.count()+1})
+
+        queryset_my_reits = Asset.objects.filter(owner=self.request.user,
+                                                 portfolio=self.object.pk,
+                                                 asset_master__asset_type='REITS')
+        if queryset_my_reits:
+            for reits in queryset_my_reits:
+                reits.update_statistics()
+            context.update({'asset_model_reits': 'Reits'})
+            context.update({'queryset_my_reits': queryset_my_reits})
+            context.update({'asset_count_reits': queryset_my_reits.count()+1})
+
+        queryset_my_crypto = Asset.objects.filter(owner=self.request.user,
+                                                  portfolio=self.object.pk,
+                                                  asset_master__asset_type='CRYPTO')
+        if queryset_my_crypto:
+            for crypto in queryset_my_crypto:
+                crypto.update_statistics()
+            context.update({'asset_model_crypto': 'Crypto'})
+            context.update({'queryset_my_crypto': queryset_my_crypto})
+            context.update({'asset_count_crypto': queryset_my_crypto.count()+1})
 
         # for element in asset_type_count_list:
-        #
-        #     elif element['asset_type'] == 'CRYPTO':
-        #         queryset_my_cryptoes = Crypto.objects.filter(owner=self.request.user).order_by("asset")
-        #         context.update({'queryset_my_cryptoes': queryset_my_cryptoes})
-        #         context.update({'asset_count_cryptoes': element['asset_count'] + 1})
         #
         #     elif element['asset_type'] == 'PENSION':
         #         queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user).order_by('pension')
@@ -103,8 +109,8 @@ class ProfileAssetMasterListView(ListView):
         except Exception as identifier:
             print('ProfileAssetMasterDetailView queryset_my_portfolio Exception : {}'.format(identifier))
 
-        query_asset_master_list = AssetMaster.objects.all().order_by('asset_type', 'ticker')
-        # query_asset_master_list = AssetMaster.objects.exclude(id__in=Equity.objects.filter(portfolio=my_portfolio_pk).values('asset_master_id')).order_by('asset_type', 'ticker')
+        # query_asset_master_list = AssetMaster.objects.all().order_by('asset_type', 'ticker')
+        query_asset_master_list = AssetMaster.objects.exclude(id__in=Asset.objects.filter(portfolio=my_portfolio_pk).values('asset_master_id')).order_by('asset_type', 'ticker')
         for asset_master in query_asset_master_list:
             asset_master.name = Truncator(asset_master.name).chars(29)
         context.update({'query_asset_master_list': query_asset_master_list})

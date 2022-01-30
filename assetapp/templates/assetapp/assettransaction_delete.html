@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_assetapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="asset_transaction_main_title">Delete Transaction</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this transaction?</h6>
+            <div style="width: 30rem; background-color: #264257;">
+                <table class="asset_transaction_delete_inverted_table">
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <th class="asset_transaction_delete_inverted_table_th">거래일자</th>
+                        <th class="asset_transaction_delete_inverted_table_th">유형</th>
+                        <th class="asset_transaction_delete_inverted_table_th">수량</th>
+                        <th class="asset_transaction_delete_inverted_table_th">가격</th>
+                        <th class="asset_transaction_delete_inverted_table_th">제비용</th>
+                        <th class="asset_transaction_delete_inverted_table_th">제세금</th>
+                        <th class="asset_transaction_delete_inverted_table_th">비고</th>
+                    </tr>
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_date|date:"Y.m.d h:i:s" }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_type }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.quantity }}</td>
+
+                        {% if target_asset_transaction.asset.asset.currency.currency_code == 'USD' %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.price|currency_usd }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_fee|currency_usd  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_tax|currency_usd  }}</td>
+                        {% elif target_asset_transaction.asset.asset.currency.currency_code == 'KRW' %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.price|currency_krw }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_fee|currency_krw  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_tax|currency_krw  }}</td>
+                        {% else %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.price|floatformat:2|intcomma }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_fee|floatformat:2|intcomma  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.transaction_tax|floatformat:2|intcomma  }}</td>
+                        {% endif %}
+
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset_transaction.note }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'assetapp:assettransaction_delete' pk=target_asset_transaction.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'assetapp:asset_detail' pk=target_asset_transaction.asset.pk %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

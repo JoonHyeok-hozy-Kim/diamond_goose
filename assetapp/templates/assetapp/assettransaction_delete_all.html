@@ -1,0 +1,11 @@
+{% load bootstrap4 %}
+
+<div>
+    <form action="{% url 'assetapp:assettransaction_delete_all' %}" method="get">
+        {% csrf_token %}
+        <input type="hidden" name="asset_pk" value="{{ asset.pk }}">
+        <button type="submit" style="border: none; background-color: #FA0067; color: #FFFFFF;">
+            <span class="material-icons">delete</span>
+        </button>
+    </form>
+</div>

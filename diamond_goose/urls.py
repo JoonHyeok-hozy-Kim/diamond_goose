@@ -28,7 +28,7 @@ urlpatterns = [
     path('masterinfo/', include('masterinfoapp.urls')),
     path('dashboard/', include('dashboardapp.urls')),
     path('portfolio/', include('portfolioapp.urls')),
-    # path('equities/', include('equityapp.urls')),
+    path('assets/', include('assetapp.urls')),
     # path('pensions/', include('pensionapp.urls')),
     # path('guardians/', include('guardianapp.urls')),
     # path('cryptoes/', include('cryptoapp.urls')),

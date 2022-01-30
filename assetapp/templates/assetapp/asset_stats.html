@@ -1,0 +1,95 @@
+{% load static %}
+{% load format_mask_portfolioapp %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+{% endblock %}
+
+<div style="display: flex; float:left; width: 12rem; height: 12rem; margin-right: 2rem;
+            align-items: center; justify-content: center; background-color: #FFFFFF;">
+    <img src="{{ asset_master.image.url }}" alt="" style="width: 90%;">
+</div>
+<div style="display: inline-block;">
+    <div>
+        <h3 style="display: inline-block; margin-right: 1rem; color:#FFFFFF">
+            {{ asset_master.name }}
+        </h3>
+        <h5 style="display: inline; background-color: #264257; color:#FFFFFF">
+            {{ asset_master.ticker }}
+        </h5>
+    </div>
+    <div style="margin: 1rem 1rem;">
+        <div style="margin-bottom: 0.5rem;">
+            <table class="asset_app_inverted_table">
+                <tr class="asset_app_inverted_table_tr">
+                    <th class="asset_app_inverted_table_th">Market</th>
+                    <th class="asset_app_inverted_table_th">Currency</th>
+                    <th class="asset_app_inverted_table_th">현재가</th>
+                </tr>
+                <tr class="asset_app_inverted_table_tr">
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_master.market }}</td>
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_master.currency.currency_code }}</td>
+                    {% if asset_master.currency.currency_code == 'USD' %}
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_master.current_price|currency_usd }}</td>
+                    {% elif asset_master.currency.currency_code == 'KRW' %}
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_master.current_price|currency_krw }}</td>
+                    {% else %}
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_master.current_price|intcomma }}</td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>
+        <div>
+            <div style="display: inline-block">
+                <table class="asset_app_inverted_table">
+                    <tr class="asset_app_inverted_table_tr">
+                        <th class="asset_app_inverted_table_th">총보유가치</th>
+                        <th class="asset_app_inverted_table_th">보유수량</th>
+                        <th class="asset_app_inverted_table_th">수익률(MV)</th>
+                        <th class="asset_app_inverted_table_th">수익률(FIFO)</th>
+                    </tr>
+                    <tr class="asset_app_inverted_table_tr">
+                        {% if asset_master.currency.currency_code == 'USD' %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_amount|currency_usd }}</td>
+                        {% elif asset_master.currency.currency_code == 'KRW' %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_amount|currency_krw }}</td>
+                        {% else %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_amount|intcomma }}</td>
+                        {% endif %}
+                        <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_instance.quantity|int_number }}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.rate_of_return_mv|percentage_rate_format }}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.rate_of_return_fifo|percentage_rate_format }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: inline-block">
+                <table class="asset_app_inverted_table">
+                    <tr class="asset_app_inverted_table_tr">
+                        <th class="asset_app_inverted_table_th">총실현이익</th>
+                        <th class="asset_app_inverted_table_th">총배당수령액</th>
+                        <th class="asset_app_inverted_table_th">평균매입단가(MV)</th>
+                        <th class="asset_app_inverted_table_th">평균매입단가(FIFO)</th>
+                    </tr>
+                    <tr class="asset_app_inverted_table_tr">
+                        {% if asset_master.currency.currency_code == 'USD' %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_realized_profit_amount|currency_usd }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_dividend_amount|currency_usd }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_mv|currency_usd }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_fifo|currency_usd }}</td>
+                        {% elif asset_master.currency.currency_code == 'KRW' %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_realized_profit_amount|currency_krw }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_dividend_amount|currency_krw }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_mv|currency_krw }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_fifo|currency_krw }}</td>
+                        {% else %}
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_realized_profit_amount|intcomma }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_dividend_amount|intcomma }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_mv|intcomma }}</td>
+                            <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.average_purchase_price_fifo|intcomma }}</td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+{% load format_mask_assetapp %}
+
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+{% endblock %}
+
+{% for transaction in transaction_list %}
+    <tr>
+        <td class= "asset_transaction_table_td_center">{{ transaction.transaction_date|date:"Y-m-d" }}</td>
+        <td class= "asset_transaction_table_td_center">{{ transaction.transaction_type }}</td>
+        <td class= "asset_transaction_table_td_center">{{ transaction.quantity|int_number }}</td>
+
+        {% if target_currency == 'USD' %}
+            <td class= "asset_transaction_table_td_center">{{ transaction.price|currency_usd }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_fee|currency_usd  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_tax|currency_usd  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.dividend_amount|currency_usd  }}</td>
+        {% elif target_currency == 'KRW' %}
+            <td class= "asset_transaction_table_td_center">{{ transaction.price|currency_krw }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_fee|currency_krw  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_tax|currency_krw  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.dividend_amount|currency_krw  }}</td>
+        {% else %}
+            <td class= "asset_transaction_table_td_center">{{ transaction.price|floatformat:2|intcomma }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_fee|floatformat:2|intcomma  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.transaction_tax|floatformat:2|intcomma  }}</td>
+            <td class= "asset_transaction_table_td_center">{{ transaction.dividend_amount|floatformat:2|intcomma  }}</td>
+        {% endif %}
+
+        <td class= "asset_transaction_table_td_center">{{ transaction.split_ratio_one_to_N|split_ratio_format }}</td>
+        <td class= "asset_transaction_table_td_start">{{ transaction.note }}</td>
+        <td class= "asset_transaction_table_td_center">
+            <a href="{% url 'assetapp:assettransaction_delete' pk=transaction.pk %}" style="color: #FA0067;text-decoration: none;">
+                X
+            </a>
+        </td>
+
+    </tr>
+{% endfor %}

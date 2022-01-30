@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_assetapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="asset_transaction_main_title">Delete Asset</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this asset?</h6>
+            <div style="width: 30rem; background-color: #264257;">
+                <table class="asset_transaction_delete_inverted_table">
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <th class="asset_transaction_delete_inverted_table_th">자산이름</th>
+                        <th class="asset_transaction_delete_inverted_table_th">시장</th>
+                        <th class="asset_transaction_delete_inverted_table_th">거래통화</th>
+                        <th class="asset_transaction_delete_inverted_table_th">보유수량</th>
+                        <th class="asset_transaction_delete_inverted_table_th">총보유가치</th>
+                        <th class="asset_transaction_delete_inverted_table_th">평균매입단가(MV)</th>
+                        <th class="asset_transaction_delete_inverted_table_th">수익률(MV)</th>
+                    </tr>
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.asset_master.name }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.asset_master.market }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.asset_master.currency }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.quantity }}</td>
+
+                        {% if target_asset.asset_master.currency.currency_code == 'USD' %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.total_amount|currency_usd  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.average_purchase_price_mv|currency_usd  }}</td>
+                        {% elif target_asset.asset_master.currency.currency_code == 'KRW' %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.total_amount|currency_krw  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.average_purchase_price_mv|currency_krw  }}</td>
+                        {% else %}
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.total_amount|floatformat:2|intcomma  }}</td>
+                            <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.average_purchase_price_mv|floatformat:2|intcomma  }}</td>
+                        {% endif %}
+
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'assetapp:asset_delete' pk=target_asset.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'portfolioapp:portfolio_detail' pk=target_asset.portfolio.pk %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

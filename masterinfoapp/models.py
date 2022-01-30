@@ -1,4 +1,7 @@
+import json
+import requests
 from django.db import models
+import yfinance as yf
 
 # Create your models here.
 class CurrencyMaster(models.Model):
