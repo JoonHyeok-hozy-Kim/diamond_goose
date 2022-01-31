@@ -45,12 +45,13 @@ class AssetDetailView(DetailView, FormMixin):
     template_name = 'assetapp/asset_detail.html'
 
     def get_context_data(self, **kwargs):
-        # Update Asset's current price
+        # Update AssetMaster's current price
         self.object.asset_master.update_current_price()
         self.object.asset_master.refresh_from_db()
 
-        # Update Equity's stats
+        # Update Asset's stats
         self.object.update_statistics()
+        self.object.refresh_from_db()
 
         context = super(AssetDetailView, self).get_context_data(**kwargs)
 
@@ -71,6 +72,8 @@ class AssetDetailView(DetailView, FormMixin):
                 transaction.dividend_amount = '-'
             if transaction.split_ratio_one_to_N == 1:
                 transaction.split_ratio_one_to_N = '-'
+            if transaction.note is None:
+                transaction.note = '-'
         context.update({'my_asset_transactions': my_asset_transactions})
 
         return context

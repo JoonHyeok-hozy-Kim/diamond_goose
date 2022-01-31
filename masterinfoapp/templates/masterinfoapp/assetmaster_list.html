@@ -58,9 +58,11 @@
                 {% endif %}
                         {% if asset_master_list_view_flag %}
                             <a href="{% url 'masterinfoapp:assetmaster_detail' pk=asset.id %}"
-                        {% elif profile_assetmaster_list_flag %}
+                        {% elif portfolio_assetmaster_list_flag %}
                             <a href="{% url 'portfolioapp:portfolio_assetmaster_detail' pk=asset.id %}"
-                       {% endif %}
+                        {% elif pensionasset_assetmaster_list_flag %}
+                            <a href="{% url 'pensionapp:pensionasset_assetmaster_notmine_detail' pension_pk=pension_pk pk=asset.id %}"
+                        {% endif %}
                                {% if asset.asset_type == 'EQUITY' or asset.asset_type == 'CRYPTO' %}
                                    style="color: #FFFFFF;"
                                {% else %}

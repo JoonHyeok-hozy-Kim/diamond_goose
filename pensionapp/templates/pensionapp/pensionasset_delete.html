@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_pensionapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="pensionapp_main_title">Delete Pension Asset</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this Pension Asset?</h6>
+            <div style="display: block; min-height: 5rem; background-color: #264257;">
+                <table style="border-collapse: collapse; color: #FFFFFF;">
+                    <tr style="display: block; float: left;">
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">종목명</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">현재가</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">보유량</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">현재보유가치</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">평균매입단가</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">자본이득률</th>
+                    </tr>
+                    <tr style="display: block; float: left;">
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset.name }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset.current_price|currency_krw }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.quantity }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.total_amount|currency_krw }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.average_purchase_price_mv|currency_krw }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'pensionapp:pensionasset_delete' pk=target_pension_asset.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'pensionapp:pension_detail' pk=target_pension_asset.pension.pk %}" class="btn btn-light">취소</a>
+                <input type="hidden" name="pension_pk" value={{ target_pension_asset.pension.pk }}>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% load static %}
+{% load format_mask_pensionapp %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+{% endblock %}
+
+<div style="display: flex; float:left; width: 250px; height: 250px; margin-right: 2rem;
+            align-items: center; justify-content: center; background-color: #FFFFFF;">
+    <img src="{{ asset_master.image.url }}" alt="" style="width: 90%;">
+</div>
+<div style="display: inline-block;">
+    <div>
+        <h3 style="display: inline-block; margin-right: 1rem; color:#FFFFFF">
+            {{ asset_master.name }}
+        </h3>
+        <h5 style="display: inline; margin-right: 1rem; background-color: #264257; color:#FFFFFF">
+            {{ asset_master.ticker }}
+        </h5>
+        <h5 style="display: inline; background-color: #00C483;">
+            <a href="{% url 'pensionapp:pension_detail' pk=pension_asset.pension.pk %}" style="text-decoration: none; color: #081321;">{{ pension_asset.pension.pension_master.pension_name }}</a>
+        </h5>
+    </div>
+    <div style="margin: 1rem 1rem;">
+        <div style="margin-bottom: 1rem;">
+            <table class="asset_app_inverted_table">
+                <tr class="asset_app_inverted_table_tr">
+                    <th class="asset_app_inverted_table_th">Market</th>
+                    <th class="asset_app_inverted_table_th">Currency</th>
+                    <th class="asset_app_inverted_table_th">자산구분</th>
+                    <th class="asset_app_inverted_table_th">현재가</th>
+                </tr>
+                <tr class="asset_app_inverted_table_tr">
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_master.market }}</td>
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_master.currency.currency_code }}</td>
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">
+                        {% if asset_master.pension_risk_asset_flag %} 안전자산
+                        {% else %} 위험자산
+                        {% endif %}
+                    </td>
+                    <td class="asset_app_inverted_table_td" style="text-align: end;">
+                        {% if asset_master.currency.currency_code == 'USD' %}
+                            {{ asset_master.current_price|currency_usd }}
+                        {% elif asset_master.currency.currency_code == 'KRW' %}
+                            {{ asset_master.current_price|currency_krw }}
+                        {% else %}
+                            {{ asset_master.current_price|intcomma }}
+                        {% endif %} </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <div style="display: inline-block">
+                <table class="asset_app_inverted_table">
+                    <tr class="asset_app_inverted_table_tr">
+                        <th class="asset_app_inverted_table_th">총보유가치</th>
+                        <th class="asset_app_inverted_table_th">보유수량</th>
+                        <th class="asset_app_inverted_table_th">수익률(MV)</th>
+                        <th class="asset_app_inverted_table_th">수익률(FIFO)</th>
+                    </tr>
+                    <tr class="asset_app_inverted_table_tr">
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">
+                            {% if asset_master.currency.currency_code == 'USD' %}
+                                {{ pension_asset.total_amount|currency_usd }}
+                            {% elif asset_master.currency.currency_code == 'KRW' %}
+                                {{ pension_asset.total_amount|currency_krw }}
+                            {% else %}
+                                {{ pension_asset.total_amount|intcomma }}
+                            {% endif %} </td>
+                        <td class="asset_app_inverted_table_td" style="text-align: center;">{{ pension_asset.quantity|int_number }}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">{{ pension_asset.rate_of_return_fifo|percentage_rate_format }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: inline-block">
+                <table class="asset_app_inverted_table">
+                    <tr class="asset_app_inverted_table_tr">
+                        <th class="asset_app_inverted_table_th">총실현이익</th>
+                        <th class="asset_app_inverted_table_th">총배당수령액</th>
+                        <th class="asset_app_inverted_table_th">평균매입단가(MV)</th>
+                        <th class="asset_app_inverted_table_th">평균매입단가(FIFO)</th>
+                    </tr>
+                    <tr class="asset_app_inverted_table_tr">
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">
+                            {% if asset_master.currency.currency_code == 'USD' %}
+                                {{ pension_asset.total_realized_profit_amount|currency_usd }}
+                            {% elif asset_master.currency.currency_code == 'KRW' %}
+                                {{ pension_asset.total_realized_profit_amount|currency_krw }}
+                            {% else %}
+                                {{ pension_asset.total_realized_profit_amount|intcomma }}
+                            {% endif %}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">
+                            {% if asset_master.currency.currency_code == 'USD' %}
+                                {{ pension_asset.total_dividend_amount|currency_usd }}
+                            {% elif asset_master.currency.currency_code == 'KRW' %}
+                                {{ pension_asset.total_dividend_amount|currency_krw }}
+                            {% else %}
+                                {{ pension_asset.total_dividend_amount|intcomma }}
+                            {% endif %}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">
+                            {% if asset_master.currency.currency_code == 'USD' %}
+                                {{ pension_asset.average_purchase_price_mv|currency_usd }}
+                            {% elif asset_master.currency.currency_code == 'KRW' %}
+                                {{ pension_asset.average_purchase_price_mv|currency_krw }}
+                            {% else %}
+                                {{ pension_asset.average_purchase_price_mv|intcomma }}
+                            {% endif %}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: end;">
+                            {% if asset_master.currency.currency_code == 'USD' %}
+                                {{ pension_asset.average_purchase_price_fifo|currency_usd }}
+                            {% elif asset_master.currency.currency_code == 'KRW' %}
+                                {{ pension_asset.average_purchase_price_fifo|currency_krw }}
+                            {% else %}
+                                {{ pension_asset.average_purchase_price_fifo|intcomma }}
+                            {% endif %}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

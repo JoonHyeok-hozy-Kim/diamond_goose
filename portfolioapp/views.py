@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.utils.text import Truncator
 from django.views.generic import CreateView, DetailView, ListView
 
-from assetapp.models import Asset
+from assetapp.models import Asset, PensionAsset
 from dashboardapp.models import Dashboard
 from masterinfoapp.models import AssetMaster
 from portfolioapp.decorators import portfolio_ownership_required
@@ -46,7 +46,7 @@ class PortfolioDetailView(DetailView):
 
         queryset_my_equities = Asset.objects.filter(owner=self.request.user,
                                                     portfolio=self.object.pk,
-                                                    asset_master__asset_type='EQUITY')
+                                                    asset_master__asset_type='EQUITY').order_by('asset_master__ticker')
         if queryset_my_equities:
             for equity in queryset_my_equities:
                 equity.update_statistics()
@@ -56,7 +56,7 @@ class PortfolioDetailView(DetailView):
 
         queryset_my_guardians = Asset.objects.filter(owner=self.request.user,
                                                      portfolio=self.object.pk,
-                                                     asset_master__asset_type='GUARDIAN')
+                                                     asset_master__asset_type='GUARDIAN').order_by('asset_master__ticker')
         if queryset_my_guardians:
             for guardian in queryset_my_guardians:
                 guardian.update_statistics()
@@ -66,7 +66,7 @@ class PortfolioDetailView(DetailView):
 
         queryset_my_reits = Asset.objects.filter(owner=self.request.user,
                                                  portfolio=self.object.pk,
-                                                 asset_master__asset_type='REITS')
+                                                 asset_master__asset_type='REITS').order_by('asset_master__ticker')
         if queryset_my_reits:
             for reits in queryset_my_reits:
                 reits.update_statistics()
@@ -76,7 +76,7 @@ class PortfolioDetailView(DetailView):
 
         queryset_my_crypto = Asset.objects.filter(owner=self.request.user,
                                                   portfolio=self.object.pk,
-                                                  asset_master__asset_type='CRYPTO')
+                                                  asset_master__asset_type='CRYPTO').order_by('asset_master__ticker')
         if queryset_my_crypto:
             for crypto in queryset_my_crypto:
                 crypto.update_statistics()
@@ -84,22 +84,27 @@ class PortfolioDetailView(DetailView):
             context.update({'queryset_my_crypto': queryset_my_crypto})
             context.update({'asset_count_crypto': queryset_my_crypto.count()+1})
 
-        # for element in asset_type_count_list:
-        #
-        #     elif element['asset_type'] == 'PENSION':
-        #         queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user).order_by('pension')
-        #         context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
-        #         context.update({'asset_count_pension_asset': element['asset_count'] + 1})
+        queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user,
+                                                                 portfolio=self.object.pk,
+                                                                 asset_master__asset_type='PENSION_ASSET').order_by('pension',
+                                                                                                                    'asset_master__name')
+
+        if queryset_my_pension_assets:
+            for pension_asset in queryset_my_pension_assets:
+                pension_asset.update_statistics()
+            context.update({'asset_model_pension': 'Pension'})
+            context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
+            context.update({'asset_count_pension': queryset_my_pension_assets.count()+1})
 
         return context
 
 
-class ProfileAssetMasterListView(ListView):
+class PortfolioAssetMasterListView(ListView):
     model = AssetMaster
     template_name = 'masterinfoapp/assetmaster_list.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(ProfileAssetMasterListView, self).get_context_data(**kwargs)
+        context = super(PortfolioAssetMasterListView, self).get_context_data(**kwargs)
 
         try:
             queryset_my_portfolio = Portfolio.objects.get(owner=self.request.user)
@@ -109,18 +114,17 @@ class ProfileAssetMasterListView(ListView):
         except Exception as identifier:
             print('ProfileAssetMasterDetailView queryset_my_portfolio Exception : {}'.format(identifier))
 
-        # query_asset_master_list = AssetMaster.objects.all().order_by('asset_type', 'ticker')
-        query_asset_master_list = AssetMaster.objects.exclude(id__in=Asset.objects.filter(portfolio=my_portfolio_pk).values('asset_master_id')).order_by('asset_type', 'ticker')
+        query_asset_master_list = AssetMaster.objects.exclude(id__in=Asset.objects.filter(portfolio=my_portfolio_pk).values('asset_master_id')).exclude(asset_type='PENSION_ASSET').order_by('asset_type', 'ticker')
         for asset_master in query_asset_master_list:
             asset_master.name = Truncator(asset_master.name).chars(29)
         context.update({'query_asset_master_list': query_asset_master_list})
 
-        context.update({'profile_assetmaster_list_flag': True})
+        context.update({'portfolio_assetmaster_list_flag': True})
 
         return context
 
 
-class ProfileAssetMasterDetailView(DetailView):
+class PortfolioAssetMasterDetailView(DetailView):
     model = AssetMaster
     context_object_name = 'target_asset_master'
     template_name = 'portfolioapp/portfolio_assetmaster_detail.html'
@@ -130,85 +134,10 @@ class ProfileAssetMasterDetailView(DetailView):
         self.object.update_current_price()
         self.object.refresh_from_db()
 
-        context = super(ProfileAssetMasterDetailView, self).get_context_data(**kwargs)
+        context = super(PortfolioAssetMasterDetailView, self).get_context_data(**kwargs)
 
         context.update({'default_image_url': 'static/images/diamond_goose_logo_mk1.png'})
-        context.update({'profile_assetmaster_detail_flag': True})
-
-        # if self.request.user.is_authenticated:
-        #
-        #     try:
-        #         queryset_my_portfolio = Portfolio.objects.get(owner=self.request.user)
-        #         my_portfolio_pk = queryset_my_portfolio.pk
-        #         target_user_id = queryset_my_portfolio.id
-        #
-        #         my_asset_pk = None
-        #         if self.object.asset_type in ['EQUITY', 'GUARDIAN', 'REITS']:
-        #             context.update({'asset_model': 'EQUITY'})
-        #             try:
-        #                 queryset_my_equity = Equity.objects.get(asset_master=self.object.pk,
-        #                                                         portfolio=my_portfolio_pk,
-        #                                                         owner=target_user_id)
-        #                 my_asset_pk = queryset_my_equity.pk
-        #             except Exception as identifier:
-        #                 print('ProfileAssetMasterDetailView queryset_my_equity Exception : {}'.format(identifier))
-        #
-        #         elif self.object.asset_type == 'CRYPTO':
-        #             None
-        #
-        #         elif self.object.asset_type == 'PENSION':
-        #             None
-        #
-        #     except Exception as identifier:
-        #         print('ProfileAssetMasterDetailView queryset_my_portfolio Exception : {}'.format(identifier))
-        #
-        #
-        #     # my_portfolio_scalar_query = Portfolio.objects.filter(owner=self.request.user).values()
-        #     # if my_portfolio_scalar_query:
-        #     #     for my_portfolio in my_portfolio_scalar_query:
-        #     #         my_portfolio_pk = my_portfolio['id']
-        #     #         target_user_id = my_portfolio['owner_id']
-        #     #     context.update({'my_portfolio_pk': my_portfolio_pk})
-        #     #     context.update({'target_user_id': target_user_id})
-        #     #
-        #     #     my_asset_pk = None
-        #     #     if self.object.asset_type == 'EQUITY':
-        #     #         my_equity_scalar_query = Equity.objects.filter(asset=self.object.pk,
-        #     #                                                        portfolio=my_portfolio_pk,
-        #     #                                                        owner=self.request.user).values()
-        #     #         if my_equity_scalar_query:
-        #     #             for my_equity in my_equity_scalar_query:
-        #     #                 my_asset_pk = my_equity['asset_id']
-        #     #
-        #     #     elif self.object.asset_type == 'GUARDIAN':
-        #     #         queryset_my_guardian = Guardian.objects.filter(asset=self.object.pk,
-        #     #                                                        portfolio=my_portfolio_pk,
-        #     #                                                        owner=self.request.user)
-        #     #         if queryset_my_guardian:
-        #     #             for my_guardian in queryset_my_guardian:
-        #     #                 my_asset_pk = my_guardian.asset.pk
-        #     #
-        #     #     elif self.object.asset_type == 'REITS':
-        #     #         queryset_my_reits = Reits.objects.filter(asset=self.object.pk,
-        #     #                                                  portfolio=my_portfolio_pk,
-        #     #                                                  owner=self.request.user)
-        #     #         if queryset_my_reits:
-        #     #             for my_guardian in queryset_my_reits:
-        #     #                 my_asset_pk = my_guardian.asset.pk
-        #     #
-        #     #     elif self.object.asset_type == 'PENSION':
-        #     #         None
-        #     #
-        #     #     elif self.object.asset_type == 'CRYPTO':
-        #     #         queryset_my_crypto = Crypto.objects.filter(asset=self.object.pk,
-        #     #                                                    portfolio=my_portfolio_pk,
-        #     #                                                    owner=self.request.user)
-        #     #         if queryset_my_crypto:
-        #     #             for my_crypto in queryset_my_crypto:
-        #     #                 my_asset_pk = my_crypto.asset.pk
-        #     #
-        #     if my_asset_pk:
-        #         context.update({'my_asset_pk': my_asset_pk})
+        context.update({'portfolio_assetmaster_detail_flag': True})
 
         return context
 

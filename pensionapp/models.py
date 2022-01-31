@@ -11,7 +11,9 @@ class Pension(models.Model):
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='pension')
     pension_master = models.ForeignKey(PensionMaster, on_delete=models.CASCADE, related_name='pension_master')
     total_amount = models.FloatField(default=0, null=False)
+    net_paid_amount = models.FloatField(default=0, null=False)
     total_paid_amount = models.FloatField(default=0, null=False)
+    total_received_amount = models.FloatField(default=0, null=False)
     total_cash_amount = models.FloatField(default=0, null=False)
     total_profit_amount = models.FloatField(default=0, null=False)
     rate_of_return = models.FloatField(default=0, null=False)
@@ -20,52 +22,53 @@ class Pension(models.Model):
     def __str__(self):
         return f'{self.pension_master.pension_name}'
 
-    def update_parameters(self):
+    def update_statistics(self):
         self.calculate_pension_transaction_stats()
         self.refresh_from_db()
         self.calculate_pension_asset_stats()
         self.refresh_from_db()
 
     def calculate_pension_transaction_stats(self):
-        # pension_transaction_query = self.pension_transaction.all()
-        # new_total_paid_amount = 0
-        # for transaction in pension_transaction_query:
-        #     if transaction.transaction_type == 'PAY':
-        #         new_total_paid_amount += transaction.amount
-        #     else:
-        #         new_total_paid_amount -= transaction.amount
-        #
-        # pension = Pension.objects.filter(pk=self.pk)
-        # pension.update(total_paid_amount=new_total_paid_amount)
-        # return new_total_paid_amount
+        queryset_pension_transaction = PensionTransaction.objects.filter(pension=self.pk)
+        target_pension = Pension.objects.filter(pk=self.pk)
+        total_paid_amount = 0
+        total_received_amount = 0
+        for transaction in queryset_pension_transaction:
+            if transaction.transaction_type == 'PAY':
+                total_paid_amount += transaction.amount
+            elif transaction.transaction_type == 'RECEIVE':
+                total_received_amount += transaction.amount
+        target_pension.update(total_paid_amount=total_paid_amount)
+        target_pension.update(total_received_amount=total_received_amount)
+        target_pension.update(net_paid_amount=total_paid_amount-total_received_amount)
         return
 
     def calculate_pension_asset_stats(self):
-        # queryset_pension_asset = self.pension_asset.all()
-        # total_asset_purchase_amount = 0
-        # total_asset_dividend_amount = 0
-        # total_current_value = 0
-        # current_risk_asset_ratio = 0
-        # current_risk_asset_amount = 0
-        #
-        # for pension_asset in queryset_pension_asset:
-        #     total_asset_purchase_amount += pension_asset.average_purchase_price_mv * pension_asset.quantity
-        #     total_asset_dividend_amount += pension_asset.total_dividend_amount
-        #     total_current_value += pension_asset.total_amount
-        #     if not pension_asset.asset.pension_non_risk_asset_flag:
-        #         current_risk_asset_amount += pension_asset.total_amount
-        #
-        # total_cash_amount = self.total_paid_amount + total_asset_dividend_amount - total_asset_purchase_amount
-        # total_current_value += total_cash_amount
-        # if current_risk_asset_amount > 0:
-        #     current_risk_asset_ratio = current_risk_asset_amount / total_current_value
-        #
-        # pension = Pension.objects.filter(pk=self.pk)
-        # pension.update(total_cash_amount=total_cash_amount)
-        # pension.update(total_current_value=total_current_value)
-        # pension.update(current_risk_asset_ratio=current_risk_asset_ratio)
-        #
-        # return {'total_current_value': total_current_value, 'total_cash_amount': total_cash_amount}
+        queryset_pension_assets = self.pension_asset.all()
+        target_pension = Pension.objects.filter(pk=self.pk)
+        total_amount = 0
+        cash_not_used = self.net_paid_amount
+        total_cash_amount = 0
+        total_profit_amount = 0
+        rate_of_return = 0
+        current_risk_asset_ratio = 0
+
+        for pension_asset in queryset_pension_assets:
+            total_amount += pension_asset.total_amount
+
+            total_cash_amount += pension_asset.total_realized_profit_amount
+            total_cash_amount += pension_asset.total_dividend_amount
+            cash_not_used -= pension_asset.average_purchase_price_fifo * pension_asset.quantity
+
+            total_profit_amount += pension_asset.total_realized_profit_amount
+            total_profit_amount += pension_asset.total_dividend_amount
+            total_profit_amount += pension_asset.total_valuation_profit_amount_fifo
+
+        total_cash_amount += cash_not_used
+        target_pension.update(total_amount=total_amount)
+        target_pension.update(total_cash_amount=total_cash_amount)
+        target_pension.update(total_profit_amount=total_profit_amount)
+
         return
 
 

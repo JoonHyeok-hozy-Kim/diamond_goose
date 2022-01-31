@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_pensionapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetmasterapp.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem 2rem">
+        <div style="margin: 1rem auto;">
+            <div style="display: block; margin-bottom: 1rem;">
+                <a href="{% url 'pensionapp:pension_detail' pk=target_pension.pk %}" class="btn btn-info" >
+                    {{ target_pension.pension_master.pension_name }}
+                </a>
+{#                <a href="{% url 'pensionapp:pensionasset_delete' pk=target_pension_asset.pk %}" class="btn btn-light btn-sm">#}
+                    <span class="material-icons">delete</span>
+{#                </a>#}
+            </div>
+        </div>
+        <div style="display: inline-block; margin: 1rem auto;">
+            {% include 'pensionapp/pensionasset_detail_stats.html' with asset_master=target_pension_asset.asset_master pension_asset=target_pension_asset %}
+        </div>
+        <div>
+            <div style="display: block;">
+                <h3 style=" color: #FFFFFF;">Transactions</h3>
+                <div style="display: block; width: 100%;">
+                    <div style="display: block; width: 20%; float: left; margin-right: 0.5%;">
+                        <div style="margin-bottom: 1rem;">
+                            {% include 'pensionapp/pensionassettransaction_create.html' with pension_asset=target_pension_asset %}
+                        </div>
+                        <div style="display: inline-block;">
+{#                            {% include 'equityapp/equitytransaction_export_csv_template.html' with equity=target_equity %}#}
+                        </div>
+                        <div>
+{#                            {% include 'equityapp/equitytransaction_import_csv.html' with equity=target_equity %}#}
+                        </div>
+                    </div>
+                    <div style="display: inline-block; width: 79.5%;">
+                        <div>
+                            <div style="display: block; width: 100%; ">
+                                <h4 style="margin-left: 1rem; color: #FFFFFF;">Records</h4>
+                            </div>
+
+                            <div style="display: block; margin-left: 1%;">
+                                <table class="asset_transaction_table">
+                                    <colgroup>
+                                        <col style="width: 7rem;">
+                                        <col style="width: 5rem;">
+                                        <col style="width: 3.5rem;">
+                                        <col style="width: 7rem;">
+                                        <col style="width: 5rem;">
+                                        <col style="width: 5rem;">
+                                        <col style="width: 5rem;">
+                                        <col style="width: 4rem;">
+                                        <col style="width: 15rem;">
+                                        <col style="width: 1.5rem;">
+                                    </colgroup>
+                                    <tr>
+                                        <th class="asset_transaction_table_th">거래일자</th>
+                                        <th class="asset_transaction_table_th">유형</th>
+                                        <th class="asset_transaction_table_th">수량</th>
+                                        <th class="asset_transaction_table_th">가격</th>
+                                        <th class="asset_transaction_table_th">제비용</th>
+                                        <th class="asset_transaction_table_th">제세금</th>
+                                        <th class="asset_transaction_table_th">배당금</th>
+                                        <th class="asset_transaction_table_th">액면분할</th>
+                                        <th class="asset_transaction_table_th">비고</th>
+                                        <th class="asset_transaction_table_th_delete"><span class="material-icons">delete</span></th>
+                                    </tr>
+
+                                    {% include 'assetapp/assettransaction_list.html' with transaction_list=queryset_transaction_list target_currency=target_pension_asset.asset_master.currency.currency_code pension_asset_flag=pension_asset_flag %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

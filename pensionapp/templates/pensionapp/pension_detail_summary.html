@@ -17,6 +17,8 @@
             {% if pension.pension_master.risk_ratio_force_flag %}
                 <col span="1" style="width: 7rem;">
             {% endif %}
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
         </colgroup>
         {% if pension.pension_master.pension_name == '퇴직연금' %}
             <tr style="background-color: #005236; color: #081321;">
@@ -34,21 +36,27 @@
                 {% endif %}
             </th>
             <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재규모</th>
-            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">납입총액</th>
-            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">수익금(분배금포함)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">순납입금액(A-B)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">
+                <div style="display:inline-block; margin-right: 0.01rem;">수익</div>
+                <div style="display:inline-block; margin: 0; font-size: 0.7rem;">(차익실현,분배금포함)</div></th>
             <th style="border: 1px solid black; text-align: center; font-weight: bolder;">총수익률</th>
             {% if pension.pension_master.risk_ratio_force_flag %}
-                <th style="border: 1px solid black; text-align: center; font-weight: bolder;">위험자산비중</th>
+                <th style="border: 1px solid black; text-align: center; font-weight: bolder; background-color: #FF9C00;">위험자산비중</th>
             {% endif %}
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">연금납입액(A)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">연금수령액(B)</th>
         </tr>
         <tr>
-            <td style="border: 1px solid white; text-align: end;">{{ pension.total_amount|currency_krw }}</td>
-            <td style="border: 1px solid white; text-align: end;">{{ pension.total_paid_amount|currency_krw }}</td>
-            <td style="border: 1px solid white; text-align: end;">{{ pension.total_profit_amount|currency_krw }}</td>
-            <td style="border: 1px solid white; text-align: end;">{{ pension.rate_of_return|percentage_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.total_amount|currency_krw }}</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.net_paid_amount|currency_krw }}</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.total_profit_amount|currency_krw }}</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.rate_of_return|percentage_rate_format }}</td>
             {% if pension.pension_master.risk_ratio_force_flag %}
-                <td style="border: 1px solid white; text-align: end;">{{ pension.current_risk_asset_ratio|percentage_rate_format }}</td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension.current_risk_asset_ratio|percentage_rate_format }}</td>
             {% endif %}
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.total_paid_amount|currency_krw }}</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.total_received_amount|currency_krw }}</td>
         </tr>
     </table>
 </div>

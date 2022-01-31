@@ -1,4 +1,6 @@
 from django.forms import widgets, ModelForm, ModelChoiceField, RadioSelect
+
+from assetapp.models import PensionAsset, AssetTransaction
 from pensionapp.models import Pension, PensionTransaction, PENSION_TRANSACTION_TYPES
 
 
@@ -17,17 +19,27 @@ class PensionTransactionCreationForm(ModelForm):
         }
 
 
-# class PensionAssetCreationForm(ModelForm):
-#     class Meta:
-#         model = PensionAsset
-#         fields = []
-#
-#
-# class PensionAssetTransactionCreationForm(ModelForm):
-#     class Meta:
-#         model = PensionAssetTransaction
-#         fields = ['transaction_type', 'quantity', 'price', 'transaction_fee', 'transaction_tax', 'transaction_date', 'note']
-#
-#         widgets = {
-#             'transaction_date': widgets.DateTimeInput(attrs={'type': 'date'}),
-#         }
+class PensionAssetCreationForm(ModelForm):
+    class Meta:
+        model = PensionAsset
+        fields = []
+
+
+class PensionAssetTransactionCreationForm(ModelForm):
+    class Meta:
+        model = AssetTransaction
+        fields = [
+            'transaction_date',
+            'transaction_type',
+            'quantity',
+            'price',
+            'dividend_amount',
+            'split_ratio_one_to_N',
+            'transaction_fee',
+            'transaction_tax',
+            'note',
+        ]
+
+        widgets = {
+            'transaction_date': widgets.DateTimeInput(attrs={'type': 'date'}),
+        }

@@ -97,7 +97,10 @@
                     {% if queryset_my_crypto %}
                         {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_crypto queryset_asset=queryset_my_crypto asset_count=asset_count_crypto %}
                     {% endif %}
-{#                    {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' %}#}
+                    {% if queryset_my_pension_assets %}
+                        PENSION
+                        {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' with asset_model=asset_model_pension queryset_asset=queryset_my_pension_assets asset_count=asset_count_pension %}
+                    {% endif %}
                 </table>
 
             </div>

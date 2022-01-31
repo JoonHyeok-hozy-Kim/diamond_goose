@@ -29,9 +29,14 @@
         {% endif %}
 
         <td class= "asset_transaction_table_td_center">{{ transaction.split_ratio_one_to_N|split_ratio_format }}</td>
-        <td class= "asset_transaction_table_td_start">{{ transaction.note }}</td>
+        <td class= "asset_transaction_table_td_center">{{ transaction.note }}</td>
         <td class= "asset_transaction_table_td_center">
-            <a href="{% url 'assetapp:assettransaction_delete' pk=transaction.pk %}" style="color: #FA0067;text-decoration: none;">
+            {% if pension_asset_flag %}
+                <a href="{% url 'pensionapp:pensionassettransaction_delete' pk=transaction.pk %}" style="color: #FA0067;text-decoration: none;">
+            {% else %}
+                <a href="{% url 'assetapp:assettransaction_delete' pk=transaction.pk %}" style="color: #FA0067;text-decoration: none;">
+            {% endif %}
+
                 X
             </a>
         </td>

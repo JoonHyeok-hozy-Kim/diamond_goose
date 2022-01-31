@@ -1,0 +1,11 @@
+{% load bootstrap4 %}
+
+<form action="{% url 'pensionapp:pensionasset_create' %} " method="post">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+        <input type="submit" class="btn btn-info" value="Open Position for {{ target_pension.pension_master.pension_name }}" style="display: inline">
+    {% endif %}
+    <input type="hidden" name="pension_pk" value="{{ target_pension.pk }}">
+    <input type="hidden" name="asset_pk" value="{{ asset_pk }}">
+</form>
+

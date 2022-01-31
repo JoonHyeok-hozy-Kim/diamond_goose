@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Q
 
 from masterinfoapp.models import AssetMaster
+from pensionapp.models import Pension
 from portfolioapp.models import Portfolio
 
 
@@ -149,7 +150,7 @@ class Asset(models.Model):
         total_valuation_profit_amount_mv = (self.asset_master.current_price - average_purchase_price_mv) * final_quantity
         target_asset_instance.update(total_valuation_profit_amount_mv=total_valuation_profit_amount_mv)
         rate_of_return_mv = 0
-        if self.asset_master.current_price > 0:
+        if self.asset_master.current_price > 0 and average_purchase_price_mv > 0:
             rate_of_return_mv = (self.asset_master.current_price - average_purchase_price_mv) / self.asset_master.current_price
         target_asset_instance.update(rate_of_return_mv=rate_of_return_mv)
 
@@ -167,6 +168,10 @@ class Asset(models.Model):
         target_asset_instance.update(average_purchase_price_fifo=average_purchase_price_fifo)
         target_asset_instance.update(total_valuation_profit_amount_fifo=total_valuation_profit_amount_fifo)
         target_asset_instance.update(rate_of_return_fifo=rate_of_return_fifo)
+
+
+class PensionAsset(Asset):
+    pension = models.ForeignKey(Pension, on_delete=models.CASCADE, related_name='pension_asset')
 
 
 class MinValueFloat(models.FloatField):
@@ -197,7 +202,7 @@ class AssetTransaction(models.Model):
     split_ratio_one_to_N = MinValueFloat(default=1, min_value=0, null=False)
     transaction_fee = MinValueFloat(min_value=0, default=0, null=True)
     transaction_tax = models.FloatField(default=0, null=True)
-    note = models.CharField(max_length=100, default=' - ', null=True)
+    note = models.CharField(max_length=100, default='-', null=True)
     applied_flag = models.BooleanField(default=False, null=False)
     transaction_date = models.DateTimeField(null=False)
     creation_date = models.DateTimeField(auto_now=True)

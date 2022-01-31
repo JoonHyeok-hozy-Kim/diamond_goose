@@ -19,12 +19,12 @@ class AssetTransactionCreationForm(ModelForm):
     class Meta:
         model = AssetTransaction
         fields = [
+            'transaction_date',
             'transaction_type',
             'quantity',
             'price',
             'dividend_amount',
             'split_ratio_one_to_N',
-            'transaction_date',
             'transaction_fee',
             'transaction_tax',
             'note',

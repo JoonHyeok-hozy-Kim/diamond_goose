@@ -1,0 +1,67 @@
+{% load static %}
+{% load format_mask_pensionapp %}
+{% load bootstrap4 %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+{% endblock %}
+
+<div>
+    <table>
+        <colgroup>
+            <col span="1" style="width: 15rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 7rem;">
+            <col span="1" style="width: 2.5rem;">
+        </colgroup>
+        {% if pension.pension_master.pension_name == '퇴직연금' %}
+            <tr style="background-color: #005236; color: #081321;">
+        {% elif pension.pension_master.pension_name == '연금저축' %}
+            <tr style="background-color: #008558; color: #081321;">
+        {% elif pension.pension_master.pension_name == 'IRP' %}
+            <tr style="background-color: #00D18B; color: #081321;">
+        {% endif %}
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">
+                종목명
+                <a href="{% url 'pensionapp:pensionasset_assetmaster_notmine_list' pension_pk=pension.pk %}" >
+                    <span class="material-icons"
+                          style="box-shadow: 0 0 1px white; padding: 0.2rem; background-color: white; color: #081321;">add</span>
+                </a>
+            </th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재보유가치</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">보유량</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재가</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">평균매입단가</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">자본이득률</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder; background-color: #FA0067; color: #FFFFFF;">
+                <span class="material-icons">delete</span>
+            </th>
+        </tr>
+        {% for pension_asset in pension_asset_list %}
+            <tr>
+                <td style="border: 1px solid darkgray; text-align: start;">
+                    <a href="{% url 'pensionapp:pensionasset_detail' pk=pension_asset.pk %}" style="color: #FFFFFF;">
+                        <div style="text-indent: 0.5rem; color: #FFFFFF;">{{ pension_asset.asset_master.name }}</div>
+                    </a>
+                </td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.total_amount|currency_krw }}</td>
+                <td style="border: 1px solid darkgray; text-align: center;">{{ pension_asset.quantity|int_number }}</td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.asset_master.current_price|currency_krw }}</td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.average_purchase_price_mv|currency_krw }}</td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                <td style="border: 1px solid darkgray; text-align: center; ">
+                    <a href="{% url 'pensionapp:pensionasset_delete' pk=pension_asset.pk %}" style="color: #FA0067; text-decoration: none; font-weight: bodl;">
+                        X
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td style="border: 1px solid darkgray; text-align: start; text-indent: 0.5rem;">현금(Cash)</td>
+            <td style="border: 1px solid darkgray; text-align: end;">{{ pension.total_cash_amount|currency_krw }}</td>
+        </tr>
+    </table>
+</div>

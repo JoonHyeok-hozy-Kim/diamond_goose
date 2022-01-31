@@ -7,11 +7,13 @@
 {% endblock %}
 
 <div style="justify-content: start; height: 30rem;">
-    {% if pension.pension_type == '퇴직연금' %}
+    {% if pension.pension_master.pension_name == '퇴직연금' %}
         <div style="display: block; background-color: #005236; color: #081321;">
-    {% elif pension.pension_type == '연금저축' %}
+    {% elif pension.pension_master.pension_name == '연금저축' %}
         <div style="display: block; background-color: #008558; color: #081321;">
-    {% elif pension.pension_type == 'IRP' %}
+    {% elif pension.pension_master.pension_name == 'IRP' %}
+        <div style="display: block; background-color: #00D18B; color: #081321;">
+    {% else %}
         <div style="display: block; background-color: #00D18B; color: #081321;">
     {% endif %}
             <h4 style="font-weight: bold;">Pension Transaction</h4>

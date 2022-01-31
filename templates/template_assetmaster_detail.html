@@ -104,8 +104,11 @@
 {#                    {% endif %}#}
 {#                </div>#}
 
-                {% if profile_assetmaster_detail_flag %}
+                {% if portfolio_assetmaster_detail_flag %}
                     {% block portfolio_assetmaster_detail %}
+                    {% endblock %}
+                {% elif pensionasset_assetmaster_notmine_detail_flag %}
+                    {% block pensionasset_assetmaster_notmine_detail %}
                     {% endblock %}
                 {% endif %}
             </div>

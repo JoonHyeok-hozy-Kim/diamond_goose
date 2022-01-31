@@ -49,11 +49,19 @@
             </div>
         </div>
         <div class="text-white">
-            <form action="{% url 'assetapp:assettransaction_delete' pk=target_asset_transaction.pk %}" method="post">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-dark">
-                <a href="{% url 'assetapp:asset_detail' pk=target_asset_transaction.asset.pk %}" class="btn btn-light">취소</a>
-            </form>
+            {% if pension_asset_flag %}
+                <form action="{% url 'pensionapp:pensionassettransaction_delete' pk=target_asset_transaction.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-dark">
+                    <a href="{% url 'pensionapp:pensionasset_detail' pk=target_asset_transaction.asset.pk %}" class="btn btn-light">취소</a>
+                </form>
+            {% else %}
+                <form action="{% url 'assetapp:assettransaction_delete' pk=target_asset_transaction.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-dark">
+                    <a href="{% url 'assetapp:asset_detail' pk=target_asset_transaction.asset.pk %}" class="btn btn-light">취소</a>
+                </form>
+            {% endif %}
         </div>
     </div>
 

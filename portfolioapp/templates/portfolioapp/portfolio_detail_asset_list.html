@@ -10,7 +10,7 @@
         style="text-align: center; border: .5px solid black; background-color: #328BAB; color: #081321; font-weight: bolder;"
         {% elif asset_model == 'Crypto' %}
         style="text-align: center; border: .5px solid black; background-color: #7A3156; font-weight: bolder;"
-        {% elif asset_model == 'Pension Asset' %}
+        {% else %}
         style="text-align: center; border: .5px solid black; background-color: #00C484; color: #081321; font-weight: bolder;"
         {% endif %}>
         {{ asset_model }}</td>
@@ -25,7 +25,7 @@
     <tr style="background-color: #328BAB; color: #081321; font-weight: bolder;">
     {% elif asset_model == 'Crypto' %}
     <tr style="background-color: #7A3156; font-weight: bolder;">
-    {% elif asset_model == 'Pension Asset' %}
+    {% else %}
     <tr style="background-color: #00C484; color: #081321; font-weight: bolder;">
     {% endif %}
         <td style="text-align: center; border: .5px solid black;">

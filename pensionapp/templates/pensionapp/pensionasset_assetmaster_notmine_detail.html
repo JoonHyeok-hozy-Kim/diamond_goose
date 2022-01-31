@@ -1,0 +1,14 @@
+{% extends 'template_assetmaster_detail.html' %}
+{% load bootstrap4 %}
+
+{% block pensionasset_assetmaster_notmine_detail %}
+
+    <div style="color: #FFFFFF;">
+        {% if my_asset_pk %}
+            <h3 style="color: #FA0067;">My Asset Exists</h3>
+        {% else %}
+            {% include 'pensionapp/pensionasset_create.html' with target_pension=target_pension asset_pk=asset_pk %}
+        {% endif %}
+    </div>
+
+{% endblock %}
