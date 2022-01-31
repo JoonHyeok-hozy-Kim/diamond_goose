@@ -9,6 +9,9 @@
 
     <div style="margin: 2rem;">
         <div style="margin-bottom: 1rem;">
+            <a href="{% url 'portfolioapp:portfolio_detail' pk=target_pension.portfolio.pk %}" class="btn btn-info btn-sm" >
+                <span class="material-icons">table_chart</span>
+            </a>
             <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-info">
                 Pension Summary
             </a>

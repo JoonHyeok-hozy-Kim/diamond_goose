@@ -13,12 +13,15 @@
     <div style="margin: 2rem 2rem">
         <div style="margin: 1rem auto;">
             <div style="display: block; margin-bottom: 1rem;">
+                <a href="{% url 'portfolioapp:portfolio_detail' pk=target_pension.portfolio.pk %}" class="btn btn-info btn-sm" >
+                    <span class="material-icons">table_chart</span>
+                </a>
                 <a href="{% url 'pensionapp:pension_detail' pk=target_pension.pk %}" class="btn btn-info" >
                     {{ target_pension.pension_master.pension_name }}
                 </a>
-{#                <a href="{% url 'pensionapp:pensionasset_delete' pk=target_pension_asset.pk %}" class="btn btn-light btn-sm">#}
+                <a href="{% url 'pensionapp:pensionasset_delete' pk=target_pension_asset.pk %}" class="btn btn-danger btn-sm">
                     <span class="material-icons">delete</span>
-{#                </a>#}
+                </a>
             </div>
         </div>
         <div style="display: inline-block; margin: 1rem auto;">

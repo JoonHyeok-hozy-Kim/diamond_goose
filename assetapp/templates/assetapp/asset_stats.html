@@ -56,7 +56,13 @@
                         {% else %}
                             <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.total_amount|intcomma }}</td>
                         {% endif %}
-                        <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_instance.quantity|int_number }}</td>
+                        <td class="asset_app_inverted_table_td" style="text-align: center;">
+                            {% if asset_instance.asset_master.asset_type == 'CRYPTO' %}
+                                {{ asset_instance.quantity }}
+                            {% else %}
+                                {{ asset_instance.quantity|int_number }}
+                            {% endif %}
+                        </td>
                         <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.rate_of_return_mv|percentage_rate_format }}</td>
                         <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_instance.rate_of_return_fifo|percentage_rate_format }}</td>
                     </tr>

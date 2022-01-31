@@ -72,10 +72,14 @@ class Asset(models.Model):
     rate_of_return_fifo = models.FloatField(default=0, null=False)
 
     def update_statistics(self):
-        self.calculate_quantity_amount()
+        if self.asset_master.asset_type == 'CRYPTO':
+            self.update_from_upbit()
+        else:
+            self.calculate_from_transaction()
         self.refresh_from_db()
 
-    def calculate_quantity_amount(self):
+    def calculate_from_transaction(self):
+
         query = Q(transaction_type='BUY')
         query.add(Q(transaction_type='SELL'), Q.OR)
         query.add(Q(transaction_type='DIVIDEND'), Q.OR)
@@ -168,6 +172,67 @@ class Asset(models.Model):
         target_asset_instance.update(average_purchase_price_fifo=average_purchase_price_fifo)
         target_asset_instance.update(total_valuation_profit_amount_fifo=total_valuation_profit_amount_fifo)
         target_asset_instance.update(rate_of_return_fifo=rate_of_return_fifo)
+
+    def update_from_upbit(self):
+        import jwt
+        import uuid
+        import hashlib
+        from urllib.parse import urlencode
+        import requests
+
+        try:
+            from diamond_goose.settings.local import UPBIT_ACCESS_KEY as access_key_local, UPBIT_SECRET_KEY as secret_key_local
+            if access_key_local:
+                access_key = access_key_local
+                secret_key = secret_key_local
+        except:
+            from diamond_goose.settings.deploy import UPBIT_ACCESS_KEY as access_key_deploy, UPBIT_SECRET_KEY as secret_key_deploy
+            access_key = access_key_deploy
+            secret_key = secret_key_deploy
+
+        server_url = "https://api.upbit.com"
+
+        market = 'KRW-'
+        market += self.asset_master.ticker
+        query = {
+            'market': market,
+        }
+        query_string = urlencode(query).encode()
+
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+
+        payload = {
+            'access_key': access_key,
+            'nonce': str(uuid.uuid4()),
+            'query_hash': query_hash,
+            'query_hash_alg': 'SHA512',
+        }
+
+        jwt_token = jwt.encode(payload, secret_key)
+        authorize_token = 'Bearer {}'.format(jwt_token)
+        headers = {"Authorization": authorize_token}
+
+        res = requests.get(server_url + "/v1/orders/chance", params=query, headers=headers)
+
+        # My Account Data in Json
+        my_account = res.json()['ask_account']
+        my_balance = float(my_account['balance'])
+        my_avg_buy_price = float(my_account['avg_buy_price'])
+
+        asset = Asset.objects.filter(pk=self.pk)
+        asset.update(quantity=my_balance)
+        total_amount = my_balance * self.asset_master.current_price
+        asset.update(total_amount=total_amount)
+        asset.update(average_purchase_price_mv=my_avg_buy_price)
+        asset.update(average_purchase_price_fifo=my_avg_buy_price)
+        rate_of_return = 0
+        if my_avg_buy_price > 0:
+            rate_of_return = (self.asset_master.current_price-my_avg_buy_price)/my_avg_buy_price
+        asset.update(rate_of_return_mv=rate_of_return)
+        asset.update(rate_of_return_fifo=rate_of_return)
+
 
 
 class PensionAsset(Asset):

@@ -31,6 +31,8 @@ def asset_name_omit(asset_name):
     return Truncator(asset_name).chars(31)
 
 def int_number(amount):
+    if amount is None:
+        return '0'
     if isinstance(amount, str):
         return amount
     amount = round(float(amount))

@@ -24,6 +24,8 @@
         <div style="display: inline-block; margin: 1rem auto;">
             {% include 'assetapp/asset_stats.html' with asset_master=target_asset.asset_master asset_instance=target_asset %}
         </div>
+
+        {% if target_asset.asset_master.asset_type != 'CRYPTO' %}
         <div>
             <div style="display: block;">
                 <h3 style=" color: #FFFFFF;">Transactions</h3>
@@ -82,5 +84,6 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

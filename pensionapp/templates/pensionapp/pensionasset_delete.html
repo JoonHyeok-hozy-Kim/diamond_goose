@@ -24,8 +24,8 @@
                         <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">자본이득률</th>
                     </tr>
                     <tr style="display: block; float: left;">
-                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset.name }}</td>
-                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset.current_price|currency_krw }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset_master.name }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.asset_master.current_price|currency_krw }}</td>
                         <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.quantity }}</td>
                         <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.total_amount|currency_krw }}</td>
                         <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_pension_asset.average_purchase_price_mv|currency_krw }}</td>

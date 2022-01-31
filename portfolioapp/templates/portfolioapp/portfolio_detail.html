@@ -61,11 +61,12 @@
                         <col span="1" style="width: 4.5rem;">
                         <col span="1" style="width: 17rem;">
                         <col span="1" style="width: 3rem;">
-                        <col span="1" style="width: 4.5rem;">
-                        <col span="1" style="width: 7rem;">
-                        <col span="1" style="width: 7rem;">
-                        <col span="1" style="width: 7rem;">
                         <col span="1" style="width: 8rem;">
+                        <col span="1" style="width: 8rem;">
+                        <col span="1" style="width: 5rem;">
+                        <col span="1" style="width: 7rem;">
+                        <col span="1" style="width: 7rem;">
+                        <col span="1" style="width: 7rem;">
                         <col span="1" style="width: 6rem;">
                         <col span="1" style="width: 6rem;">
                         <col span="1" style="width: 2.5rem;">
@@ -75,14 +76,14 @@
                         <th style="border: 1px solid black;">Ticker</th>
                         <th style="border: 1px solid black;">Name</th>
                         <th style="border: 1px solid black;">통화</th>
+                        <th style="border: 1px solid black;">총보유가치<br/>(현지통화)</th>
+                        <th style="border: 1px solid black;">총보유가치<br/>(주력통화)</th>
                         <th style="border: 1px solid black;">보유수량</th>
                         <th style="border: 1px solid black;">현재가</th>
                         <th style="border: 1px solid black;">평균구매단가<br/>(MV)</th>
                         <th style="border: 1px solid black;">평균구매단가<br/>(FIFO)</th>
-                        <th style="border: 1px solid black;">총보유가치<br/>(현지통화)</th>
                         <th style="border: 1px solid black;">수익률<br/>(MV)</th>
                         <th style="border: 1px solid black;">수익률<br/>(FIFO)</th>
-
                         <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
                     </tr>
                     {% if queryset_my_equities %}
@@ -98,7 +99,6 @@
                         {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_model=asset_model_crypto queryset_asset=queryset_my_crypto asset_count=asset_count_crypto %}
                     {% endif %}
                     {% if queryset_my_pension_assets %}
-                        PENSION
                         {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' with asset_model=asset_model_pension queryset_asset=queryset_my_pension_assets asset_count=asset_count_pension %}
                     {% endif %}
                 </table>

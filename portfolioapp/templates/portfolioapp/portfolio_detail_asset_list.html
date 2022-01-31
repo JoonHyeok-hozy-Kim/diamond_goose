@@ -51,22 +51,33 @@
             </a>
         </td>
         <td style="text-align: center; border: 1px solid black;">{{ asset_instance.asset_master.currency.currency_code }}</td>
-        <td style="text-align: center; border: 1px solid black;">{{ asset_instance.quantity|int_number }}</td>
+        <td style="text-align: end; border: 1px solid black;">
+            {{ asset_instance.asset_master.currency.currency_sign }}
+            {{ asset_instance.total_amount|int_number }}
+        </td>
+        <td style="text-align: end; border: 1px solid black;">
+            {{ asset_instance.portfolio.dashboard.main_currency.currency_sign }}
+            {{ asset_instance.total_amount_in_main_currency|int_number }}
+        </td>
+        <td style="text-align: center; border: 1px solid black;">
+            {% if asset_instance.asset_master.asset_type == 'CRYPTO' %}
+                {{ asset_instance.quantity }}
+            {% else %}
+                {{ asset_instance.quantity|int_number }}
+            {% endif %}
+        </td>
         {% if asset_instance.asset_master.currency.currency_code == 'USD' %}
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|currency_usd }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|currency_usd }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|currency_usd }}</td>
-            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|currency_usd }}</td>
         {% elif asset_instance.asset_master.currency.currency_code == 'KRW' %}
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|currency_krw }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|currency_krw }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|currency_krw }}</td>
-            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|currency_krw }}</td>
         {% else %}
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.asset_master.current_price|intcomma }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_mv|intcomma }}</td>
             <td style="text-align: end; border: 1px solid black;">{{ asset_instance.average_purchase_price_fifo|intcomma }}</td>
-            <td style="text-align: end; border: 1px solid black;">{{ asset_instance.total_amount|intcomma }}</td>
         {% endif %}
         <td style="text-align: center; border: 1px solid black;">{{ asset_instance.rate_of_return_mv|percentage_rate_format }}</td>
         <td style="text-align: center; border: 1px solid black;">{{ asset_instance.rate_of_return_fifo|percentage_rate_format }}</td>
