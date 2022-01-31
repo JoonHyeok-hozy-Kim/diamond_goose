@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_exchangeapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/exchangeapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+
+        <div style="display: block">
+            <div style="display: block; margin-bottom: 0.5rem;">
+                <a href="{% url 'dashboardapp:detail' pk=my_dashboard.pk %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">show_chart</span>
+                </a>
+                <a href="{% url 'exchangeapp:myexchange_currencymaster_list' %}" class="btn btn-light btn-sm">
+                    <span class="material-icons">add</span>
+                </a>
+{#                <a href="" class="btn btn-light btn-sm">#}
+                    <span class="material-icons">refresh</span>
+{#                </a>#}
+            </div>
+            <div style="display: block">
+                <h3 class="exchangeapp_main_title">Exchange Summary</h3>
+            </div>
+        </div>
+
+        <div style="margin: 1rem;">
+            <div style="margin-bottom: 1rem;">
+                <table class="exchangeapp_inverted_table">
+                    <tr class="exchangeapp_inverted_table_tr">
+                        <th class="exchangeapp_inverted_table_th_td" style="font-size: 1.5rem;">주력 통화</th>
+                    </tr>
+                    <tr class="exchangeapp_inverted_table_tr">
+                        <td class="exchangeapp_inverted_table_th_td">
+                            <div style="display:inline-block; font-size: 1.5rem;">{{ my_dashboard.main_currency.currency_name }}</div>
+                            <div style="display:inline-block; font-size: 1rem;">({{ my_dashboard.main_currency.currency_code }})</div>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="border: 1px solid white; width: 80%; height: 20rem; margin-bottom: 1rem;">
+                통화별 환차손익현황황 Graph
+           </div>
+
+            <div style="margin-bottom: 1rem; color: #FFFFFF;">
+                {% for foreign_currency in queryset_foreign_currencies %}
+                    {% include 'exchangeapp/foreigncurrency_summary.html' with foreign_currency=foreign_currency myexchange_detail_flag=myexchange_detail_flag %}
+                {% endfor %}
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+{% endblock %}

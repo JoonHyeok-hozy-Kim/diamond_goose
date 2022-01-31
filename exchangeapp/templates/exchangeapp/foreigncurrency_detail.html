@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_exchangeapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/exchangeapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+
+        <div style="display: block">
+            <div style="display: block; margin-bottom: 0.5rem;">
+                <a href="{% url 'exchangeapp:myexchange_detail' pk=target_foreign_currency.dashboard.pk %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">currency_exchange</span>
+                </a>
+{#                <div class="btn btn-light btn-sm">#}
+{#                    {% include 'exchangeapp/foreigncurrency_refresh.html' with foreign_currency=target_foreign_currency %}#}
+{#                </div>#}
+                <a href="" class="btn btn-light btn-sm">
+                    <span class="material-icons">delete</span>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin: 1rem;">
+
+            <div style="margin-bottom: 1rem; color: #FFFFFF;">
+                {% include 'exchangeapp/foreigncurrency_summary.html' with foreign_currency=target_foreign_currency %}
+            </div>
+
+            <div style="border: 1px solid white; width: 80%; height: 20rem; margin-bottom: 1rem; color: #FFFFFF;">
+                환율 관련 Graph 영역
+            </div>
+
+            <div>
+                <div style="display: block;">
+                    <h3 style=" color: #FFFFFF;">Transactions</h3>
+                    <div style="display: block; width: 100%;">
+                        <div style="display: block; width: 20%; float: left; margin-right: 0.5%;">
+                            <div style="margin-bottom: 1rem;">
+                                {% include 'exchangeapp/foreigncurrencytransaction_create.html' with foreign_currency=target_foreign_currency %}
+                            </div>
+                            <div style="display: inline-block;">
+    {#                            {% include 'equityapp/equitytransaction_export_csv_template.html' with equity=target_equity %}#}
+                            </div>
+                            <div>
+    {#                            {% include 'equityapp/equitytransaction_import_csv.html' with equity=target_equity %}#}
+                            </div>
+                        </div>
+                        <div style="display: inline-block; width: 79.5%;">
+                            <div>
+                                <div style="display: block; width: 100%; ">
+                                    <h4 style="margin-left: 1rem; color: #FFFFFF;">Records</h4>
+                                </div>
+
+                                <div style="display: block; margin-left: 1%;">
+                                    <table class="asset_transaction_table">
+                                        <colgroup>
+                                            <col style="width: 10%;">
+                                            <col style="width: 5%;">
+                                            <col style="width: 10%;">
+                                            <col style="width: 10%;">
+                                            <col style="width: 15%;">
+                                            <col style="width: 2%;">
+                                        </colgroup>
+                                        <tr>
+                                            <th class="asset_transaction_table_th">거래일자</th>
+                                            <th class="asset_transaction_table_th">유형</th>
+                                            <th class="asset_transaction_table_th">수량</th>
+                                            <th class="asset_transaction_table_th">환율</th>
+                                            <th class="asset_transaction_table_th">비고</th>
+                                            <th class="asset_transaction_table_th_delete">
+                                                {% include 'exchangeapp/foreigncurrencytransaction_delete_all.html' with foreign_currency=target_foreign_currency %}
+                                            </th>
+                                        </tr>
+
+                                        {% include 'exchangeapp/foriegncurrencytransaction_list.html' with transaction_list=queryset_transaction_list %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+{% endblock %}

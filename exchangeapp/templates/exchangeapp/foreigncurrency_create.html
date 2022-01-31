@@ -1,0 +1,10 @@
+{% load bootstrap4 %}
+
+<div style="max-width: 500px; margin: 2rem auto">
+    <form action="{% url 'exchangeapp:foreigncurrency_create' %}" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" class="btn btn-info" value="Add Foreign Currency">
+        <input type="hidden" name="currency_master_pk" value="{{ currency_master_pk }}">
+    </form>
+</div>

@@ -109,7 +109,6 @@ class PortfolioAssetMasterListView(ListView):
         try:
             queryset_my_portfolio = Portfolio.objects.get(owner=self.request.user)
             my_portfolio_pk = queryset_my_portfolio.pk
-            target_user_id = queryset_my_portfolio.id
 
         except Exception as identifier:
             print('ProfileAssetMasterDetailView queryset_my_portfolio Exception : {}'.format(identifier))

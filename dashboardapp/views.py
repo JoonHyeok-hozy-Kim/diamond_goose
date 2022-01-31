@@ -38,7 +38,6 @@ class DashboardCreateView(CreateView):
 
 @method_decorator(has_ownership, 'get')
 class DashboardDetailView(DetailView, FormMixin):
-# class DashboardDetailView(DetailView):
     model = Dashboard
     context_object_name = 'target_dashboard'
     form_class = PortfolioCreationForm
@@ -59,12 +58,5 @@ class DashboardDetailView(DetailView, FormMixin):
             context.update({'target_portfolio_pk': queryset_my_portfolio.pk})
         except Exception as identifier:
             print('Dashboard Detail my_portfolio query :', identifier)
-
-
-        # queryset_my_exchange = MyExchange.objects.filter(owner=self.request.user,
-        #                                                  dashboard=self.object.pk)
-        # if queryset_my_exchange:
-        #     for exchange in queryset_my_exchange:
-        #         context.update({'my_exchange_pk': exchange.pk})
 
         return context

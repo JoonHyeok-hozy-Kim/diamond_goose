@@ -1,0 +1,11 @@
+{% load bootstrap4 %}
+
+<div>
+    <form action="{% url 'exchangeapp:foreigncurrencytransaction_delete_all' %}" method="get">
+        {% csrf_token %}
+        <input type="hidden" name="foreign_currency_pk" value="{{ foreign_currency.pk }}">
+        <button type="submit" style="border: none; background-color: #FA0067; color: #FFFFFF;">
+            <span class="material-icons">delete</span>
+        </button>
+    </form>
+</div>

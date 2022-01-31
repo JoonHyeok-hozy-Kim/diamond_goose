@@ -86,24 +86,6 @@
                     </div>
                 </div>
 
-{#                <div style="display: block;">#}
-{#                    {% if user.is_authenticated %}#}
-{#                        {% if my_portfolio_pk and my_asset_pk != target_asset.pk %}#}
-{#                            {% if target_asset.asset_type == 'EQUITY' %}#}
-{#                                {% include 'equityapp/equity_create.html' with asset=target_asset %}#}
-{#                            {% elif target_asset.asset_type == 'GUARDIAN' %}#}
-{#                                {% include 'guardianapp/guardian_create.html' with asset=target_asset %}#}
-{#                            {% elif target_asset.asset_type == 'REITS' %}#}
-{#                                {% include 'reitsapp/reits_create.html' with asset=target_asset %}#}
-{#                            {% elif target_asset.asset_type == 'PENSION_ASSET' %}#}
-{#                                <a href="{% url 'pensionapp:pensionasset_create' asset_pk=target_asset.pk %}" class="btn btn-info">Open Pension Position</a>#}
-{#                            {% elif target_asset.asset_type == 'CRYPTO' %}#}
-{#                                {% include 'cryptoapp/crypto_create.html' with asset=target_asset %}#}
-{#                            {% endif %}#}
-{#                        {% endif %}#}
-{#                    {% endif %}#}
-{#                </div>#}
-
                 {% if portfolio_assetmaster_detail_flag %}
                     {% block portfolio_assetmaster_detail %}
                     {% endblock %}

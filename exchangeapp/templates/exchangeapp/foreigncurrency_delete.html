@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_exchangeapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="pensionapp_main_title">Delete Foreign Currency</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this Foreign Currency?</h6>
+            <div style="display: block; min-height: 5rem; background-color: #264257;">
+                <table style="border-collapse: collapse; color: #FFFFFF;">
+                    <tr style="display: block; float: left;">
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">통화</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">보유량</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">현재환율</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">누적환율(MV)</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">누적환율(FIFO)</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">환차손익(MV)</th>
+                        <th style="display: block; width: 8rem; text-indent: 0.5rem; border-bottom: 1px solid black;">환차손익(FIFO)</th>
+                    </tr>
+                    <tr style="display: block; float: left;">
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.currency_master.currency_name }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.current_exchange_rate }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.current_amount }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.accumulated_exchange_rate_mv }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.accumulated_exchange_rate_fifo }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.rate_of_return_mv }}</td>
+                        <td style="display: block; width: 20rem; text-indent: 0.5rem; border-bottom: 1px solid black;">{{ target_foreign_currency.rate_of_return_fifo }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'exchangeapp:foreigncurrency_delete' pk=target_foreign_currency.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'exchangeapp:myexchange_detail' pk=target_foreign_currency.dashboard.pk %}" class="btn btn-light">취소</a>
+                <input type="hidden" name="myexchange_pk" value={{ target_foreign_currency.exchange.pk }}>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

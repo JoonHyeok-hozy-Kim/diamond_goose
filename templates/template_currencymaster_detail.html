@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_masterinfoapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem 2rem">
+        <div style="margin: 1rem auto;">
+            <div style="display: block; margin-bottom: 1rem;">
+                {% if masterinfoapp_currency_master_flag %}
+                    <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-light">
+                        <span class="material-icons">arrow_back</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'masterinfoapp:assetmaster_update' pk=target_currency_master.pk %}" class="btn btn-light">
+                            <span class="material-icons">edit</span>
+                        </a>
+                        <a href="{% url 'masterinfoapp:assetmaster_delete' pk=target_currency_master.pk %}" class="btn btn-light">
+                            <span class="material-icons">delete</span>
+                        </a>
+                    {% endif %}
+
+                {% elif myexchange_currency_master_flag %}
+                    <a href="{% url 'exchangeapp:myexchange_currencymaster_list' %}" class="btn btn-light">
+                        <span class="material-icons">arrow_back</span>
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+        <div style="display: inline-block; margin: 1rem auto;">
+            <div style="display: flex; float:left; width: 15rem; margin-right: 2rem;
+                        align-items: center; justify-content: center; background-color: #FFFFFF;">
+                {% if target_currency_master.currency_national_flag %}
+                    <img src="{{ target_currency_master.currency_national_flag.url }}" alt="" style="width: 100%;">
+                {% else %}
+                    <img src="{{ default_image_url }}" alt="" style="width: 90%;">
+                {% endif %}
+            </div>
+            <div style="display: inline-block;">
+                <div>
+                    <h3 style="display: inline-block; margin-right: 1rem; color:#FFFFFF">
+                        {{ target_currency_master.currency_name }}
+                    </h3>
+                    <h5 style="display: inline; background-color: #264257; color:#FFFFFF">
+                        {{ target_currency_master.currency_code }}
+                    </h5>
+                </div>
+
+                {% if myexchange_currency_master_flag %}
+                    {% include 'exchangeapp/foreigncurrency_create.html' with currency_master_pk=target_currency_master.pk %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

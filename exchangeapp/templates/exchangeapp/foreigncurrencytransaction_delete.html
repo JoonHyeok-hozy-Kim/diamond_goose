@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_exchangeapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="asset_transaction_main_title">Delete Foreign Currency Transaction</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete this transaction?</h6>
+            <div style="width: 29rem; background-color: #264257;">
+                <table class="asset_transaction_delete_inverted_table">
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <th class="asset_transaction_delete_inverted_table_th">거래일자</th>
+                        <th class="asset_transaction_delete_inverted_table_th">유형</th>
+                        <th class="asset_transaction_delete_inverted_table_th">수량</th>
+                        <th class="asset_transaction_delete_inverted_table_th">가격</th>
+                        <th class="asset_transaction_delete_inverted_table_th">비고</th>
+                    </tr>
+                    <tr class="asset_transaction_delete_inverted_table_tr">
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_foreign_currency_transaction.transaction_date|date:"Y.m.d h:i:s" }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_foreign_currency_transaction.transaction_type }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_foreign_currency_transaction.quantity }} {{ target_foreign_currency_transaction.foreign_currency.currency }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_foreign_currency_transaction.exchange_rate }}</td>
+                        <td class="asset_transaction_delete_inverted_table_td">{{ target_foreign_currency_transaction.note }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'exchangeapp:foreigncurrencytransaction_delete' pk=target_foreign_currency_transaction.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'exchangeapp:foreigncurrency_detail' pk=target_foreign_currency_transaction.foreign_currency.pk %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

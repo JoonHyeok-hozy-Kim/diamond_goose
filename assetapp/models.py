@@ -96,7 +96,7 @@ class Asset(models.Model):
                 for i in range(int(transaction.quantity)):
                     trade_stack.append(transaction.price)
 
-                # mv calculation
+                # MV calculation
                 if temp_quantity == 0:
                     average_purchase_price_mv = transaction.price
                 else:
@@ -150,8 +150,8 @@ class Asset(models.Model):
         total_valuation_profit_amount_mv = (self.asset_master.current_price - average_purchase_price_mv) * final_quantity
         target_asset_instance.update(total_valuation_profit_amount_mv=total_valuation_profit_amount_mv)
         rate_of_return_mv = 0
-        if self.asset_master.current_price > 0 and average_purchase_price_mv > 0:
-            rate_of_return_mv = (self.asset_master.current_price - average_purchase_price_mv) / self.asset_master.current_price
+        if average_purchase_price_mv > 0:
+            rate_of_return_mv = (self.asset_master.current_price - average_purchase_price_mv) / average_purchase_price_mv
         target_asset_instance.update(rate_of_return_mv=rate_of_return_mv)
 
         # FIFO Series Calculation
@@ -164,7 +164,7 @@ class Asset(models.Model):
                 fifo_sum += trade
             average_purchase_price_fifo = fifo_sum/final_quantity
             total_valuation_profit_amount_fifo = (self.asset_master.current_price - average_purchase_price_fifo) * final_quantity
-            rate_of_return_fifo = (self.asset_master.current_price - average_purchase_price_fifo) / self.asset_master.current_price
+            rate_of_return_fifo = (self.asset_master.current_price - average_purchase_price_fifo) / average_purchase_price_fifo
         target_asset_instance.update(average_purchase_price_fifo=average_purchase_price_fifo)
         target_asset_instance.update(total_valuation_profit_amount_fifo=total_valuation_profit_amount_fifo)
         target_asset_instance.update(rate_of_return_fifo=rate_of_return_fifo)

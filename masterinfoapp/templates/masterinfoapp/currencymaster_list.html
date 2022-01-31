@@ -31,12 +31,14 @@
     </style>
 
     <div style="width:100%; text-align: center; margin-bottom: 1rem;">
-        <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-info">
-            Assets
-        </a>
-        <a href="{% url 'masterinfoapp:pensionmaster_list' %}" class="btn btn-success">
-            Pensions
-        </a>
+        {% if masterinfoapp_currency_master_list_flag %}
+            <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-info">
+                Assets
+            </a>
+            <a href="{% url 'masterinfoapp:pensionmaster_list' %}" class="btn btn-success">
+                Pensions
+            </a>
+        {% endif %}
         <a href="{% url 'masterinfoapp:currencymaster_create' %}" class="btn btn-light btn-sm">
             <span class="material-icons">add</span>
         </a>
@@ -46,7 +48,11 @@
         {% if query_currency_master_list %}
             {% for currency in query_currency_master_list %}
                 <div style="background-color: #264257;">
-                    <a href="{% url 'masterinfoapp:currencymaster_update' pk=currency.id %}">
+                    {% if masterinfoapp_currency_master_list_flag %}
+                        <a href="{% url 'masterinfoapp:currencymaster_detail' pk=currency.id %}">
+                    {% elif myexchange_currencymaster_list_flag %}
+                        <a href="{% url 'exchangeapp:myexchange_currencymaster_detail' pk=currency.id %}">
+                    {% endif %}
                         {% include 'snippets/currency_card.html' with currency=currency %}
                     </a>
                 </div>

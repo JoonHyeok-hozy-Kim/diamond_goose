@@ -2,7 +2,8 @@ from django.urls import path
 
 from masterinfoapp.views import AssetMasterCreateView, AssetMasterListView, AssetMasterDetailView, \
     AssetMasterUpdateView, AssetMasterDeleteView, CurrencyMasterCreateView, CurrencyMasterListView, \
-    CurrencyMasterUpdateView, PensionMasterCreateView, PensionMasterListView, PensionMasterUpdateView
+    CurrencyMasterUpdateView, PensionMasterCreateView, PensionMasterListView, PensionMasterUpdateView, \
+    CurrencyMasterDetailView
 
 app_name = 'masterinfoapp'
 
@@ -16,6 +17,7 @@ urlpatterns = [
 
     path('currencymaster_create/', CurrencyMasterCreateView.as_view(), name='currencymaster_create'),
     path('currencymaster_list/', CurrencyMasterListView.as_view(), name='currencymaster_list'),
+    path('currencymaster_detail/<int:pk>', CurrencyMasterDetailView.as_view(), name='currencymaster_detail'),
     path('currencymaster_update/<int:pk>', CurrencyMasterUpdateView.as_view(), name='currencymaster_update'),
 
     path('pensionmaster_create/', PensionMasterCreateView.as_view(), name='pensionmaster_create'),

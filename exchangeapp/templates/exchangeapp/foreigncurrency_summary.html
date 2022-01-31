@@ -1,0 +1,65 @@
+{% load static %}
+{% load format_mask_exchangeapp %}
+{% load bootstrap4 %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pensionapp.css' %}">
+{% endblock %}
+
+<div style="margin-bottom: 0.3rem;">
+    <table>
+        <colgroup>
+            <col span="1" style="width: 15rem;">
+            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 8rem;">
+            <col span="1" style="width: 8rem;">
+            <col span="1" style="width: 8rem;">
+            <col span="1" style="width: 8rem;">
+            <col span="1" style="width: 8rem;">
+            <col span="1" style="width: 11rem;">
+        </colgroup>
+        {% if foreign_currency.currency_master.currency_code == 'USD' %}
+            <tr style="background-color: #005236; color: #081321;">
+        {% elif foreign_currency.currency_master.currency_code == 'KRW' %}
+            <tr style="background-color: #008558; color: #081321;">
+        {% else %}
+            <tr style="background-color: #00D18B; color: #081321;">
+        {% endif %}
+            <th rowspan="2" style="border: 1px solid black; text-align: center; ">
+                <h3 style="display: inline-block; margin-right: 1rem; font-weight: bold;">{{ foreign_currency.currency_master.currency_code }}</h3>
+                {% if myexchange_detail_flag %}
+                    <a href="{% url 'exchangeapp:foreigncurrency_detail' pk=foreign_currency.pk %}"
+                       class="btn btn-dark btn-sm" style="display: inline-block;">
+                        <span class="material-icons">tune</span>
+                    </a>
+                {% endif %}
+                <a href="{% url 'exchangeapp:foreigncurrency_delete' pk=foreign_currency.pk %}"
+                   class="btn btn-dark btn-sm" style="display: inline-block;">
+                    <span class="material-icons">delete</span>
+                </a>
+            </th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">누적외화매매량</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재환율</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">누적환율(MV)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">누적환율(FIFO)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">환차손익(MV)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">환차손익(FIFO)</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">실현손익</th>
+        </tr>
+        <tr>
+            <td style="border: 1px solid darkgray; text-align: center;">
+                {{ foreign_currency.current_amount|exchange_rate_format }}
+                {{ foreign_currency.currency_master.currency_code }}
+            </td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.current_exchange_rate|exchange_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.accumulated_exchange_rate_mv|exchange_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.accumulated_exchange_rate_fifo|exchange_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.rate_of_return_mv|percentage_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.rate_of_return_fifo|percentage_rate_format }}</td>
+            <td style="border: 1px solid darkgray; text-align: center;">{{ foreign_currency.total_realized_profit|currency_krw }}</td>
+        </tr>
+    </table>
+</div>
+
+
+

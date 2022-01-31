@@ -91,6 +91,22 @@ class CurrencyMasterListView(ListView):
         for currency_master in query_currency_master_list:
             currency_master.name = Truncator(currency_master.currency_name).chars(29)
         context.update({'query_currency_master_list': query_currency_master_list})
+        context.update({'masterinfoapp_currency_master_list_flag': True})
+        return context
+
+
+class CurrencyMasterDetailView(DetailView):
+    model = CurrencyMaster
+    context_object_name = 'target_currency_master'
+    template_name = 'template_currencymaster_detail.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CurrencyMasterDetailView, self).get_context_data(**kwargs)
+
+        context.update({'default_image_url': 'static/images/diamond_goose_logo_mk1.png'})
+        context.update({'masterinfoapp_currency_master_flag': True})
+
         return context
 
 

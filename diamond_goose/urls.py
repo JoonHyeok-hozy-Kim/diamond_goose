@@ -30,10 +30,7 @@ urlpatterns = [
     path('portfolio/', include('portfolioapp.urls')),
     path('assets/', include('assetapp.urls')),
     path('pensions/', include('pensionapp.urls')),
-    # path('guardians/', include('guardianapp.urls')),
-    # path('cryptoes/', include('cryptoapp.urls')),
-    # path('reits/', include('reitsapp.urls')),
-    # path('exchange/', include('exchangeapp.urls')),
+    path('exchange/', include('exchangeapp.urls')),
     # path('hozylab/', include('hozylabapp.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
