@@ -1,0 +1,23 @@
+{% load bootstrap4 %}
+
+<div style="margin-bottom: 1rem; background-color: #264257; color: #FFFFFF;">
+    <div style="display: inline-block; width: 100%; background-color: #007D8A;">
+        <div style="display: inline-block; float: left;">
+            <h5 style="margin-left: 1rem; color: #FFFFFF;">한국투자증권 엑셀 변환</h5>
+        </div>
+    </div>
+    <div style="display: block; width: 80%; margin-left: 1rem; background-color: #264257;">
+        <form action="{% url 'hozylabapp:upload_excel_hankook' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="x_content">
+                <div class="col-md-8 col-sm-12 col-xs-12 form-group">
+                    </label>
+                </div>
+                <input type="file" name="transaction_file" class="form-control">
+                <button type="submit" class="btn btn-warning btn-sm" >Upload</button>
+                <input type="hidden" name="company" value="hankook">
+                <br/>
+            </div>
+        </form>
+    </div>
+</div>

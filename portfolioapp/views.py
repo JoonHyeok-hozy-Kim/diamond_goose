@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.urls import reverse
@@ -160,4 +160,16 @@ class PortfolioAssetMasterDetailView(DetailView):
         context.update({'portfolio_assetmaster_detail_flag': True})
 
         return context
+
+
+def portfolio_refresh(request):
+
+    try:
+        queryset_my_portfolio = Portfolio.objects.get(owner=request.user)
+        queryset_my_portfolio.update_statistics()
+
+    except Exception as identifier:
+        print('portfolio_refresh:', identifier)
+
+    return redirect('portfolioapp:portfolio_detail', pk=queryset_my_portfolio.pk)
 

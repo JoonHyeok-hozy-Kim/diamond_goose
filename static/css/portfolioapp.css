@@ -15,7 +15,12 @@
     float: left;
 }
 
-.portfolioapp_inverted_table_th_td {
+.portfolioapp_inverted_table_th {
     display: block;
     width: 11rem;
+}
+
+.portfolioapp_inverted_table_td {
+    display: block;
+    width: 7rem;
 }

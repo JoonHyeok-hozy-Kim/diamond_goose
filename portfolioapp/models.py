@@ -39,7 +39,6 @@ class Portfolio(models.Model):
             'profit_fifo_exchange_fifo': asset.total_valuation_profit_amount_fifo * target_foreign_currency.accumulated_exchange_rate_fifo,
         }
 
-
         return result
 
     def update_current_value(self):
@@ -85,7 +84,7 @@ class Portfolio(models.Model):
         # Pension Assets
         from assetapp.models import PensionAsset
         queryset_pension_assets = PensionAsset.objects.filter(portfolio=self.pk)
-        for pension_asset in queryset_assets:
+        for pension_asset in queryset_pension_assets:
             if pension_asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
                 current_value_exchange_market += asset.total_amount
 

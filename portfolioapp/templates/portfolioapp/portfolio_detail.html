@@ -16,9 +16,9 @@
                 <a href="{% url 'dashboardapp:detail' pk=target_portfolio.dashboard.pk %}" class="btn btn-info btn-sm">
                     <span class="material-icons">show_chart</span>
                 </a>
-{#                <a href="{% url 'portfolioapp:portfolio_refresh' %}" class="btn btn-light btn-sm">#}
-{#                    <span class="material-icons">refresh</span>#}
-{#                </a>#}
+                <a href="{% url 'portfolioapp:portfolio_refresh' %}" class="btn btn-light btn-sm">
+                    <span class="material-icons">refresh</span>
+                </a>
             </div>
             <div style="display: block">
                 <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">Portfolio Summary</h3>
@@ -29,18 +29,18 @@
             <div style="margin-bottom: 1rem;">
                 <table class="portfolioapp_inverted_table">
                     <tr class="portfolioapp_inverted_table_tr">
-                        <th class="portfolioapp_inverted_table_th_td">현재가치</th>
-                        <th class="portfolioapp_inverted_table_th_td">자본이득</th>
-                        <th class="portfolioapp_inverted_table_th_td">자본이득(환차 반영)</th>
-                        <th class="portfolioapp_inverted_table_th_td">자본이득률</th>
-                        <th class="portfolioapp_inverted_table_th_td">자본이득률(환차 반영)</th>
+                        <th class="portfolioapp_inverted_table_th">현재가치</th>
+                        <th class="portfolioapp_inverted_table_th">자본이득</th>
+                        <th class="portfolioapp_inverted_table_th">자본이득(환차 반영)</th>
+                        <th class="portfolioapp_inverted_table_th">자본이득률</th>
+                        <th class="portfolioapp_inverted_table_th">자본이득률(환차 반영)</th>
                     </tr>
                     <tr class="portfolioapp_inverted_table_tr">
-                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.current_value|currency_krw }}</td>
-                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.capital_gain|currency_krw }}</td>
-                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|currency_krw }}</td>
-                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.rate_of_return|percentage_rate_format }}</td>
-                        <td class="portfolioapp_inverted_table_th_td">{{ target_portfolio.rate_of_return_foreign_exchange_adjusted|percentage_rate_format }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.current_value|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|currency_krw }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: center;">{{ target_portfolio.rate_of_return|percentage_rate_format }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: center;">{{ target_portfolio.rate_of_return_foreign_exchange_adjusted|percentage_rate_format }}</td>
                     </tr>
                 </table>
             </div>

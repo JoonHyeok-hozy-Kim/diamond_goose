@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'assetapp',
     'pensionapp',
     'exchangeapp',
-    # 'hozylabapp',
+    'hozylabapp',
 ]
 
 MIDDLEWARE = [

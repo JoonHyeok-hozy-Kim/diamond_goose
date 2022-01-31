@@ -1,7 +1,7 @@
 from django.urls import path
 
 from portfolioapp.views import PortfolioCreateView, PortfolioDetailView, PortfolioAssetMasterListView, \
-    PortfolioAssetMasterDetailView
+    PortfolioAssetMasterDetailView, portfolio_refresh
 
 app_name = 'portfolioapp'
 
@@ -12,6 +12,6 @@ urlpatterns = [
     path('portfolio_assetmaster_list/', PortfolioAssetMasterListView.as_view(), name='portfolio_assetmaster_list'),
     path('portfolio_assetmaster_detail/<int:pk>', PortfolioAssetMasterDetailView.as_view(), name='portfolio_assetmaster_detail'),
 
-    # path('portfolio_refresh/', portfolio_refresh, name='portfolio_refresh'),
+    path('portfolio_refresh/', portfolio_refresh, name='portfolio_refresh'),
 
 ]

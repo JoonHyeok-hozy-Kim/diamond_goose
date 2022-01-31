@@ -115,8 +115,12 @@ class Asset(models.Model):
 
                 # trade_stack creation
                 for i in range(int(transaction.quantity)):
-                    initial_purchase_price = trade_stack.pop(0)
-                    total_realized_profit_amount += (transaction.price - initial_purchase_price)
+                    try:
+                        initial_purchase_price = trade_stack.pop(0)
+                        total_realized_profit_amount += (transaction.price - initial_purchase_price)
+                    except Exception as trade_stack_sell_pop:
+                        print('Asset-calculate_from_transaction-trade_stack_sell_pop error : {}'.format(trade_stack_sell_pop))
+                        continue
 
             elif transaction.transaction_type == 'DIVIDEND':
                 total_dividend_amount += transaction.dividend_amount
@@ -154,7 +158,7 @@ class Asset(models.Model):
         total_valuation_profit_amount_mv = (self.asset_master.current_price - average_purchase_price_mv) * final_quantity
         target_asset_instance.update(total_valuation_profit_amount_mv=total_valuation_profit_amount_mv)
         rate_of_return_mv = 0
-        if average_purchase_price_mv > 0:
+        if average_purchase_price_mv > 0 and final_quantity > 0:
             rate_of_return_mv = (self.asset_master.current_price - average_purchase_price_mv) / average_purchase_price_mv
         target_asset_instance.update(rate_of_return_mv=rate_of_return_mv)
 

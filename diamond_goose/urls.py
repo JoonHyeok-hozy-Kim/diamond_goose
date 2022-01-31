@@ -31,6 +31,6 @@ urlpatterns = [
     path('assets/', include('assetapp.urls')),
     path('pensions/', include('pensionapp.urls')),
     path('exchange/', include('exchangeapp.urls')),
-    # path('hozylab/', include('hozylabapp.urls')),
+    path('hozylab/', include('hozylabapp.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

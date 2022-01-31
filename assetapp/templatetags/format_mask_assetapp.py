@@ -43,6 +43,8 @@ def split_ratio_format(amount):
         return amount
     if amount > 1:
         return '1 : {}'.format(int(amount))
+    elif amount == 0:
+        return '-'
     else:
         reverse = round(pow(amount, -1))
         return '{} : 1'.format(reverse)

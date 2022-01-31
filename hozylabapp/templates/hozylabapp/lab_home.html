@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+        <div>
+            <h1 class="portfolioapp_main_title">Hozy's Laboratory</h1>
+        </div>
+
+        <div>
+            <div style="display: inline-block; width: 28%; margin: 1%; border: 1px solid white;">
+                <h5 style="display: inline-block; color: #FFFFFF; margin: 1rem;">Data Mass Upload</h5>
+                <a href="{% url 'hozylabapp:temptransaction_list' %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">tune</span>
+                </a>
+            </div>
+
+            <div style="display: inline-block; width: 28%; margin: 1%; border: 1px solid white;">
+                <h5 style="color: #FFFFFF; margin: 1rem;">PARTITION 2</h5>
+            </div>
+
+            <div style="display: inline-block; width: 28%; margin: 1%; border: 1px solid white;">
+                <h5 style="color: #FFFFFF; margin: 1rem;">PARTITION 3</h5>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+        <div>
+            <h1 class="portfolioapp_main_title">Data Mass Upload</h1>
+        </div>
+
+        <div>
+            <div style="margin-bottom: 1rem;">
+                <div style="display: inline-block; width: 23%; margin: 1%;">
+                    {% include 'hozylabapp/upload_mass_transaction.html'%}
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div style="display: inline-block; width: 23%; margin: 1%;">
+                    {% include 'hozylabapp/upload_excel_daeshin.html'%}
+                </div>
+                <div style="display: inline-block; width: 23%; margin: 1%;">
+                    {% include 'hozylabapp/upload_excel_hankook.html'%}
+                </div>
+                <div style="display: inline-block; width: 23%; margin: 1%;">
+                    {% include 'hozylabapp/upload_excel_shinhan.html'%}
+                </div>
+            </div>
+            <div style="display: inline-block; width: 100%; margin-bottom: 1rem; border: 1px solid white;">
+                <h5 style="color: #FFFFFF; margin: 1rem;">Temp Transaction</h5>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
