@@ -51,6 +51,7 @@ class Pension(models.Model):
         total_cash_amount = 0
         total_profit_amount = 0
         rate_of_return = 0
+        total_risk_asset_amount = 0
         current_risk_asset_ratio = 0
 
         for pension_asset in queryset_pension_assets:
@@ -64,10 +65,22 @@ class Pension(models.Model):
             total_profit_amount += pension_asset.total_dividend_amount
             total_profit_amount += pension_asset.total_valuation_profit_amount_fifo
 
+            if pension_asset.asset_master.pension_risk_asset_flag:
+                total_risk_asset_amount += pension_asset.total_amount
+
         total_cash_amount += cash_not_used
+        total_amount += total_cash_amount
         target_pension.update(total_amount=total_amount)
         target_pension.update(total_cash_amount=total_cash_amount)
         target_pension.update(total_profit_amount=total_profit_amount)
+
+        if self.total_paid_amount > 0:
+            rate_of_return = total_profit_amount / self.total_paid_amount
+        target_pension.update(rate_of_return=rate_of_return)
+
+        if total_amount > 0:
+            current_risk_asset_ratio = total_risk_asset_amount / total_amount
+        target_pension.update(current_risk_asset_ratio=current_risk_asset_ratio)
 
         return
 
