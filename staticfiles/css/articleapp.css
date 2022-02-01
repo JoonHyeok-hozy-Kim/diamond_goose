@@ -1,0 +1,28 @@
+.articleapp_main_title {
+    display: inline-block;
+    background-color: #FF9C00;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #FFFFFF
+}
+
+.container {
+    width: 100%;
+}
+
+.container a {
+    width: 45%;
+    max-width: 250px;
+}
+
+.container div {
+    width: 250px;
+    background-color: #264257;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    border-radius: 8px;
+}
+
+.container img {
+    width: 100%;
+}

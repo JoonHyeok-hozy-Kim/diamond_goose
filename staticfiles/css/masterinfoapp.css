@@ -1,0 +1,35 @@
+.masterinfoapp_main_title {
+    display: inline-block;
+    background-color: #FF9C00;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #FFFFFF
+}
+
+.asset_card_white_text_div {
+    width: 90%;
+    margin-bottom: 2%;
+    margin-left: 4%;
+    color: #FFFFFF;
+    justify-items: start;
+}
+
+.asset_card_black_text_div {
+    width: 90%;
+    margin-bottom: 2%;
+    margin-left: 4%;
+    color: #000000;
+    font-weight: bolder;
+    justify-items: start;
+}
+
+.asset_div_equity { background-color: #264257; }
+.asset_div_etf { background-color: #068CD6; }
+.asset_div_bond { background-color: #FF9C00; }
+.asset_div_reits { background-color: #00C484; }
+.asset_div_pension { background-color: #07C500; }
+.asset_div_crypto { background-color: #F707AC; }
+
+.assetmasterapp_inverted_table { border-collapse: collapse; color:#FFFFFF; }
+.assetmasterapp_inverted_table_tr { display: block; float: left;}
+.assetmasterapp_inverted_table_th { display: block; width: 11rem; }
+.assetmasterapp_inverted_table_td { display: block; width: 11rem; }

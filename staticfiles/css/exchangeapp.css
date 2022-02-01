@@ -1,0 +1,21 @@
+.exchangeapp_main_title {
+    display: inline-block;
+    background-color: #540000;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #FFFFFF
+}
+
+.exchangeapp_inverted_table{
+    border-collapse: collapse;
+    color:#FFFFFF;
+}
+
+.exchangeapp_inverted_table_tr {
+    display: block;
+    float: left;
+    margin-right: 2rem;
+}
+
+.exchangeapp_inverted_table_th_td {
+    display: block;
+}

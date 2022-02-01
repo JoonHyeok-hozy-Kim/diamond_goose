@@ -1,0 +1,45 @@
+.pensionapp_main_title {
+    display: inline-block;
+    background-color: #00C483;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: #000000;
+}
+
+.pensionapp_퇴직연금_style {
+    background-color: #00452E;
+    color: #081321;
+}
+
+.pensionapp_연금저축_style {
+    background-color: #008558;
+    color: #081321;
+}
+
+.pensionapp_IRP_style {
+    background-color: #00D18B;
+    color: #081321;
+}
+
+
+.pensionasset_delete_inverted_table{
+    border-collapse: collapse;
+    color: #FFFFFF;
+}
+
+.pensionasset_delete_inverted_table_tr {
+    display: block;
+    float: left;
+}
+
+.pensionasset_delete_inverted_table_th {
+    display: block;
+    width: 10rem;
+    text-indent: 0.5rem;
+    border-bottom: 1px solid black;
+}
+
+.pensionasset_delete_inverted_table_td {
+    display: block;
+    width: 15rem;
+    border-bottom: 1px solid black;
+}
