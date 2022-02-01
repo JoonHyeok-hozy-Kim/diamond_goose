@@ -146,7 +146,6 @@ class ForeignCurrency(models.Model):
             fifo_sum = 0
             for trade in trade_stack:
                 fifo_sum += trade['exchange_rate'] * trade['amount']
-                print(fifo_sum)
             accumulated_exchange_rate_fifo = fifo_sum / current_amount
             rate_of_return_fifo = (self.current_exchange_rate - accumulated_exchange_rate_fifo) / accumulated_exchange_rate_fifo
         target_foreign_currency.update(accumulated_exchange_rate_fifo=accumulated_exchange_rate_fifo)

@@ -19,9 +19,10 @@ from django.contrib import admin
 from django.urls import path, include
 
 from accountapp.views import temp_welcome_view
+from masterinfoapp.views import AssetMasterListView
 
 urlpatterns = [
-    path('', temp_welcome_view, name='home'),
+    path('', AssetMasterListView.as_view(), name='home'),
 
     path('admin/', admin.site.urls),
     path('accounts/', include('accountapp.urls')),

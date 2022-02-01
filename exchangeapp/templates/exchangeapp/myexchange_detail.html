@@ -20,9 +20,10 @@
                 <a href="{% url 'exchangeapp:myexchange_currencymaster_list' %}" class="btn btn-light btn-sm">
                     <span class="material-icons">add</span>
                 </a>
-{#                <a href="" class="btn btn-light btn-sm">#}
+                <a href="{% url 'exchangeapp:foreigncurrency_refresh' %}" class="btn btn-light btn-sm">
                     <span class="material-icons">refresh</span>
-{#                </a>#}
+                    <input type="hidden" name="dashboard_pk" value="{{ my_dashboard.pk }}">
+                </a>
             </div>
             <div style="display: block">
                 <h3 class="exchangeapp_main_title">Exchange Summary</h3>

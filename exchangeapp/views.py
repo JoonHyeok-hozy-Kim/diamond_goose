@@ -108,18 +108,15 @@ class ForeignCurrencyDetailView(DetailView, FormMixin):
         return context
 
 
-# def foreign_currency_refresh(request):
-#
-#     foreign_currency_pk = request.GET['foreign_currency_pk']
-#
-#     target_foreign_currency = ForeignCurrency.objects.get(pk=foreign_currency_pk)
-#
-#     target_foreign_currency.update_current_rate()
-#     target_foreign_currency.refresh_from_db()
-#     target_foreign_currency.update_quantity_amount_rates()
-#     target_foreign_currency.refresh_from_db()
-#
-#     return HttpResponseRedirect(reverse('exchangeapp:foreigncurrency_detail', kwargs={'pk': foreign_currency_pk}))
+def foreign_currency_refresh(request):
+
+    my_dashboard = Dashboard.objects.get(owner=request.user)
+
+    queryset_foreign_currencies = ForeignCurrency.objects.filter(dashboard=my_dashboard.pk)
+    for foreign_currency in queryset_foreign_currencies:
+        foreign_currency.update_statistics()
+
+    return HttpResponseRedirect(reverse('exchangeapp:myexchange_detail', kwargs={'pk': my_dashboard.pk}))
 
 
 class ForeignCurrencyTransactionCreateView(CreateView):
