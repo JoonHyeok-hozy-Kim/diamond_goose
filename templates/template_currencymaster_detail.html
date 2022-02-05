@@ -17,10 +17,10 @@
                         <span class="material-icons">arrow_back</span>
                     </a>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'masterinfoapp:assetmaster_update' pk=target_currency_master.pk %}" class="btn btn-light">
+                        <a href="{% url 'masterinfoapp:currencymaster_update' pk=target_currency_master.pk %}" class="btn btn-light">
                             <span class="material-icons">edit</span>
                         </a>
-                        <a href="{% url 'masterinfoapp:assetmaster_delete' pk=target_currency_master.pk %}" class="btn btn-light">
+                        <a href="{% url 'masterinfoapp:currencymaster_delete' pk=target_currency_master.pk %}" class="btn btn-light">
                             <span class="material-icons">delete</span>
                         </a>
                     {% endif %}
@@ -51,7 +51,22 @@
                         {{ target_currency_master.currency_code }}
                     </h5>
                 </div>
-
+                <div style="margin: 1rem 1rem;">
+                    <div>
+                        <table class="assetmasterapp_inverted_table">
+                            <tr class="assetmasterapp_inverted_table_tr">
+                                <th class="assetmasterapp_inverted_table_th" style="width: 7rem;">Code</th>
+                                <th class="assetmasterapp_inverted_table_th" style="width: 7rem;">Sign</th>
+                                <th class="assetmasterapp_inverted_table_th" style="width: 7rem;">Country</th>
+                            </tr>
+                            <tr class="assetmasterapp_inverted_table_tr">
+                                <td class="assetmasterapp_inverted_table_td">{{ target_currency_master.currency_code }}</td>
+                                <td class="assetmasterapp_inverted_table_td">{{ target_currency_master.currency_sign }}</td>
+                                <td class="assetmasterapp_inverted_table_td">{{ target_currency_master.country }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 {% if myexchange_currency_master_flag %}
                     {% include 'exchangeapp/foreigncurrency_create.html' with currency_master_pk=target_currency_master.pk %}
                 {% endif %}

@@ -9,6 +9,7 @@ class CurrencyMaster(models.Model):
     currency_name = models.CharField(max_length=100, null=False)
     currency_sign = models.CharField(max_length=10, null=True)
     currency_national_flag = models.ImageField(upload_to='currencymaster/', null=True)
+    country = models.CharField(max_length=100, null=False)
 
     def __str__(self):
         result_list = [self.currency_name]

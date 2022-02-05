@@ -110,6 +110,15 @@ class CurrencyMasterDetailView(DetailView):
         return context
 
 
+class CurrencyMasterDeleteView(DeleteView):
+    model = CurrencyMaster
+    context_object_name = 'target_currency_master'
+    template_name = 'masterinfoapp/currencymaster_delete.html'
+
+    def get_success_url(self):
+        return reverse('masterinfoapp:currencymaster_list')
+
+
 class CurrencyMasterUpdateView(UpdateView):
     model = CurrencyMaster
     form_class = CurrencyMasterCreationForm

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div style="margin: 2rem 0;">
+            <h4 class="masterinfoapp_main_title">Delete Currency Master</h4>
+            <h6 style="color: #FFFFFF;">Are you sure to delete {{ target_currency_master.name }} ?</h6>
+        </div>
+        <div class="text-white">
+            <form action="{% url 'masterinfoapp:currencymaster_delete' pk=target_currency_master.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark">
+                <a href="{% url 'masterinfoapp:currencymaster_detail' pk=target_currency_master.pk %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

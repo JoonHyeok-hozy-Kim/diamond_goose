@@ -26,6 +26,7 @@ class CurrencyMasterCreationForm(ModelForm):
             'currency_name',
             'currency_sign',
             'currency_national_flag',
+            'country',
         ]
 
 
