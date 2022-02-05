@@ -11,10 +11,11 @@
         <colgroup>
             <col span="1" style="width: 15rem;">
             <col span="1" style="width: 11rem;">
-            <col span="1" style="width: 11rem;">
-            <col span="1" style="width: 11rem;">
-            <col span="1" style="width: 11rem;">
+            <col span="1" style="width: 5rem;">
+            <col span="1" style="width: 9rem;">
+            <col span="1" style="width: 9rem;">
             <col span="1" style="width: 7rem;">
+            <col span="1" style="width: 9rem;">
             <col span="1" style="width: 2.5rem;">
         </colgroup>
         {% if pension.pension_master.pension_name == '퇴직연금' %}
@@ -36,6 +37,7 @@
             <th style="border: 1px solid black; text-align: center; font-weight: bolder;">현재가</th>
             <th style="border: 1px solid black; text-align: center; font-weight: bolder;">평균매입단가</th>
             <th style="border: 1px solid black; text-align: center; font-weight: bolder;">자본이득률</th>
+            <th style="border: 1px solid black; text-align: center; font-weight: bolder;">실현손익+분배금</th>
             <th style="border: 1px solid black; text-align: center; font-weight: bolder; background-color: #FA0067; color: #FFFFFF;">
                 <span class="material-icons">delete</span>
             </th>
@@ -52,8 +54,9 @@
                 <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.asset_master.current_price|currency_krw }}</td>
                 <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.average_purchase_price_mv|currency_krw }}</td>
                 <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                <td style="border: 1px solid darkgray; text-align: end;">{{ pension_asset.total_realized_profit_and_dividend|currency_krw }}</td>
                 <td style="border: 1px solid darkgray; text-align: center; ">
-                    <a href="{% url 'pensionapp:pensionasset_delete' pk=pension_asset.pk %}" style="color: #FA0067; text-decoration: none; font-weight: bodl;">
+                    <a href="{% url 'pensionapp:pensionasset_delete' pk=pension_asset.pk %}" style="color: #FA0067; text-decoration: none; font-weight: bold;">
                         X
                     </a>
                 </td>
