@@ -1,5 +1,6 @@
 import json
 import requests
+import investpy as ip
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -30,58 +31,75 @@ class ForeignCurrency(models.Model):
     def get_current_exchange_rate(self):
         import datetime
 
-        url_list = ['https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?']
-        url_list.append('authkey=')
+        # url_list = ['https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?']
+        # url_list.append('authkey=')
+        # try:
+        #     from diamond_goose.settings.local import EXIM_BANK_API_KEY as key_local
+        #     if key_local:
+        #         url_list.append(key_local)
+        # except:
+        #     from diamond_goose.settings.deploy import EXIM_BANK_API_KEY as key_deploy
+        #     url_list.append(key_deploy)
+        # url_list.append('&searchdate=')
+        #
+        # today = datetime.datetime.today()
+        # while True:
+        #     url_list.append(today.strftime("%Y%m%d"))
+        #     url_list.append('&data=AP01')
+        #
+        #     url = ''.join(url_list)
+        #     headers = {"Accept": "application/json"}
+        #     response = requests.request("GET", url, headers=headers)
+        #     dict_result = json.loads(response.text)
+        #
+        #     if dict_result:
+        #         print('EXIM Bank url : {}'.format(url))
+        #         break;
+        #     else:
+        #         today -= datetime.timedelta(days=1)
+        #         url_list.pop(-1)
+        #         url_list.pop(-1)
+        #
+        # exchange_rate = self.current_exchange_rate
+        #
+        # for result in dict_result:
+        #     if result['cur_unit'][0:3] == self.currency_master.currency_code:
+        #         exchange_rate_char_list = []
+        #         for char in result['deal_bas_r']:
+        #             if char != ',':
+        #                 exchange_rate_char_list.append(char)
+        #
+        #         exchange_rate = round(float(''.join(exchange_rate_char_list)), 2)
+        #
+        #         if len(result['cur_unit']) > 3:
+        #             power_list = []
+        #             for char in result['cur_unit']:
+        #                 if char.isnumeric():
+        #                     power_list.append(char)
+        #             power = int(''.join(power_list))
+        #             exchange_rate /= power
+        #
+        #         foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
+        #         foreign_currency.update(current_exchange_rate=exchange_rate)
+
+        currency_cross_list = [
+            self.currency_master.currency_code,
+            '/',
+            self.dashboard.main_currency.currency_code,
+        ]
+        currency_cross = ''.join(currency_cross_list)
         try:
-            from diamond_goose.settings.local import EXIM_BANK_API_KEY as key_local
-            if key_local:
-                url_list.append(key_local)
-        except:
-            from diamond_goose.settings.deploy import EXIM_BANK_API_KEY as key_deploy
-            url_list.append(key_deploy)
-        url_list.append('&searchdate=')
+            current_exchange_rate_json = json.loads(ip.get_currency_cross_information(currency_cross, True))
+            current_exchange_rate = (current_exchange_rate_json['ask'] + current_exchange_rate_json['bid'])/2
+        except Exception as currency_rate_search:
+            print('exchangeapp - get_current_exchange_rate - get_currency_cross_information error : {}'.format(currency_rate_search))
+            current_exchange_rate_json = json.loads(ip.get_currency_cross_recent_data(currency_cross, True))
+            current_exchange_rate = current_exchange_rate_json['recent'][-1]['close']
 
-        today = datetime.datetime.today()
-        while True:
-            url_list.append(today.strftime("%Y%m%d"))
-            url_list.append('&data=AP01')
+        foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
+        foreign_currency.update(current_exchange_rate=current_exchange_rate)
 
-            url = ''.join(url_list)
-            headers = {"Accept": "application/json"}
-            response = requests.request("GET", url, headers=headers)
-            dict_result = json.loads(response.text)
-
-            if dict_result:
-                print('EXIM Bank url : {}'.format(url))
-                break;
-            else:
-                today -= datetime.timedelta(days=1)
-                url_list.pop(-1)
-                url_list.pop(-1)
-
-        exchange_rate = self.current_exchange_rate
-
-        for result in dict_result:
-            if result['cur_unit'][0:3] == self.currency_master.currency_code:
-                exchange_rate_char_list = []
-                for char in result['deal_bas_r']:
-                    if char != ',':
-                        exchange_rate_char_list.append(char)
-
-                exchange_rate = round(float(''.join(exchange_rate_char_list)), 2)
-
-                if len(result['cur_unit']) > 3:
-                    power_list = []
-                    for char in result['cur_unit']:
-                        if char.isnumeric():
-                            power_list.append(char)
-                    power = int(''.join(power_list))
-                    exchange_rate /= power
-
-                foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
-                foreign_currency.update(current_exchange_rate=exchange_rate)
-
-        return exchange_rate
+        return current_exchange_rate
 
     def calculate_statistics(self):
         from django.db.models import Q
