@@ -42,14 +42,11 @@ class Portfolio(models.Model):
         return result
 
     def update_current_value(self):
-
         target_portfolio = Portfolio.objects.filter(pk=self.pk)
         current_value_exchange_market = 0
-
         profit_mv_exchange_market = 0
         profit_mv_exchange_mv = 0
         profit_mv_exchange_fifo = 0
-
         profit_fifo_exchange_market = 0
         profit_fifo_exchange_mv = 0
         profit_fifo_exchange_fifo = 0
@@ -57,7 +54,9 @@ class Portfolio(models.Model):
         # Assets
         from assetapp.models import Asset
         queryset_assets = Asset.objects.filter(portfolio=self.pk)
+        print('queryset_assets')
         for asset in queryset_assets:
+            asset.update_statistics()
             if asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
                 current_value_exchange_market += asset.total_amount
 
@@ -84,7 +83,9 @@ class Portfolio(models.Model):
         # Pension Assets
         from assetapp.models import PensionAsset
         queryset_pension_assets = PensionAsset.objects.filter(portfolio=self.pk)
+        print('queryset_pension_assets')
         for pension_asset in queryset_pension_assets:
+            pension_asset.update_statistics()
             if pension_asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
                 current_value_exchange_market += asset.total_amount
 

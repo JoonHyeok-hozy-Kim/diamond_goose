@@ -72,6 +72,8 @@ class Asset(models.Model):
     rate_of_return_fifo = models.FloatField(default=0, null=False)
 
     def update_statistics(self):
+        self.asset_master.update_statistics()
+
         if self.asset_master.asset_type == 'CRYPTO':
             self.update_from_upbit()
         else:

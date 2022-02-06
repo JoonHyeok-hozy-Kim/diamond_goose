@@ -8,6 +8,7 @@ class AssetMasterCreationForm(ModelForm):
         model = AssetMaster
         fields = [
             'asset_type',
+            'etf_flag',
             'market',
             'ticker',
             'name',
