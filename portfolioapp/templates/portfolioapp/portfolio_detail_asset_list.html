@@ -52,8 +52,13 @@
         </td>
         <td style="text-align: center; border: 1px solid black;">{{ asset_instance.asset_master.currency.currency_code }}</td>
         <td style="text-align: end; border: 1px solid black;">
-            {{ asset_instance.asset_master.currency.currency_sign }}
-            {{ asset_instance.total_amount|int_number }}
+            {% if asset_instance.asset_master.currency.currency_code == 'USD' %}
+                {{ asset_instance.total_amount|currency_usd }}
+            {% elif asset_instance.asset_master.currency.currency_code == 'KRW' %}
+                {{ asset_instance.total_amount|currency_krw }}
+            {% else %}
+                {{ asset_instance.total_amount|intcomma }}
+            {% endif %}
         </td>
         <td style="text-align: end; border: 1px solid black;">
             {{ asset_instance.portfolio.dashboard.main_currency.currency_sign }}

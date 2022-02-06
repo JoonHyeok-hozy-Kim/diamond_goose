@@ -18,8 +18,11 @@ class Portfolio(models.Model):
     creation_date = models.DateTimeField(auto_now=True)
     last_update_date = models.DateTimeField(auto_now_add=True)
 
-    def update_statistics(self):
-        self.update_current_value()
+    def update_statistics(self, price_update=False):
+        if price_update:
+            self.update_current_value(price_update=True)
+        else:
+            self.update_current_value()
         self.refresh_from_db()
 
     def asset_value_exchange(self, asset):
@@ -41,7 +44,7 @@ class Portfolio(models.Model):
 
         return result
 
-    def update_current_value(self):
+    def update_current_value(self, price_update=False):
         target_portfolio = Portfolio.objects.filter(pk=self.pk)
         current_value_exchange_market = 0
         profit_mv_exchange_market = 0
@@ -54,9 +57,9 @@ class Portfolio(models.Model):
         # Assets
         from assetapp.models import Asset
         queryset_assets = Asset.objects.filter(portfolio=self.pk)
-        print('queryset_assets')
         for asset in queryset_assets:
-            asset.update_statistics()
+            if price_update:
+                asset.update_statistics()
             if asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
                 current_value_exchange_market += asset.total_amount
 
@@ -80,33 +83,33 @@ class Portfolio(models.Model):
                 profit_fifo_exchange_mv += profit_dict['profit_fifo_exchange_mv']
                 profit_fifo_exchange_fifo += profit_dict['profit_fifo_exchange_fifo']
 
-        # Pension Assets
-        from assetapp.models import PensionAsset
-        queryset_pension_assets = PensionAsset.objects.filter(portfolio=self.pk)
-        print('queryset_pension_assets')
-        for pension_asset in queryset_pension_assets:
-            pension_asset.update_statistics()
-            if pension_asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
-                current_value_exchange_market += asset.total_amount
-
-                profit_mv_exchange_market += asset.total_valuation_profit_amount_mv
-                profit_mv_exchange_mv += pension_asset.total_valuation_profit_amount_mv
-                profit_mv_exchange_fifo += pension_asset.total_valuation_profit_amount_mv
-
-                profit_fifo_exchange_market += asset.total_valuation_profit_amount_fifo
-                profit_fifo_exchange_mv += pension_asset.total_valuation_profit_amount_fifo
-                profit_fifo_exchange_fifo += pension_asset.total_valuation_profit_amount_fifo
-            else:
-                profit_dict = self.asset_value_exchange(pension_asset)
-                current_value_exchange_market += profit_dict['current_value_exchange_market']
-
-                profit_mv_exchange_market += profit_dict['profit_mv_exchange_market']
-                profit_mv_exchange_mv += profit_dict['profit_mv_exchange_mv']
-                profit_mv_exchange_fifo += profit_dict['profit_mv_exchange_fifo']
-
-                profit_fifo_exchange_market += profit_dict['profit_fifo_exchange_market']
-                profit_fifo_exchange_mv += profit_dict['profit_fifo_exchange_mv']
-                profit_fifo_exchange_fifo += profit_dict['profit_fifo_exchange_fifo']
+        # # Pension Assets
+        # from assetapp.models import PensionAsset
+        # queryset_pension_assets = PensionAsset.objects.filter(portfolio=self.pk)
+        # print('queryset_pension_assets')
+        # for pension_asset in queryset_pension_assets:
+        #     pension_asset.update_statistics()
+        #     if pension_asset.asset_master.currency.currency_code == self.dashboard.main_currency.currency_code:
+        #         current_value_exchange_market += asset.total_amount
+        #
+        #         profit_mv_exchange_market += asset.total_valuation_profit_amount_mv
+        #         profit_mv_exchange_mv += pension_asset.total_valuation_profit_amount_mv
+        #         profit_mv_exchange_fifo += pension_asset.total_valuation_profit_amount_mv
+        #
+        #         profit_fifo_exchange_market += asset.total_valuation_profit_amount_fifo
+        #         profit_fifo_exchange_mv += pension_asset.total_valuation_profit_amount_fifo
+        #         profit_fifo_exchange_fifo += pension_asset.total_valuation_profit_amount_fifo
+        #     else:
+        #         profit_dict = self.asset_value_exchange(pension_asset)
+        #         current_value_exchange_market += profit_dict['current_value_exchange_market']
+        #
+        #         profit_mv_exchange_market += profit_dict['profit_mv_exchange_market']
+        #         profit_mv_exchange_mv += profit_dict['profit_mv_exchange_mv']
+        #         profit_mv_exchange_fifo += profit_dict['profit_mv_exchange_fifo']
+        #
+        #         profit_fifo_exchange_market += profit_dict['profit_fifo_exchange_market']
+        #         profit_fifo_exchange_mv += profit_dict['profit_fifo_exchange_mv']
+        #         profit_fifo_exchange_fifo += profit_dict['profit_fifo_exchange_fifo']
 
 
         current_value = current_value_exchange_market

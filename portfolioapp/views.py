@@ -56,16 +56,14 @@ class PortfolioDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PortfolioDetailView, self).get_context_data(**kwargs)
 
-        # Update Statistics
-        self.object.update_statistics()
-
         queryset_my_equities = Asset.objects.filter(owner=self.request.user,
                                                     portfolio=self.object.pk,
                                                     asset_master__asset_type='EQUITY').order_by('asset_master__ticker')
 
         if queryset_my_equities:
             for equity in queryset_my_equities:
-                equity.update_statistics()
+                # equity.update_statistics()
+                # equity.refresh_from_db()
                 equity.total_amount_in_main_currency = self.asset_value_exchanger(equity)
             context.update({'asset_model_equity': 'Equity'})
             context.update({'queryset_my_equities': queryset_my_equities})
@@ -76,7 +74,8 @@ class PortfolioDetailView(DetailView):
                                                      asset_master__asset_type='GUARDIAN').order_by('asset_master__ticker')
         if queryset_my_guardians:
             for guardian in queryset_my_guardians:
-                guardian.update_statistics()
+                # guardian.update_statistics()
+                # guardian.refresh_from_db()
                 guardian.total_amount_in_main_currency = self.asset_value_exchanger(guardian)
             context.update({'asset_model_guardian': 'Guardian'})
             context.update({'queryset_my_guardians': queryset_my_guardians})
@@ -87,7 +86,8 @@ class PortfolioDetailView(DetailView):
                                                  asset_master__asset_type='REITS').order_by('asset_master__ticker')
         if queryset_my_reits:
             for reits in queryset_my_reits:
-                reits.update_statistics()
+                # reits.update_statistics()
+                # reits.refresh_from_db()
                 reits.total_amount_in_main_currency = self.asset_value_exchanger(reits)
             context.update({'asset_model_reits': 'Reits'})
             context.update({'queryset_my_reits': queryset_my_reits})
@@ -98,7 +98,8 @@ class PortfolioDetailView(DetailView):
                                                   asset_master__asset_type='CRYPTO').order_by('asset_master__ticker')
         if queryset_my_crypto:
             for crypto in queryset_my_crypto:
-                crypto.update_statistics()
+                # crypto.update_statistics()
+                # crypto.refresh_from_db()
                 crypto.total_amount_in_main_currency = self.asset_value_exchanger(crypto)
             context.update({'asset_model_crypto': 'Crypto'})
             context.update({'queryset_my_crypto': queryset_my_crypto})
@@ -111,11 +112,15 @@ class PortfolioDetailView(DetailView):
 
         if queryset_my_pension_assets:
             for pension_asset in queryset_my_pension_assets:
-                pension_asset.update_statistics()
+                # pension_asset.update_statistics()
+                # pension_asset.refresh_from_db()
                 pension_asset.total_amount_in_main_currency = self.asset_value_exchanger(pension_asset)
             context.update({'asset_model_pension': 'Pension'})
             context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
             context.update({'asset_count_pension': queryset_my_pension_assets.count()+1})
+
+        # Update Statistics
+        self.object.update_statistics(price_update=False)
 
         return context
 
@@ -166,7 +171,7 @@ def portfolio_refresh(request):
 
     try:
         queryset_my_portfolio = Portfolio.objects.get(owner=request.user)
-        queryset_my_portfolio.update_statistics()
+        queryset_my_portfolio.update_statistics(price_update=True)
 
     except Exception as identifier:
         print('portfolio_refresh:', identifier)
