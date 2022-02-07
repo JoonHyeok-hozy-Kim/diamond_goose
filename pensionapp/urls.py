@@ -3,7 +3,7 @@ from django.urls import path
 from pensionapp.views import PensionCreateView, PensionListView, PensionDetailView, PensionTransactionCreateView, \
     PensionTransactionDeleteView, PensionAssetMasterNotMineListView, PensionAssetMasterNotMineDetailView, \
     PensionAssetCreateView, PensionAssetDetailView, PensionAssetTransactionCreateView, \
-    PensionAssetTransactionDeleteView, PensionAssetDeleteView
+    PensionAssetTransactionDeleteView, PensionAssetDeleteView, pensionasset_position_open_close
 
 app_name = 'pensionapp'
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('pensionasset_create/', PensionAssetCreateView.as_view(), name='pensionasset_create'),
     path('pensionasset_detail/<int:pk>', PensionAssetDetailView.as_view(), name='pensionasset_detail'),
     path('pensionasset_delete/<int:pk>', PensionAssetDeleteView.as_view(), name='pensionasset_delete'),
+    path('pensionasset_position_open_close/', pensionasset_position_open_close, name='pensionasset_position_open_close'),
 
     path('pensionassettransaction_create', PensionAssetTransactionCreateView.as_view(), name='pensionassettransaction_create'),
     path('pensionassettransaction_delete/<int:pk>', PensionAssetTransactionDeleteView.as_view(), name='pensionassettransaction_delete'),

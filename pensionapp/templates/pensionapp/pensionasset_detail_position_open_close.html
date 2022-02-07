@@ -1,0 +1,13 @@
+{% load bootstrap4 %}
+
+<div>
+    <form action="{% url 'pensionapp:pensionasset_position_open_close' %}" method="get">
+        {% csrf_token %}
+        {% if asset_instance.position_opened_flag == True and asset_instance.quantity <= 0 %}
+            <button type="submit" class="btn btn-warning">Close Position</button>
+        {% elif asset_instance.position_opened_flag == False %}
+            <button type="submit" class="btn btn-info">Open Position</button>
+        {% endif %}
+        <input type="hidden" name="asset_pk" value="{{ asset_instance.pk }}">
+    </form>
+</div>

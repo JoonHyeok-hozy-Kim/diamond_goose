@@ -241,6 +241,22 @@ class PensionAssetDeleteView(DeleteView):
         return reverse('pensionapp:pension_detail', kwargs={'pk': self.request.POST['pension_pk']})
 
 
+def pensionasset_position_open_close(request):
+    asset_pk = request.GET['asset_pk']
+    target_asset = PensionAsset.objects.filter(pk=asset_pk)
+    for asset in target_asset:
+        if asset.position_opened_flag and asset.quantity <= 0:
+            target_asset.update(position_opened_flag=False)
+            print('[Position Close] {}'.format(asset.asset_master.name))
+        elif not asset.position_opened_flag:
+            target_asset.update(position_opened_flag=True)
+            print('[Position Open] {}'.format(asset.asset_master.name))
+        else:
+            print('[Exception Position Open/Close] position_opened_flag : {} / quantity : {}'.format(asset.position_opened_flag, asset.quantity))
+
+    return HttpResponseRedirect(reverse('pensionapp:pensionasset_detail', kwargs={'pk': asset_pk}))
+
+
 class PensionAssetTransactionCreateView(CreateView):
     model = AssetTransaction
     form_class = PensionAssetTransactionCreationForm
