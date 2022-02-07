@@ -152,7 +152,8 @@ class PortfolioDetailViewIncludeClosed(DetailView):
 
         queryset_my_equities = Asset.objects.filter(owner=self.request.user,
                                                     portfolio=self.object.pk,
-                                                    asset_master__asset_type='EQUITY').order_by('asset_master__ticker')
+                                                    asset_master__asset_type='EQUITY').order_by('position_opened_flag',
+                                                                                                'asset_master__ticker')
 
         if queryset_my_equities:
             for equity in queryset_my_equities:
@@ -165,7 +166,8 @@ class PortfolioDetailViewIncludeClosed(DetailView):
 
         queryset_my_guardians = Asset.objects.filter(owner=self.request.user,
                                                      portfolio=self.object.pk,
-                                                     asset_master__asset_type='GUARDIAN').order_by('asset_master__ticker')
+                                                     asset_master__asset_type='GUARDIAN').order_by('position_opened_flag',
+                                                                                                   'asset_master__ticker')
         if queryset_my_guardians:
             for guardian in queryset_my_guardians:
                 # guardian.update_statistics()
@@ -177,7 +179,8 @@ class PortfolioDetailViewIncludeClosed(DetailView):
 
         queryset_my_reits = Asset.objects.filter(owner=self.request.user,
                                                  portfolio=self.object.pk,
-                                                 asset_master__asset_type='REITS').order_by('asset_master__ticker')
+                                                 asset_master__asset_type='REITS').order_by('position_opened_flag',
+                                                                                            'asset_master__ticker')
         if queryset_my_reits:
             for reits in queryset_my_reits:
                 # reits.update_statistics()
@@ -189,7 +192,8 @@ class PortfolioDetailViewIncludeClosed(DetailView):
 
         queryset_my_crypto = Asset.objects.filter(owner=self.request.user,
                                                   portfolio=self.object.pk,
-                                                  asset_master__asset_type='CRYPTO').order_by('asset_master__ticker')
+                                                  asset_master__asset_type='CRYPTO').order_by('position_opened_flag',
+                                                                                              'asset_master__ticker')
         if queryset_my_crypto:
             for crypto in queryset_my_crypto:
                 # crypto.update_statistics()
@@ -202,7 +206,8 @@ class PortfolioDetailViewIncludeClosed(DetailView):
         queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user,
                                                                  portfolio=self.object.pk,
                                                                  asset_master__asset_type='PENSION_ASSET').order_by('pension',
-                                                                                          'asset_master__name')
+                                                                                                                    'position_opened_flag',
+                                                                                                                    'asset_master__name')
 
         if queryset_my_pension_assets:
             for pension_asset in queryset_my_pension_assets:
