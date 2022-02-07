@@ -67,7 +67,8 @@ class PensionDetailView(DetailView, FormMixin):
 
         context.update({'my_pension_pk': self.object.pk})
 
-        pension_asset_list = PensionAsset.objects.filter(pension=self.object.pk).order_by('position_opened_flag')
+        pension_asset_list = PensionAsset.objects.filter(pension=self.object.pk).order_by('-position_opened_flag',
+                                                                                          '-total_amount')
         for pension_asset in pension_asset_list:
             pension_asset.total_realized_profit_and_dividend = pension_asset.total_realized_profit_amount + pension_asset.total_dividend_amount
         context.update({'pension_asset_list': pension_asset_list})
