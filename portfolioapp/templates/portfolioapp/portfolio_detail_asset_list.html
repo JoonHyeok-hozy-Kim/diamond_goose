@@ -2,51 +2,22 @@
 
 {% if asset_count_equity > 1 %}
     <td rowspan="{{ asset_count }}"
-        {% if asset_model == 'Equity' %}
-        style="text-align: center; border: .5px solid black; background-color: #264257; font-weight: bolder;"
-        {% elif asset_model == 'Guardian' %}
-        style="text-align: center; border: .5px solid black; background-color: #FFC000; color: #081321; font-weight: bolder;"
-        {% elif asset_model == 'Reits' %}
-        style="text-align: center; border: .5px solid black; background-color: #328BAB; color: #081321; font-weight: bolder;"
-        {% elif asset_model == 'Crypto' %}
-        style="text-align: center; border: .5px solid black; background-color: #7A3156; font-weight: bolder;"
-        {% else %}
-        style="text-align: center; border: .5px solid black; background-color: #00C484; color: #081321; font-weight: bolder;"
-        {% endif %}>
-        {{ asset_model }}</td>
+        style="text-align: center; border: .5px solid black; font-weight: bolder;
+                background-color: {{ asset_type_master.color_hex }}; color: {{ asset_type_master.text_color_hex }};">
+        {{ asset_type_master.asset_type_name }}</td>
 {% endif %}
 
 {% for asset_instance in queryset_asset %}
-    {% if asset_model == 'Equity' %}
-    <tr style="background-color: #264257; font-weight: bolder;">
-    {% elif asset_model == 'Guardian' %}
-    <tr style="background-color: #FFC000; color: #081321; font-weight: bolder;">
-    {% elif asset_model == 'Reits' %}
-    <tr style="background-color: #328BAB; color: #081321; font-weight: bolder;">
-    {% elif asset_model == 'Crypto' %}
-    <tr style="background-color: #7A3156; font-weight: bolder;">
-    {% else %}
-    <tr style="background-color: #00C484; color: #081321; font-weight: bolder;">
-    {% endif %}
+    <tr style="background-color: {{ asset_instance.asset_master.asset_type_master.color_hex }}; color: {{ asset_instance.asset_master.asset_type_master.text_color_hex }}; font-weight: bolder;">
         <td style="text-align: center; border: .5px solid black;">
-            <a href="{% url 'assetapp:asset_detail' pk=asset_instance.pk %}" style="text-decoration: none;
-                {% if asset_model == 'Equity' or asset_model == 'Crypto' %}
-                    color: #FFFFFF;
-                {% else %}
-                    color: #081321;
-                {% endif %}
-            ">
+            <a href="{% url 'assetapp:asset_detail' pk=asset_instance.pk %}"
+               style="text-decoration: none; color: {{ asset_instance.asset_master.asset_type_master.text_color_hex }}">
                 {{ asset_instance.asset_master.ticker }}
             </a>
         </td>
         <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
-            <a href="{% url 'assetapp:asset_detail' pk=asset_instance.pk %}" style="text-indent: 0.5rem; text-decoration: none;
-                {% if asset_model == 'Equity' or asset_model == 'Crypto' %}
-                    color: #FFFFFF;
-                {% else %}
-                    color: #081321;
-                {% endif %}
-            ">
+            <a href="{% url 'assetapp:asset_detail' pk=asset_instance.pk %}"
+               style="text-indent: 0.5rem; text-decoration: none; color: {{ asset_instance.asset_master.asset_type_master.text_color_hex }}">
                 {{ asset_instance.asset_master.name|asset_name_omit }}
             </a>
         </td>
