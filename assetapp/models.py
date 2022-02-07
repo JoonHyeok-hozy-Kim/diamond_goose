@@ -70,6 +70,7 @@ class Asset(models.Model):
     total_valuation_profit_amount_fifo = models.FloatField(default=0, null=False)
     rate_of_return_mv = models.FloatField(default=0, null=False)
     rate_of_return_fifo = models.FloatField(default=0, null=False)
+    position_opened_flag = models.BooleanField(default=True)
 
     def update_statistics(self):
         self.asset_master.update_statistics()

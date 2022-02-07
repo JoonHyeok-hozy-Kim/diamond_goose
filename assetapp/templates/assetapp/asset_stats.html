@@ -25,6 +25,7 @@
                     <th class="asset_app_inverted_table_th">Market</th>
                     <th class="asset_app_inverted_table_th">Currency</th>
                     <th class="asset_app_inverted_table_th">현재가</th>
+                    <th class="asset_app_inverted_table_th">Position</th>
                 </tr>
                 <tr class="asset_app_inverted_table_tr">
                     <td class="asset_app_inverted_table_td" style="text-align: center;">{{ asset_master.market }}</td>
@@ -36,10 +37,14 @@
                     {% else %}
                         <td class="asset_app_inverted_table_td" style="text-align: end;">{{ asset_master.current_price|intcomma }}</td>
                     {% endif %}
+                    <td class="asset_app_inverted_table_td" style="text-align: center;">
+                    {% if asset_instance.position_opened_flag %} Open
+                    {% else %} Closed {% endif %}
+                    </td>
                 </tr>
             </table>
         </div>
-        <div>
+        <div style="margin-bottom: 0.5rem;">
             <div style="display: inline-block">
                 <table class="asset_app_inverted_table">
                     <tr class="asset_app_inverted_table_tr">
@@ -96,6 +101,9 @@
                     </tr>
                 </table>
             </div>
+        </div>
+        <div>
+            {% include 'assetapp/asset_detail_position_open_close.html' with asset_instance=asset_instance %}
         </div>
     </div>
 </div>

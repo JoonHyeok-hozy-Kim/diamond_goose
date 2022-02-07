@@ -36,9 +36,19 @@
                         <th class="portfolioapp_inverted_table_th">자본이득률(환차 반영)</th>
                     </tr>
                     <tr class="portfolioapp_inverted_table_tr">
+                        {% if target_portfolio.dashboard.main_currency.currency_code == 'KRW' %}
                         <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.current_value|currency_krw }}</td>
                         <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain|currency_krw }}</td>
                         <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|currency_krw }}</td>
+                        {% elif target_portfolio.dashboard.main_currency.currency_code == 'USD' %}
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.current_value|currency_usd }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain|currency_usd }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|currency_usd }}</td>
+                        {% else %}
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.current_value|intcomma }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain|intcomma }}</td>
+                        <td class="portfolioapp_inverted_table_td" style="text-align: end;">{{ target_portfolio.capital_gain_foreign_exchange_adjusted|intcomma }}</td>
+                        {% endif %}
                         <td class="portfolioapp_inverted_table_td" style="text-align: center;">{{ target_portfolio.rate_of_return|percentage_rate_format }}</td>
                         <td class="portfolioapp_inverted_table_td" style="text-align: center;">{{ target_portfolio.rate_of_return_foreign_exchange_adjusted|percentage_rate_format }}</td>
                     </tr>
@@ -49,9 +59,14 @@
                 <a href="{% url 'portfolioapp:portfolio_assetmaster_list' %}" class="btn btn-light btn-sm" style="display: inline-block">
                     <span class="material-icons">add_shopping_cart</span>
                 </a>
-                <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-light btn-sm" style="display: inline-block; height: 2.4rem;">
+                <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-light" style="display: inline-block; height: 2.4rem;">
                     Pension Management
                 </a>
+                {% if closed_asset_include_flag %}
+                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio.pk %}" class="btn btn-warning">Show only opened position</a>
+                {% else %}
+                    <a href="{% url 'portfolioapp:portfolio_detail_include_closed' pk=target_portfolio.pk %}" class="btn btn-warning">Show closed position included</a>
+                {% endif %}
             </div>
 
             <div style="margin-bottom: 1rem;">

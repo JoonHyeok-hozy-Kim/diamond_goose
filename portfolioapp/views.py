@@ -58,6 +58,100 @@ class PortfolioDetailView(DetailView):
 
         queryset_my_equities = Asset.objects.filter(owner=self.request.user,
                                                     portfolio=self.object.pk,
+                                                    asset_master__asset_type='EQUITY',
+                                                    position_opened_flag=True).order_by('asset_master__ticker')
+
+        if queryset_my_equities:
+            for equity in queryset_my_equities:
+                # equity.update_statistics()
+                # equity.refresh_from_db()
+                equity.total_amount_in_main_currency = self.asset_value_exchanger(equity)
+            context.update({'asset_model_equity': 'Equity'})
+            context.update({'queryset_my_equities': queryset_my_equities})
+            context.update({'asset_count_equity': queryset_my_equities.count()+1})
+
+        queryset_my_guardians = Asset.objects.filter(owner=self.request.user,
+                                                     portfolio=self.object.pk,
+                                                     asset_master__asset_type='GUARDIAN',
+                                                     position_opened_flag=True).order_by('asset_master__ticker')
+        if queryset_my_guardians:
+            for guardian in queryset_my_guardians:
+                # guardian.update_statistics()
+                # guardian.refresh_from_db()
+                guardian.total_amount_in_main_currency = self.asset_value_exchanger(guardian)
+            context.update({'asset_model_guardian': 'Guardian'})
+            context.update({'queryset_my_guardians': queryset_my_guardians})
+            context.update({'asset_count_guardians': queryset_my_guardians.count()+1})
+
+        queryset_my_reits = Asset.objects.filter(owner=self.request.user,
+                                                 portfolio=self.object.pk,
+                                                 asset_master__asset_type='REITS',
+                                                 position_opened_flag=True).order_by('asset_master__ticker')
+        if queryset_my_reits:
+            for reits in queryset_my_reits:
+                # reits.update_statistics()
+                # reits.refresh_from_db()
+                reits.total_amount_in_main_currency = self.asset_value_exchanger(reits)
+            context.update({'asset_model_reits': 'Reits'})
+            context.update({'queryset_my_reits': queryset_my_reits})
+            context.update({'asset_count_reits': queryset_my_reits.count()+1})
+
+        queryset_my_crypto = Asset.objects.filter(owner=self.request.user,
+                                                  portfolio=self.object.pk,
+                                                  asset_master__asset_type='CRYPTO',
+                                                  position_opened_flag=True).order_by('asset_master__ticker')
+        if queryset_my_crypto:
+            for crypto in queryset_my_crypto:
+                # crypto.update_statistics()
+                # crypto.refresh_from_db()
+                crypto.total_amount_in_main_currency = self.asset_value_exchanger(crypto)
+            context.update({'asset_model_crypto': 'Crypto'})
+            context.update({'queryset_my_crypto': queryset_my_crypto})
+            context.update({'asset_count_crypto': queryset_my_crypto.count()+1})
+
+        queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user,
+                                                                 portfolio=self.object.pk,
+                                                                 asset_master__asset_type='PENSION_ASSET',
+                                                                 position_opened_flag=True).order_by('pension',
+                                                                                                     'asset_master__name')
+
+        if queryset_my_pension_assets:
+            for pension_asset in queryset_my_pension_assets:
+                # pension_asset.update_statistics()
+                # pension_asset.refresh_from_db()
+                pension_asset.total_amount_in_main_currency = self.asset_value_exchanger(pension_asset)
+            context.update({'asset_model_pension': 'Pension'})
+            context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
+            context.update({'asset_count_pension': queryset_my_pension_assets.count()+1})
+
+        # Update Statistics
+        self.object.update_statistics(price_update=False)
+
+        return context
+
+
+@method_decorator(has_ownership, 'get')
+class PortfolioDetailViewIncludeClosed(DetailView):
+    model = Portfolio
+    context_object_name = 'target_portfolio'
+    template_name = 'portfolioapp/portfolio_detail.html'
+
+    def asset_value_exchanger(self, asset):
+        if asset.asset_master.currency.pk == self.object.dashboard.main_currency.pk:
+            result = asset.total_amount
+        else:
+            target_currency_pk = asset.asset_master.currency.pk
+            queryset_foreign_currency = ForeignCurrency.objects.get(dashboard=self.object.dashboard.pk,
+                                                                    owner=self.request.user,
+                                                                    currency_master=target_currency_pk)
+            result = asset.total_amount * queryset_foreign_currency.current_exchange_rate
+        return result
+
+    def get_context_data(self, **kwargs):
+        context = super(PortfolioDetailViewIncludeClosed, self).get_context_data(**kwargs)
+
+        queryset_my_equities = Asset.objects.filter(owner=self.request.user,
+                                                    portfolio=self.object.pk,
                                                     asset_master__asset_type='EQUITY').order_by('asset_master__ticker')
 
         if queryset_my_equities:
@@ -108,7 +202,7 @@ class PortfolioDetailView(DetailView):
         queryset_my_pension_assets = PensionAsset.objects.filter(owner=self.request.user,
                                                                  portfolio=self.object.pk,
                                                                  asset_master__asset_type='PENSION_ASSET').order_by('pension',
-                                                                                                                    'asset_master__name')
+                                                                                          'asset_master__name')
 
         if queryset_my_pension_assets:
             for pension_asset in queryset_my_pension_assets:
@@ -121,6 +215,7 @@ class PortfolioDetailView(DetailView):
 
         # Update Statistics
         self.object.update_statistics(price_update=False)
+        context.update({'closed_asset_include_flag': True})
 
         return context
 
