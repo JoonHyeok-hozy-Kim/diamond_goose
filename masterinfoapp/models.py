@@ -21,6 +21,13 @@ class CurrencyMaster(models.Model):
         return ''.join(result_list)
 
 
+class AssetTypeMaster(models.Model):
+    asset_type_code = models.CharField(max_length=30, null=False)
+    asset_type_name = models.CharField(max_length=100, null=False)
+    color_hex = models.CharField(max_length=7, default="#264257")
+    text_color_hex = models.CharField(max_length=7, default="#081321")
+
+
 ASSET_TYPES = (
     ('EQUITY', 'Equity'),
     ('GUARDIAN', 'Guardian'),
@@ -28,6 +35,7 @@ ASSET_TYPES = (
     ('PENSION_ASSET', 'Pension Asset'),
     ('CRYPTO', 'Crypto Asset'),
 )
+
 
 MARKET_CHOICES = (
     ('KSE', 'Korean Stock Exchange(KSE)'),

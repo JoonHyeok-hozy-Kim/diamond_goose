@@ -3,11 +3,18 @@ from django.urls import path
 from masterinfoapp.views import AssetMasterCreateView, AssetMasterListView, AssetMasterDetailView, \
     AssetMasterUpdateView, AssetMasterDeleteView, CurrencyMasterCreateView, CurrencyMasterListView, \
     CurrencyMasterUpdateView, PensionMasterCreateView, PensionMasterListView, PensionMasterUpdateView, \
-    CurrencyMasterDetailView, CurrencyMasterDeleteView
+    CurrencyMasterDetailView, CurrencyMasterDeleteView, AssetTypeMasterCreateView, AssetTypeMasterListView, \
+    AssetTypeMasterUpdateView
 
 app_name = 'masterinfoapp'
 
 urlpatterns = [
+
+    path('assettypemaster_create/', AssetTypeMasterCreateView.as_view(), name='assettypemaster_create'),
+    path('assettypemaster_list/', AssetTypeMasterListView.as_view(), name='assettypemaster_list'),
+    path('assettypemaster_update/<int:pk>', AssetTypeMasterUpdateView.as_view(), name='assettypemaster_update'),
+    # path('assettypemaster_detail/<int:pk>', AssetTypeMasterDetailView.as_view(), name='assettypemaster_detail'),
+    # path('assettypemaster_delete/<int:pk>', AssetTypeMasterDeleteView.as_view(), name='assettypemaster_delete'),
 
     path('assetmaster_create/', AssetMasterCreateView.as_view(), name='assetmaster_create'),
     path('assetmaster_list/', AssetMasterListView.as_view(), name='assetmaster_list'),

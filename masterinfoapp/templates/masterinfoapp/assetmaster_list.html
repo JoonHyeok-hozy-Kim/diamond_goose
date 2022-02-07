@@ -30,6 +30,9 @@
 
     <div style="width:100%; text-align: center; margin-bottom: 1rem;">
     {% if asset_master_list_view_flag %}
+        <a href="{% url 'masterinfoapp:assettypemaster_list' %}" class="btn btn-dark">
+            Asset Types
+        </a>
         <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-warning">
             Currencies
         </a>

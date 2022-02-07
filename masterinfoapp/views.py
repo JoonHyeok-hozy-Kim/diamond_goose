@@ -5,8 +5,9 @@ from django.urls import reverse
 from django.utils.text import Truncator
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from masterinfoapp.forms import AssetMasterCreationForm, CurrencyMasterCreationForm, PensionMasterCreationForm
-from masterinfoapp.models import AssetMaster, CurrencyMaster, PensionMaster
+from masterinfoapp.forms import AssetMasterCreationForm, CurrencyMasterCreationForm, PensionMasterCreationForm, \
+    AssetTypeMasterCreationForm
+from masterinfoapp.models import AssetMaster, CurrencyMaster, PensionMaster, AssetTypeMaster
 
 
 class AssetMasterCreateView(CreateView):
@@ -69,6 +70,38 @@ class AssetMasterDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('masterinfoapp:assetmaster_list')
+
+
+class AssetTypeMasterCreateView(CreateView):
+    model = AssetTypeMaster
+    form_class = AssetTypeMasterCreationForm
+    template_name = 'masterinfoapp/assettypemaster_create.html'
+
+    def get_success_url(self):
+        return reverse('masterinfoapp:assettypemaster_list')
+
+
+class AssetTypeMasterListView(ListView):
+    model = AssetTypeMaster
+    template_name = 'masterinfoapp/assettypemaster_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(AssetTypeMasterListView, self).get_context_data(**kwargs)
+
+        queryset_asset_type_master_list = AssetTypeMaster.objects.all().order_by('asset_type_name')
+        context.update({'queryset_asset_type_master_list': queryset_asset_type_master_list})
+        context.update({'masterinfoapp_asset_type_master_list_flag': True})
+        return context
+
+
+class AssetTypeMasterUpdateView(UpdateView):
+    model = AssetTypeMaster
+    form_class = AssetTypeMasterCreationForm
+    context_object_name = 'target_asset_type_master'
+    template_name = 'masterinfoapp/assettypemaster_update.html'
+
+    def get_success_url(self):
+        return reverse('masterinfoapp:assettypemaster_list')
 
 
 class CurrencyMasterCreateView(CreateView):

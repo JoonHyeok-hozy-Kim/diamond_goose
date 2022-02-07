@@ -31,38 +31,28 @@
     </style>
 
     <div style="width:100%; text-align: center; margin-bottom: 1rem;">
-        <a href="{% url 'masterinfoapp:assettypemaster_list' %}" class="btn btn-dark">
-            Asset Types
-        </a>
         <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-info">
             Assets
         </a>
         <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-warning">
             Currencies
         </a>
-        <a href="{% url 'masterinfoapp:pensionmaster_create' %}" class="btn btn-light btn-sm">
+        <a href="{% url 'masterinfoapp:pensionmaster_list' %}" class="btn btn-success">
+            Pensions
+        </a>
+        <a href="{% url 'masterinfoapp:assettypemaster_create' %}" class="btn btn-light btn-sm">
             <span class="material-icons">add</span>
         </a>
     </div>
 
     <div class="container">
-        {% if query_pension_master_list %}
-            {% for pension in query_pension_master_list %}
-                <div style="background-color: {{ pension.color_hex }};">
-{#                    {% if pension.pension_name == '퇴직연금' %}#}
-{#                    style="background-color: #005236;"#}
-{#                    {% elif pension.pension_name == '연금저축' %}#}
-{#                    style="background-color: #008558;"#}
-{#                    {% elif pension.pension_name == 'IRP' %}#}
-{#                    style="background-color: #00D18B;"#}
-{#                    {% else %}#}
-{#                    style="background-color: #00C484;"#}
-{#                    {% endif %} >#}
-
-                    <a href="{% url 'masterinfoapp:pensionmaster_update' pk=pension.id %}">
+        {% if queryset_asset_type_master_list %}
+            {% for asset_type_master in queryset_asset_type_master_list %}
+                <div style="background-color: {{ asset_type_master.color_hex }}; ">
+                    <a href="{% url 'masterinfoapp:assettypemaster_update' pk=asset_type_master.pk %}">
                         <div class="asset_card_black_text_div" style="text-align: center;">
-                            <div style="display:inline-block; font-size: 1.5rem;">
-                                {{ pension.pension_name }}
+                            <div style="display:inline-block; color: {{ asset_type_master.text_color_hex }}; font-size: 1.5rem;">
+                                {{ asset_type_master.asset_type_name }}
                             </div>
                         </div>
                     </a>

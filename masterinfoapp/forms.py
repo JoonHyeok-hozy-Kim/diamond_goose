@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from masterinfoapp.models import AssetMaster, CurrencyMaster, PensionMaster
+from masterinfoapp.models import AssetMaster, CurrencyMaster, PensionMaster, AssetTypeMaster
 
 
 class AssetMasterCreationForm(ModelForm):
@@ -16,6 +16,17 @@ class AssetMasterCreationForm(ModelForm):
             'image',
             'pension_asset_flag',
             'pension_risk_asset_flag',
+        ]
+
+
+class AssetTypeMasterCreationForm(ModelForm):
+    class Meta:
+        model = AssetTypeMaster
+        fields = [
+            'asset_type_code',
+            'asset_type_name',
+            'color_hex',
+            'text_color_hex',
         ]
 
 
