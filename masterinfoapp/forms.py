@@ -7,6 +7,7 @@ class AssetMasterCreationForm(ModelForm):
     class Meta:
         model = AssetMaster
         fields = [
+            'asset_type_master',
             'asset_type',
             'etf_flag',
             'market',
@@ -25,6 +26,7 @@ class AssetTypeMasterCreationForm(ModelForm):
         fields = [
             'asset_type_code',
             'asset_type_name',
+            'asset_type_name_full',
             'color_hex',
             'text_color_hex',
         ]

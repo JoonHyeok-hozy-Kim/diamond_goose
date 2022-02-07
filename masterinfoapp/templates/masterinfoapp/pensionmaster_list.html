@@ -31,11 +31,11 @@
     </style>
 
     <div style="width:100%; text-align: center; margin-bottom: 1rem;">
-        <a href="{% url 'masterinfoapp:assettypemaster_list' %}" class="btn btn-dark">
-            Asset Types
-        </a>
         <a href="{% url 'masterinfoapp:assetmaster_list' %}" class="btn btn-info">
             Assets
+        </a>
+        <a href="{% url 'masterinfoapp:assettypemaster_list' %}" class="btn btn-dark">
+            Asset Types
         </a>
         <a href="{% url 'masterinfoapp:currencymaster_list' %}" class="btn btn-warning">
             Currencies
@@ -49,16 +49,6 @@
         {% if query_pension_master_list %}
             {% for pension in query_pension_master_list %}
                 <div style="background-color: {{ pension.color_hex }};">
-{#                    {% if pension.pension_name == '퇴직연금' %}#}
-{#                    style="background-color: #005236;"#}
-{#                    {% elif pension.pension_name == '연금저축' %}#}
-{#                    style="background-color: #008558;"#}
-{#                    {% elif pension.pension_name == 'IRP' %}#}
-{#                    style="background-color: #00D18B;"#}
-{#                    {% else %}#}
-{#                    style="background-color: #00C484;"#}
-{#                    {% endif %} >#}
-
                     <a href="{% url 'masterinfoapp:pensionmaster_update' pk=pension.id %}">
                         <div class="asset_card_black_text_div" style="text-align: center;">
                             <div style="display:inline-block; font-size: 1.5rem;">

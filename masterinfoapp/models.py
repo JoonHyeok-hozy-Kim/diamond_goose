@@ -24,17 +24,12 @@ class CurrencyMaster(models.Model):
 class AssetTypeMaster(models.Model):
     asset_type_code = models.CharField(max_length=30, null=False)
     asset_type_name = models.CharField(max_length=100, null=False)
+    asset_type_name_full = models.CharField(max_length=100, null=True)
     color_hex = models.CharField(max_length=7, default="#264257")
     text_color_hex = models.CharField(max_length=7, default="#081321")
 
-
-ASSET_TYPES = (
-    ('EQUITY', 'Equity'),
-    ('GUARDIAN', 'Guardian'),
-    ('REITS', 'Reits'),
-    ('PENSION_ASSET', 'Pension Asset'),
-    ('CRYPTO', 'Crypto Asset'),
-)
+    def __str__(self):
+        return self.asset_type_name_full
 
 
 MARKET_CHOICES = (
@@ -46,7 +41,8 @@ MARKET_CHOICES = (
 
 
 class AssetMaster(models.Model):
-    asset_type = models.CharField(max_length=100, choices=ASSET_TYPES, null=True)
+    asset_type_master = models.ForeignKey(AssetTypeMaster, on_delete=models.CASCADE, null=True)
+    asset_type = models.CharField(max_length=100, null=True)
     etf_flag = models.BooleanField(default=False, null=True)
     market = models.CharField(max_length=100, choices=MARKET_CHOICES, null=True)
     ticker = models.CharField(max_length=20, null=False)
