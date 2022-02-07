@@ -7,9 +7,9 @@
 <div style="margin: 1rem;">
 
     <div>
-        <div id="bar" style="width:600px; height:500px;"></div>
+        <div id="pie" style="width: 40rem; height: 19rem;"></div>
         <script>
-            var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
+            var chart = echarts.init(document.getElementById('pie'), 'white', {renderer: 'canvas'});
 
             $(
                 function () {
@@ -20,7 +20,11 @@
             function fetchData() {
                 $.ajax({
                     type: "GET",
-                    url: "http://141.164.44.54:8000/hozylab/bar",
+                    {% if local_flag %}
+                    url: "http://127.0.0.1:8000/pensions/pension_pie_chart",
+                    {% else %}
+                    url: "http://141.164.44.54:8000/pensions/pension_pie_chart",
+                    {% endif %}
                     dataType: 'json',
                     success: function (result) {
                         chart.setOption(result.data);

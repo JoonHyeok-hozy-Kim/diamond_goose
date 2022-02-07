@@ -39,4 +39,5 @@ class PensionMasterCreationForm(ModelForm):
             'pension_name',
             'risk_ratio_force_flag',
             'risk_ratio',
+            'color_hex',
         ]

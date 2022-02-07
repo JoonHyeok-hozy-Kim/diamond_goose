@@ -148,6 +148,7 @@ class PensionMaster(models.Model):
     pension_name = models.CharField(max_length=100, null=False)
     risk_ratio_force_flag = models.BooleanField(default=False, null=False)
     risk_ratio = models.FloatField(default=0, null=False)
+    color_hex = models.CharField(max_length=7, default="#00C483", null=True)
 
     def __str__(self):
         return '{}'.format(self.pension_name)

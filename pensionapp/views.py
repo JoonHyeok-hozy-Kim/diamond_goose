@@ -1,4 +1,5 @@
 import json
+from random import randrange
 
 from django.db.models import QuerySet, Q
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -9,10 +10,14 @@ from django.urls import reverse_lazy, reverse
 from django.utils.text import Truncator
 from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.edit import FormMixin, DeleteView
+from pyecharts.charts import Bar, Pie
+from pyecharts import options as opts
+from rest_framework.views import APIView
 
 from assetapp.models import PensionAsset, AssetTransaction
 from assetapp.views import AssetTransactionDeleteView
 from dashboardapp.models import Dashboard
+from diamond_goose.pyecharts import json_response
 from masterinfoapp.models import AssetMaster
 from pensionapp.forms import PensionCreationForm, PensionTransactionCreationForm, PensionAssetCreationForm, \
     PensionAssetTransactionCreationForm
@@ -49,7 +54,69 @@ class PensionListView(ListView):
         my_portfolio_pk = queryset_my_portfolio.pk
         context.update({'my_portfolio_pk': my_portfolio_pk})
 
+        try:
+            from diamond_goose.settings.local import UPBIT_ACCESS_KEY
+            temp_access_key = UPBIT_ACCESS_KEY
+            if temp_access_key: local_flag = True
+            else: local_flag = False
+        except:
+            local_flag = False
+        context.update({'local_flag': local_flag})
+
         return context
+
+
+def pension_pie_chart(request) -> Pie:
+    queryset_pension = Pension.objects.filter(portfolio__in=Portfolio.objects.filter(owner=request.user).values('id'))
+    x_data = []
+    y_data = []
+    color_list = []
+    for pension in queryset_pension:
+        x_data.append(pension.pension_master.pension_name)
+        y_data.append(pension.total_amount)
+        color_list.append(pension.pension_master.color_hex)
+    data_pair = [list(z) for z in zip(x_data, y_data)]
+    data_pair.sort(key=lambda x: x[1])
+
+    pie_chart = (
+        Pie()
+        .add(
+            series_name="Pension Composition",
+            data_pair=data_pair,
+            radius=["40%", "70%"],
+            # rosetype="radius",
+            center=["50%", "55%"],
+            label_opts=opts.LabelOpts(is_show=False, position="center"),
+        )
+        .set_colors(
+            color_list
+        )
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title="Pension Composition",
+                pos_left="center",
+                pos_top="5",
+                title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
+            ),
+            legend_opts=opts.LegendOpts(pos_left="left",
+                                        pos_top="center",
+                                        orient="vertical",
+                                        textstyle_opts=opts.TextStyleOpts(color="#fff")),
+        )
+        .set_series_opts(
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item", formatter="{b}: {c} ({d}%)"
+            ),
+            label_opts=opts.LabelOpts(color="#fff"),
+        )
+        .dump_options_with_quotes()
+    )
+    return pie_chart
+
+
+class PensionPieChartView(APIView):
+    def get(self, request, *args, **kwargs):
+        return json_response(json.loads(pension_pie_chart(request)))
 
 
 class PensionDetailView(DetailView, FormMixin):

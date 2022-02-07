@@ -3,7 +3,8 @@ from django.urls import path
 from pensionapp.views import PensionCreateView, PensionListView, PensionDetailView, PensionTransactionCreateView, \
     PensionTransactionDeleteView, PensionAssetMasterNotMineListView, PensionAssetMasterNotMineDetailView, \
     PensionAssetCreateView, PensionAssetDetailView, PensionAssetTransactionCreateView, \
-    PensionAssetTransactionDeleteView, PensionAssetDeleteView, pensionasset_position_open_close
+    PensionAssetTransactionDeleteView, PensionAssetDeleteView, pensionasset_position_open_close, \
+    PensionPieChartView
 
 app_name = 'pensionapp'
 
@@ -13,6 +14,8 @@ urlpatterns = [
     path('pension_create/', PensionCreateView.as_view(), name='pension_create'),
     path('pension_list/', PensionListView.as_view(), name='pension_list'),
     path('pension_detail/<int:pk>', PensionDetailView.as_view(), name='pension_detail'),
+
+    path('pension_pie_chart/', PensionPieChartView.as_view(), name='pension_pie_chart'),
 
     # PensionTransaction Model Related Urls
     path('pensiontransaction_create/', PensionTransactionCreateView.as_view(), name='pensiontransaction_create'),

@@ -28,6 +28,8 @@ from rest_framework.views import APIView
 from pyecharts.charts import Bar
 from pyecharts import options as opts
 
+from diamond_goose.pyecharts import json_error, json_response, response_as_json
+
 
 # Create your views here.
 from portfolioapp.models import Portfolio
@@ -40,39 +42,6 @@ class PyechartTestHomeView(ListView):
         context = super(PyechartTestHomeView, self).get_context_data(**kwargs)
 
         return context
-
-def response_as_json(data):
-    json_str = json.dumps(data)
-    response = HttpResponse(
-        json_str,
-        content_type="application/json",
-    )
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
-
-
-def json_response(data, code=200):
-    data = {
-        "code": code,
-        "msg": "success",
-        "data": data,
-    }
-    return response_as_json(data)
-
-
-def json_error(error_string="error", code=500, **kwargs):
-    data = {
-        "code": code,
-        "msg": error_string,
-        "data": {}
-    }
-    data.update(kwargs)
-    return response_as_json(data)
-
-
-JsonResponse = json_response
-JsonError = json_error
-
 
 def bar_base() -> Bar:
     c = (
@@ -88,9 +57,4 @@ def bar_base() -> Bar:
 
 class ChartView(APIView):
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(bar_base()))
-
-
-class IndexView(APIView):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(content=open("./hozylabapp/templates/hozylabapp/pyechart_test_001.html").read())
+        return json_response(json.loads(bar_base()))
