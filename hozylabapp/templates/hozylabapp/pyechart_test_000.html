@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+        <div>
+            <h1 style="display: inline-block; background-color: #00C484; color: #FFFFFF;">Pyechart Test Home</h1>
+        </div>
+        <div>
+            {% include 'hozylabapp/pyechart_test_001.html' with url="http://127.0.0.1:8000/hozylab/bar" %}
+        </div>
+    </div>
+
+
+{% endblock %}

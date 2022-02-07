@@ -4,12 +4,15 @@ import pandas as pd
 import pytz
 import requests
 import yfinance as yf
+import math
+
 from django.http import HttpResponse
 
 from django.shortcuts import render
 
 # Create your views here.
-from django.views.generic import ListView
+from django.template import loader
+from django.views.generic import ListView, DetailView
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
@@ -738,3 +741,4 @@ def upload_excel_shinhan(request):
 
     except Exception as identifier:
         print('upload_shinhan: excel_export', identifier)
+
