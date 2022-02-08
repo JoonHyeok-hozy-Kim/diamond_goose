@@ -111,6 +111,11 @@ class Portfolio(models.Model):
         #         profit_fifo_exchange_mv += profit_dict['profit_fifo_exchange_mv']
         #         profit_fifo_exchange_fifo += profit_dict['profit_fifo_exchange_fifo']
 
+        # Pension Cash Amount
+        from pensionapp.models import Pension
+        queryset_pensions = Pension.objects.filter(portfolio=self.pk)
+
+
 
         current_value = current_value_exchange_market
         target_portfolio.update(current_value=current_value)

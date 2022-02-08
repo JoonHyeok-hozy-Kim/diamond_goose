@@ -2,14 +2,15 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-from masterinfoapp.models import PensionMaster
+from masterinfoapp.models import PensionMaster, CurrencyMaster
 from portfolioapp.models import Portfolio
 
-
 class Pension(models.Model):
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pension')
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='pension')
-    pension_master = models.ForeignKey(PensionMaster, on_delete=models.CASCADE, related_name='pension_master')
+    pension_master = models.ForeignKey(PensionMaster, on_delete=models.CASCADE, related_name='pension')
+    currency = models.ForeignKey(CurrencyMaster, on_delete=models.CASCADE, related_name='pension', null=True)
     total_amount = models.FloatField(default=0, null=False)
     net_paid_amount = models.FloatField(default=0, null=False)
     total_paid_amount = models.FloatField(default=0, null=False)
