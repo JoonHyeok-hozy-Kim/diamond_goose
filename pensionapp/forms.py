@@ -7,7 +7,10 @@ from pensionapp.models import Pension, PensionTransaction, PENSION_TRANSACTION_T
 class PensionCreationForm(ModelForm):
     class Meta:
         model = Pension
-        fields = ['pension_master']
+        fields = [
+            'pension_master',
+            'currency',
+        ]
 
 
 class PensionTransactionCreationForm(ModelForm):
