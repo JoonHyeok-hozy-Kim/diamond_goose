@@ -128,32 +128,51 @@ class PortfolioDetailView(DetailView):
                                                                  position_opened_flag=True).order_by('pension',
                                                                                                      'asset_master__name')
 
-        if queryset_my_pension_assets:
-
-            for pension_asset in queryset_my_pension_assets:
-                # pension_asset.update_statistics()
-                # pension_asset.refresh_from_db()
-                pension_asset.total_amount_in_main_currency = self.asset_value_exchanger(pension_asset)
-            context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
-            context.update({'asset_count_pension': queryset_my_pension_assets.count()+1})
-
-
-        # queryset_my_pensions = Pension.objects.filter(owner=self.request.user,
-        #                                               portfolio=self.object.pk)
-        # pension_asset_list = []
-        # pension_total_line_count = 1
-        # for pension in queryset_my_pensions:
-        #     queryset_pension_asset = PensionAsset.objects.filter(owner=self.request.user,
-        #                                                          pension=pension.pk,
-        #                                                          portfolio=self.object.pk,
-        #                                                          position_opened_flag=True)
-        #     for pension_asset in queryset_pension_asset:
+        # if queryset_my_pension_assets:
+        #
+        #     for pension_asset in queryset_my_pension_assets:
+        #         # pension_asset.update_statistics()
+        #         # pension_asset.refresh_from_db()
         #         pension_asset.total_amount_in_main_currency = self.asset_value_exchanger(pension_asset)
-        #     pension_asset_list.append(queryset_pension_asset)
-        #     pension_total_line_count += queryset_pension_asset.count()
-        # context.update({'asset_count_pension': pension_total_line_count})
-        # if len(pension_asset_list) > 0:
-        #     context.update({'pension_asset_list': pension_asset_list})
+        #     context.update({'queryset_my_pension_assets': queryset_my_pension_assets})
+        #     context.update({'asset_count_pension': queryset_my_pension_assets.count()+1})
+
+
+        queryset_my_pensions = Pension.objects.filter(owner=self.request.user,
+                                                      portfolio=self.object.pk)
+        pension_asset_list = []
+        pension_total_line_count = 1
+        for pension in queryset_my_pensions:
+            queryset_pension_asset = PensionAsset.objects.filter(owner=self.request.user,
+                                                                 pension=pension.pk,
+                                                                 portfolio=self.object.pk,
+                                                                 position_opened_flag=True)
+
+            pension_cash_amount_original = pension.total_cash_amount
+            pension_cash_amount_exchanged = pension.total_cash_amount
+            if pension.currency != self.object.dashboard.main_currency:
+                target_foreign_currency = ForeignCurrency.objects.get(currency_master=self.object.dashboard.main_currency)
+                pension_cash_amount_exchanged *= target_foreign_currency.current_exchange_rate
+
+            pension_cash = {
+                'pension_cash_flag': True,
+                'pension_pk': pension.pk,
+                'pension_currency_code': pension.currency.currency_code,
+                'pension_name': pension.pension_master.pension_name,
+                'pension_asset_count': queryset_pension_asset.count()+1,
+                'pension_cash_amount_original': pension_cash_amount_original,
+                'pension_cash_amount_exchanged': pension_cash_amount_exchanged,
+                            }
+            pension_asset_list.append(pension_cash)
+            pension_total_line_count += 1
+
+            for pension_asset in queryset_pension_asset:
+                pension_asset.total_amount_in_main_currency = self.asset_value_exchanger(pension_asset)
+            pension_asset_list.append(queryset_pension_asset)
+            pension_total_line_count += queryset_pension_asset.count()
+        context.update({'asset_count_pension': pension_total_line_count})
+        if len(pension_asset_list) > 0:
+            context.update({'pension_asset_list': pension_asset_list})
 
         # Update Statistics
         self.object.update_statistics(price_update=False)

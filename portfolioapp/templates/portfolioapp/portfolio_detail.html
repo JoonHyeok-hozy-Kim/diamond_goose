@@ -113,12 +113,12 @@
                     {% if queryset_my_crypto %}
                         {% include 'portfolioapp/portfolio_detail_asset_list.html' with asset_type_master=asset_type_master_crypto queryset_asset=queryset_my_crypto asset_count=asset_count_crypto %}
                     {% endif %}
-                    {% if queryset_my_pension_assets %}
-                        {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' with asset_type_master=asset_type_master_pension_asset queryset_asset=queryset_my_pension_assets asset_count=asset_count_pension %}
-                    {% endif %}
-{#                    {% if pension_asset_list %}#}
-{#                        {% include 'portfolioapp/portfolio_detail_pension_asset_list.html' with asset_type_master=asset_type_master_pension_asset pension_asset_list=pension_asset_list asset_count=asset_count_pension %}#}
+{#                    {% if queryset_my_pension_assets %}#}
+{#                        {% include 'portfolioapp/portfolio_detail_pensionasset_list.html' with asset_type_master=asset_type_master_pension_asset queryset_asset=queryset_my_pension_assets asset_count=asset_count_pension %}#}
 {#                    {% endif %}#}
+                    {% if pension_asset_list %}
+                        {% include 'portfolioapp/portfolio_detail_pension_asset_list.html' with asset_type_master=asset_type_master_pension_asset pension_asset_list=pension_asset_list asset_count=asset_count_pension %}
+                    {% endif %}
                 </table>
 
             </div>

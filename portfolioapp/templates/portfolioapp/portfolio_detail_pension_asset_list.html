@@ -1,60 +1,85 @@
 {% load format_mask_assetapp %}
 
 {% if asset_count_equity > 1 %}
-    <td rowspan="{{ asset_count }}" style="text-align: center; border: .5px solid black; background-color: #00C484; color: #081321; font-weight: bolder;">
+    <td rowspan="{{ asset_count }}"
+        style="text-align: center; border: .5px solid black; background-color: {{ asset_type_master.color_hex }}; color: {{ asset_type_master.text_color_hex }}; font-weight: bolder;">
         {{ asset_type_master.asset_type_name }}</td>
 {% endif %}
 
-{% for queryset_pension_asset in pension_asset_list %}
+{% for element in pension_asset_list %}
 
-    <td rowspan="{{ queryset_pension_asset.count }}+1" style="text-align: center; border: .5px solid black;">
-        <a href="" style="text-decoration: none; color: {{ asset_type_master.text_color_hex }};">
-            PENION_NAME
-        </a>
-    </td>
-
-    {% for pension_asset in queryset_pension_asset %}
+    {% if element.pension_cash_flag %}
         <tr style="background-color: {{ asset_type_master.color_hex }}; color: {{ asset_type_master.text_color_hex }}; font-weight: bolder;">
-{#            <td style="text-align: center; border: .5px solid black;">#}
-{#                <a href="{% url 'pensionapp:pension_detail' pk=pension_asset.pension.pk %}" style="text-decoration: none; color: {{ asset_type_master.text_color_hex }};">#}
-{#                    {{ pension_asset.pension.pension_master.pension_name }}#}
-{#                </a>#}
-{#            </td>#}
-            <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
-                <a href="{% url 'pensionapp:pensionasset_detail' pk=pension_asset.pk %}" style="text-indent: 0.5rem; text-decoration: none; color: {{ asset_type_master.text_color_hex }};">
-                    {{ pension_asset.asset_master.name|asset_name_omit }}
+            <td rowspan="{{ element.pension_asset_count }}"
+                style="text-align: center; border: .5px solid black; ">
+                <a href="{% url 'pensionapp:pension_detail' pk=element.pension_pk %}"
+                   style="text-decoration: none; color: {{ asset_type_master.text_color_hex }};">
+                    {{ element.pension_name }}
                 </a>
             </td>
-            <td style="text-align: center; border: 1px solid black;">{{ pension_asset.asset_master.currency.currency_code }}</td>
+            <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">Cash</td>
+            <td style="text-align: center; border: 1px solid black;">{{ element.pension_currency_code }}</td>
             <td style="text-align: end; border: 1px solid black;">
-                {{ pension_asset.asset_master.currency.currency_sign }}
-                {{ pension_asset.total_amount|int_number }}
+                {% if element.pension_currency_code == 'KRW' %}
+                    {{ element.pension_cash_amount_original|currency_krw }}
+                {% elif element.pension_currency_code == 'USD' %}
+                    {{ element.pension_cash_amount_original|currency_usd }}
+                {% else %}
+                    {{ element.pension_cash_amount_original|intcomma }}
+                {% endif %}
             </td>
             <td style="text-align: end; border: 1px solid black;">
-                {{ pension_asset.portfolio.dashboard.main_currency.currency_sign }}
-                {{ pension_asset.total_amount_in_main_currency|int_number }}
+                {{ element.pension_cash_amount_exchanged|currency_krw }}
             </td>
-            <td style="text-align: center; border: 1px solid black;">{{ pension_asset.quantity|int_number }}</td>
-            {% if pension_asset.asset_master.currency.currency_code == 'USD' %}
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|currency_usd }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|currency_usd }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|currency_usd }}</td>
-            {% elif pension_asset.asset_master.currency.currency_code == 'KRW' %}
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|currency_krw }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|currency_krw }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|currency_krw }}</td>
-            {% else %}
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|intcomma }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|intcomma }}</td>
-                <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|intcomma }}</td>
-            {% endif %}
-            <td style="text-align: center; border: 1px solid black;">{{ pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
-            <td style="text-align: center; border: 1px solid black;">{{ pension_asset.rate_of_return_fifo|percentage_rate_format }}</td>
-            <td style="text-align: center; border: 1px solid black;">
-                <div style="color: #081321;">-</div>
-            </td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
+            <td style="text-align: center; border: 1px solid black;">-</td>
         </tr>
+    {% else %}
+        {% for pension_asset in element %}
+            <tr style="background-color: {{ asset_type_master.color_hex }}; color: {{ asset_type_master.text_color_hex }}; font-weight: bolder;">
+                <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
+                    <a href="{% url 'pensionapp:pensionasset_detail' pk=pension_asset.pk %}" style="text-indent: 0.5rem; text-decoration: none; color: {{ asset_type_master.text_color_hex }};">
+                        {{ pension_asset.asset_master.name|asset_name_omit }}
+                    </a>
+                </td>
+                <td style="text-align: center; border: 1px solid black;">{{ pension_asset.asset_master.currency.currency_code }}</td>
+                <td style="text-align: end; border: 1px solid black;">
+                    {{ pension_asset.asset_master.currency.currency_sign }}
+                    {{ pension_asset.total_amount|int_number }}
+                </td>
+                <td style="text-align: end; border: 1px solid black;">
+                    {{ pension_asset.portfolio.dashboard.main_currency.currency_sign }}
+                    {{ pension_asset.total_amount_in_main_currency|int_number }}
+                </td>
+                <td style="text-align: center; border: 1px solid black;">{{ pension_asset.quantity|int_number }}</td>
+                {% if pension_asset.asset_master.currency.currency_code == 'USD' %}
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|currency_usd }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|currency_usd }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|currency_usd }}</td>
+                {% elif pension_asset.asset_master.currency.currency_code == 'KRW' %}
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|currency_krw }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|currency_krw }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|currency_krw }}</td>
+                {% else %}
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.asset_master.current_price|intcomma }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_mv|intcomma }}</td>
+                    <td style="text-align: end; border: 1px solid black;">{{ pension_asset.average_purchase_price_fifo|intcomma }}</td>
+                {% endif %}
+                <td style="text-align: center; border: 1px solid black;">{{ pension_asset.rate_of_return_mv|percentage_rate_format }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ pension_asset.rate_of_return_fifo|percentage_rate_format }}</td>
+                <td style="text-align: center; border: 1px solid black;">
+                    <div style="color: #081321;">-</div>
+                </td>
+            </tr>
 
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+
 {% endfor %}
 

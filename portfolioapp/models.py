@@ -114,8 +114,12 @@ class Portfolio(models.Model):
         # Pension Cash Amount
         from pensionapp.models import Pension
         queryset_pensions = Pension.objects.filter(portfolio=self.pk)
-
-
+        for pension in queryset_pensions:
+            if pension.currency.currency_code == self.dashboard.main_currency.currency_code:
+                current_value_exchange_market += pension.total_cash_amount
+            else:
+                target_foreign_currency = ForeignCurrency.objects.get(currency_master=pension.currency)
+                current_value_exchange_market += pension.total_cash_amount * target_foreign_currency.current_exchange_rate
 
         current_value = current_value_exchange_market
         target_portfolio.update(current_value=current_value)
