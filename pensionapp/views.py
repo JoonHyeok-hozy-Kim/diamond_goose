@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.utils.text import Truncator
 from django.views.generic import CreateView, ListView, DetailView
-from django.views.generic.edit import FormMixin, DeleteView
+from django.views.generic.edit import FormMixin, DeleteView, UpdateView
 from pyecharts.charts import Bar, Pie
 from pyecharts import options as opts
 from rest_framework.views import APIView
@@ -40,6 +40,16 @@ class PensionCreateView(CreateView):
 
     def get_success_url(self):
         return reverse('pensionapp:pension_list')
+
+
+class PensionUpdateView(UpdateView):
+    model = Pension
+    context_object_name = 'target_pension'
+    form_class = PensionCreationForm
+    template_name = 'pensionapp/pension_update.html'
+
+    def get_success_url(self):
+        return reverse('pensionapp:pension_detail', kwargs={'pk': self.object.pk})
 
 
 class PensionListView(ListView):

@@ -12,6 +12,9 @@
             <a href="{% url 'portfolioapp:portfolio_detail' pk=target_pension.portfolio.pk %}" class="btn btn-info btn-sm" >
                 <span class="material-icons">table_chart</span>
             </a>
+            <a href="{% url 'pensionapp:pension_update' pk=target_pension.pk %}" class="btn btn-light btn-sm" >
+                <span class="material-icons">edit</span>
+            </a>
             <a href="{% url 'pensionapp:pension_list' %}" class="btn btn-info">
                 Pension Summary
             </a>

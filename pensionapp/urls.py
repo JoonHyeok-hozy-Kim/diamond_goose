@@ -4,7 +4,7 @@ from pensionapp.views import PensionCreateView, PensionListView, PensionDetailVi
     PensionTransactionDeleteView, PensionAssetMasterNotMineListView, PensionAssetMasterNotMineDetailView, \
     PensionAssetCreateView, PensionAssetDetailView, PensionAssetTransactionCreateView, \
     PensionAssetTransactionDeleteView, PensionAssetDeleteView, pensionasset_position_open_close, \
-    PensionPieChartView
+    PensionPieChartView, PensionUpdateView
 
 app_name = 'pensionapp'
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('pension_create/', PensionCreateView.as_view(), name='pension_create'),
     path('pension_list/', PensionListView.as_view(), name='pension_list'),
     path('pension_detail/<int:pk>', PensionDetailView.as_view(), name='pension_detail'),
+    path('pension_update/<int:pk>', PensionUpdateView.as_view(), name='pension_update'),
 
     path('pension_pie_chart/', PensionPieChartView.as_view(), name='pension_pie_chart'),
 
