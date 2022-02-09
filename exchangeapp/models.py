@@ -91,18 +91,23 @@ class ForeignCurrency(models.Model):
             self.dashboard.main_currency.currency_code,
         ]
         currency_cross = ''.join(currency_cross_list)
+        current_exchange_rate = None
         try:
             current_exchange_rate_json = json.loads(ip.get_currency_cross_information(currency_cross, True))
             current_exchange_rate = (current_exchange_rate_json['ask'] + current_exchange_rate_json['bid'])/2
         except Exception as currency_rate_search:
             print('exchangeapp - get_current_exchange_rate - get_currency_cross_information error : {}'.format(currency_rate_search))
-            time.sleep(10)
-            current_exchange_rate_json = json.loads(ip.get_currency_cross_recent_data(currency_cross, True))
-            current_exchange_rate = current_exchange_rate_json['recent'][-1]['close']
-            print(' -> Got from recent_data instead : {}'.format(current_exchange_rate))
 
-        foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
-        foreign_currency.update(current_exchange_rate=current_exchange_rate)
+            try:
+                current_exchange_rate_json = json.loads(ip.get_currency_cross_recent_data(currency_cross, True))
+                current_exchange_rate = current_exchange_rate_json['recent'][-1]['close']
+                print(' -> Got from recent_data instead : {}'.format(current_exchange_rate))
+            except Exception as currency_rate_search_recent:
+                print('exchangeapp - get_current_exchange_rate - currency_rate_search_recent error : {}'.format(currency_rate_search_recent))
+
+        if current_exchange_rate:
+            foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
+            foreign_currency.update(current_exchange_rate=current_exchange_rate)
 
         return current_exchange_rate
 
