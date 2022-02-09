@@ -118,6 +118,10 @@ class ForeignCurrency(models.Model):
         rate_of_return_mv = 0
         total_realized_profit = 0
 
+        history_start_date = None
+        history_end_date = None
+        history_target_pk_list = []
+
         idx = -1
         for transaction in queryset_transactions:
             idx += 1
@@ -151,39 +155,52 @@ class ForeignCurrency(models.Model):
                 # current_amount calculation
                 current_amount -= transaction.amount
 
-            # Get Market Closing Rate if it's empty.
-            if transaction.market_closing_rate is None:
-                currency_cross_list = [
-                    self.currency_master.currency_code,
-                    '/',
-                    self.dashboard.main_currency.currency_code,
-                ]
-                currency_cross = ''.join(currency_cross_list)
-                target_date = transaction.transaction_date
-                one_day = timedelta(days=1)
-                market_closing_rate = None
+            # Check transactions which market_closing_rate is None
+            if transaction.market_closing_rate is None and history_start_date is None:
+                history_start_date = transaction.transaction_date - timedelta(days=1)
+                history_end_date = transaction.transaction_date
+                history_target_pk_list.append(transaction.pk)
+            elif transaction.market_closing_rate is None and history_start_date is not None:
+                history_end_date = transaction.transaction_date
+                history_target_pk_list.append(transaction.pk)
+
+        # Insert market_closing_rate for checked transactions
+        if history_start_date is not None and history_end_date is not None:
+            currency_cross_list = [
+                self.currency_master.currency_code,
+                '/',
+                self.dashboard.main_currency.currency_code,
+            ]
+            currency_cross = ''.join(currency_cross_list)
+            market_closing_rate_json = None
+            try:
+                market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                            history_start_date.strftime("%d/%m/%Y"),
+                                                                                            history_end_date.strftime("%d/%m/%Y"),
+                                                                                            True))
+                history_dict = market_closing_rate_json['historical']
+            except Exception as historical_market_data:
+                print('Exception for historical_market_data : {}'.format(historical_market_data))
+
                 try:
+                    currency_cross = ''.join(currency_cross_list[::-1])
                     market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
-                                                                                                (target_date-one_day).strftime("%d/%m/%Y"),
-                                                                                                target_date.strftime("%d/%m/%Y"),
+                                                                                                history_start_date.strftime("%d/%m/%Y"),
+                                                                                                history_end_date.strftime("%d/%m/%Y"),
                                                                                                 True))
-                    market_closing_rate = round(market_closing_rate_json['historical'][0]['close'], 2)
-                except Exception as historical_market_data:
-                    print('Exception for historical_market_data : {}'.format(historical_market_data))
+                    history_dict = market_closing_rate_json['historical']
+                except Exception as historical_market_data_reverse:
+                    print('Exception for historical_market_data_reverse : {}'.format(historical_market_data_reverse))
 
-                    try:
-                        currency_cross = ''.join(currency_cross_list[::-1])
-                        market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
-                                                                                                    (target_date-one_day).strftime("%d/%m/%Y"),
-                                                                                                    target_date.strftime("%d/%m/%Y"),
-                                                                                                    True))
-                        market_closing_rate = round(pow(market_closing_rate_json['historical'][0]['close'], -1), 2)
-                    except Exception as historical_market_data_reverse:
-                        print('Exception for historical_market_data_reverse : {}'.format(historical_market_data))
-
-                if market_closing_rate is not None:
-                    target_transaction = ForeignCurrencyTransaction.objects.filter(pk=transaction.pk)
-                    target_transaction.update(market_closing_rate=market_closing_rate)
+            if market_closing_rate_json is not None:
+                for transaction_pk in history_target_pk_list:
+                    target_transaction = ForeignCurrencyTransaction.objects.filter(pk=transaction_pk)
+                    target_transaction_date = target_transaction.values('transaction_date')[0]['transaction_date'].strftime("%d/%m/%Y")
+                    for dict_element in history_dict:
+                        if dict_element['date'] == target_transaction_date:
+                            target_transaction.update(market_closing_rate=dict_element['close'])
+                            print(' - Historical market rate inserted, {} : {}'.format(target_transaction_date,
+                                                                                       dict_element['close']))
 
 
         target_foreign_currency.update(current_amount=current_amount)
