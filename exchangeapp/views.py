@@ -1,3 +1,7 @@
+import json
+import investpy as ip
+from datetime import timedelta
+
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 
@@ -100,6 +104,9 @@ class ForeignCurrencyDetailView(DetailView, FormMixin):
         context = super(ForeignCurrencyDetailView, self).get_context_data(**kwargs)
 
         queryset_transaction_list = ForeignCurrencyTransaction.objects.filter(foreign_currency=self.object.pk).order_by("-transaction_date")
+        for transaction in queryset_transaction_list:
+            if transaction.market_closing_rate is None:
+                transaction.market_closing_rate = '-'
         context.update({'queryset_transaction_list': queryset_transaction_list})
 
         # Update Foreign Currency Stats.
@@ -130,6 +137,39 @@ class ForeignCurrencyTransactionCreateView(CreateView):
 
         if temp_transaction.transaction_type == 'SELL' and temp_transaction.amount > temp_transaction.foreign_currency.current_amount:
             return HttpResponseNotFound('Cannot SELL more than you hold.')
+
+        # Market Close Rate Insert
+        currency_cross_list = [
+            temp_transaction.foreign_currency.currency_master.currency_code,
+            '/',
+            temp_transaction.foreign_currency.dashboard.main_currency.currency_code,
+        ]
+        currency_cross = ''.join(currency_cross_list)
+        target_date = temp_transaction.transaction_date
+        one_day = timedelta(days=1)
+        market_closing_rate = None
+        try:
+            market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                        (target_date - one_day).strftime("%d/%m/%Y"),
+                                                                                        target_date.strftime("%d/%m/%Y"),
+                                                                                        True))
+            market_closing_rate = round(market_closing_rate_json['historical'][0]['close'], 2)
+        except Exception as historical_market_data:
+            print('Exception for historical_market_data : {}'.format(historical_market_data))
+
+            try:
+                currency_cross = ''.join(currency_cross_list[::-1])
+                market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                            (target_date - one_day).strftime("%d/%m/%Y"),
+                                                                                            target_date.strftime("%d/%m/%Y"),
+                                                                                            True))
+                market_closing_rate = round(pow(market_closing_rate_json['historical'][0]['close'], -1), 2)
+            except Exception as historical_market_data_reverse:
+                print('Exception for historical_market_data_reverse : {}'.format(historical_market_data))
+
+        if market_closing_rate is not None:
+            temp_transaction.market_closing_rate = market_closing_rate
+
 
         temp_transaction.save()
         return super().form_valid(form)

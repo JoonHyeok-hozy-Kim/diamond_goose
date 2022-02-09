@@ -1,4 +1,6 @@
 import json
+from datetime import timedelta
+
 import requests
 import investpy as ip
 
@@ -95,6 +97,7 @@ class ForeignCurrency(models.Model):
             print('exchangeapp - get_current_exchange_rate - get_currency_cross_information error : {}'.format(currency_rate_search))
             current_exchange_rate_json = json.loads(ip.get_currency_cross_recent_data(currency_cross, True))
             current_exchange_rate = current_exchange_rate_json['recent'][-1]['close']
+            print(' -> Got from recent_data instead : {}'.format(current_exchange_rate))
 
         foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
         foreign_currency.update(current_exchange_rate=current_exchange_rate)
@@ -148,6 +151,41 @@ class ForeignCurrency(models.Model):
                 # current_amount calculation
                 current_amount -= transaction.amount
 
+            # Get Market Closing Rate if it's empty.
+            if transaction.market_closing_rate is None:
+                currency_cross_list = [
+                    self.currency_master.currency_code,
+                    '/',
+                    self.dashboard.main_currency.currency_code,
+                ]
+                currency_cross = ''.join(currency_cross_list)
+                target_date = transaction.transaction_date
+                one_day = timedelta(days=1)
+                market_closing_rate = None
+                try:
+                    market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                                (target_date-one_day).strftime("%d/%m/%Y"),
+                                                                                                target_date.strftime("%d/%m/%Y"),
+                                                                                                True))
+                    market_closing_rate = round(market_closing_rate_json['historical'][0]['close'], 2)
+                except Exception as historical_market_data:
+                    print('Exception for historical_market_data : {}'.format(historical_market_data))
+
+                    try:
+                        currency_cross = ''.join(currency_cross_list[::-1])
+                        market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                                    (target_date-one_day).strftime("%d/%m/%Y"),
+                                                                                                    target_date.strftime("%d/%m/%Y"),
+                                                                                                    True))
+                        market_closing_rate = round(pow(market_closing_rate_json['historical'][0]['close'], -1), 2)
+                    except Exception as historical_market_data_reverse:
+                        print('Exception for historical_market_data_reverse : {}'.format(historical_market_data))
+
+                if market_closing_rate is not None:
+                    target_transaction = ForeignCurrencyTransaction.objects.filter(pk=transaction.pk)
+                    target_transaction.update(market_closing_rate=market_closing_rate)
+
+
         target_foreign_currency.update(current_amount=current_amount)
         target_foreign_currency.update(total_realized_profit=total_realized_profit)
 
@@ -180,6 +218,7 @@ class ForeignCurrencyTransaction(models.Model):
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPE_CHOICES, null=False)
     amount = models.FloatField(default=0, null=False)
     exchange_rate = models.FloatField(default=0, null=False)
+    market_closing_rate = models.FloatField(null=True)
     applied_flag = models.BooleanField(default=False, null=False)
     note = models.CharField(max_length=100, default='-', null=True)
     transaction_date = models.DateTimeField(null=False)

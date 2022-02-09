@@ -11,6 +11,7 @@
         <td class= "asset_transaction_table_td_center">{{ transaction.transaction_type }}</td>
         <td class= "asset_transaction_table_td_center">{{ transaction.amount|exchange_rate_format }} {{ transaction.foreign_currency.currency_master.currency_code }}</td>
         <td class= "asset_transaction_table_td_center">{{ transaction.exchange_rate|exchange_rate_format }}</td>
+        <td class= "asset_transaction_table_td_center">{{ transaction.market_closing_rate|exchange_rate_format }}</td>
         <td class= "asset_transaction_table_td_start">{{ transaction.note }}</td>
         <td class= "asset_transaction_table_td_center">
             <a href="{% url 'exchangeapp:foreigncurrencytransaction_delete' pk=transaction.pk %}" style="color: #FA0067;text-decoration: none;">
