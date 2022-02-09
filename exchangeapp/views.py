@@ -165,7 +165,7 @@ class ForeignCurrencyTransactionCreateView(CreateView):
                                                                                             True))
                 market_closing_rate = round(pow(market_closing_rate_json['historical'][0]['close'], -1), 2)
             except Exception as historical_market_data_reverse:
-                print('Exception for historical_market_data_reverse : {}'.format(historical_market_data))
+                print('Exception for historical_market_data_reverse : {}'.format(historical_market_data_reverse))
 
         if market_closing_rate is not None:
             temp_transaction.market_closing_rate = market_closing_rate
