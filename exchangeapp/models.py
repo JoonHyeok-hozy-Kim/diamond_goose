@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import timedelta
 
 import requests
@@ -95,6 +96,7 @@ class ForeignCurrency(models.Model):
             current_exchange_rate = (current_exchange_rate_json['ask'] + current_exchange_rate_json['bid'])/2
         except Exception as currency_rate_search:
             print('exchangeapp - get_current_exchange_rate - get_currency_cross_information error : {}'.format(currency_rate_search))
+            time.sleep(10)
             current_exchange_rate_json = json.loads(ip.get_currency_cross_recent_data(currency_cross, True))
             current_exchange_rate = current_exchange_rate_json['recent'][-1]['close']
             print(' -> Got from recent_data instead : {}'.format(current_exchange_rate))
