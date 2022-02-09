@@ -117,7 +117,7 @@ class ForeignCurrency(models.Model):
         query.add(Q(transaction_type='SELL'),Q.OR)
         query.add(Q(amount__gt=0),Q.AND)
 
-        queryset_transactions = self.transaction.filter(query)
+        queryset_transactions = self.transaction.filter(query).order_by('transaction_date')
         target_foreign_currency = ForeignCurrency.objects.filter(pk=self.pk)
         current_amount = 0
         trade_stack = []
