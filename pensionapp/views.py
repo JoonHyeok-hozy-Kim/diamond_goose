@@ -64,14 +64,20 @@ class PensionListView(ListView):
         my_portfolio_pk = queryset_my_portfolio.pk
         context.update({'my_portfolio_pk': my_portfolio_pk})
 
+        pie_chart_url_list = ['http://']
+        ip_address = None
         try:
-            from diamond_goose.settings.local import UPBIT_ACCESS_KEY
-            temp_access_key = UPBIT_ACCESS_KEY
-            if temp_access_key: local_flag = True
-            else: local_flag = False
-        except:
-            local_flag = False
-        context.update({'local_flag': local_flag})
+            from diamond_goose.settings.local import LOCAL_IP_ADDRESS
+            ip_address = LOCAL_IP_ADDRESS
+        except Exception as deploy_environment:
+            print('Pension Pie Chart - deploy_environment : {}'.format(deploy_environment))
+            from diamond_goose.settings.deploy import DEPLOY_IP_ADDRESS
+            ip_address = DEPLOY_IP_ADDRESS
+
+        if ip_address:
+            pie_chart_url_list.append(ip_address)
+            pie_chart_url_list.append('/pensions/pension_pie_chart/')
+            context.update({'pie_chart_url': ''.join(pie_chart_url_list)})
 
         return context
 

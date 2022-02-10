@@ -10,8 +10,11 @@ from django.urls import reverse
 from django.utils.text import Truncator
 from django.views.generic import DetailView, CreateView, ListView
 from django.views.generic.edit import FormMixin, DeleteView
+from pyecharts.charts import Line
+from rest_framework.views import APIView
 
 from dashboardapp.models import Dashboard
+from diamond_goose.pyecharts import json_response
 from exchangeapp.forms import ForeignCurrencyCreationForm, ForeignCurrencyTransactionCreationForm
 from exchangeapp.models import ForeignCurrency, ForeignCurrencyTransaction
 from masterinfoapp.models import CurrencyMaster
@@ -113,6 +116,60 @@ class ForeignCurrencyDetailView(DetailView, FormMixin):
         self.object.update_statistics()
 
         return context
+
+
+def foreign_currency_line_graph(request) -> Line:
+    queryset_exchange_rate = ForeignCurrencyTransaction.objects.filter()
+
+    x_data = []
+    y_data = []
+    color_list = []
+    for pension in queryset_pension:
+        x_data.append(pension.pension_master.pension_name)
+        y_data.append(pension.total_amount)
+        color_list.append(pension.pension_master.color_hex)
+    data_pair = [list(z) for z in zip(x_data, y_data)]
+    data_pair.sort(key=lambda x: x[1])
+
+    pie_chart = (
+        Pie()
+        .add(
+            series_name="Pension Composition",
+            data_pair=data_pair,
+            radius=["40%", "70%"],
+            # rosetype="radius",
+            center=["50%", "55%"],
+            label_opts=opts.LabelOpts(is_show=False, position="center"),
+        )
+        .set_colors(
+            color_list
+        )
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title="Pension Composition",
+                pos_left="center",
+                pos_top="5",
+                title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
+            ),
+            legend_opts=opts.LegendOpts(pos_left="left",
+                                        pos_top="center",
+                                        orient="vertical",
+                                        textstyle_opts=opts.TextStyleOpts(color="#fff")),
+        )
+        .set_series_opts(
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item", formatter="{b}: {c} ({d}%)"
+            ),
+            label_opts=opts.LabelOpts(color="#fff"),
+        )
+        .dump_options_with_quotes()
+    )
+    return pie_chart
+
+
+class ForeignCurrencyLineGraphView(APIView):
+    def get(self, request, *args, **kwargs):
+        return json_response(json.loads(foreign_currency_line_graph(request)))
 
 
 def foreign_currency_refresh(request):
