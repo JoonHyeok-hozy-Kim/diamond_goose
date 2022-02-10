@@ -178,8 +178,6 @@ class ForeignCurrency(models.Model):
 
         # Insert market_closing_rate for checked transactions
         if history_start_date is not None and history_end_date is not None:
-            print('history : {} ~ {}'.format(history_start_date.strftime("%d/%m/%Y"),
-                                             history_end_date.strftime("%d/%m/%Y")))
             currency_cross_list = [
                 self.dashboard.main_currency.currency_code,
                 '/',
