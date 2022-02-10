@@ -1,3 +1,4 @@
+import datetime
 import json
 import investpy as ip
 from datetime import timedelta
@@ -157,6 +158,19 @@ def foreign_currency_line_graph(request, foreign_currency_pk) -> Line:
             if min(transaction.my_accumulated_rate, transaction.market_closing_rate) < lower_bound:
                 lower_bound = min(transaction.my_accumulated_rate, transaction.market_closing_rate)
         count += 1
+
+    # Add current exchange rate at last
+    target_foreign_currency = ForeignCurrency.objects.get(pk=foreign_currency_pk)
+    my_rate_mv = target_foreign_currency.accumulated_exchange_rate_mv
+    mkt_rate = target_foreign_currency.current_exchange_rate
+
+    transaction_date_list.append(datetime.datetime.today().strftime("%Y.%m.%d"))
+    my_exchange_rate_list.append(my_rate_mv)
+    market_exchange_rate_list.append(mkt_rate)
+    if max(my_rate_mv, mkt_rate) > upper_bound:
+        upper_bound = max(my_rate_mv, mkt_rate)
+    if min(my_rate_mv, mkt_rate) < lower_bound:
+        lower_bound = min(my_rate_mv, mkt_rate)
 
     color_list = ['#00B0F0', '#FFC000']
     area_color_js = (
