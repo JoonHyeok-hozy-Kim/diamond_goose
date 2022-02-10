@@ -175,8 +175,11 @@ class ForeignCurrency(models.Model):
             target_transaction = ForeignCurrencyTransaction.objects.filter(pk=transaction.pk)
             target_transaction.update(my_accumulated_rate=accumulated_exchange_rate_mv)
 
+
         # Insert market_closing_rate for checked transactions
         if history_start_date is not None and history_end_date is not None:
+            print('history : {} ~ {}'.format(history_start_date.strftime("%d/%m/%Y"),
+                                             history_end_date.strftime("%d/%m/%Y")))
             currency_cross_list = [
                 self.dashboard.main_currency.currency_code,
                 '/',
@@ -185,34 +188,25 @@ class ForeignCurrency(models.Model):
             currency_cross = ''.join(currency_cross_list)
             history_dict = None
 
-            market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
-                                                                                        history_start_date.strftime(
-                                                                                            "%d/%m/%Y"),
-                                                                                        history_end_date.strftime(
-                                                                                            "%d/%m/%Y"),
-                                                                                        True))
-            history_dict = market_closing_rate_json['historical']
-            reverse_flag = True
-
-            # try:
-            #     market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
-            #                                                                                 history_start_date.strftime("%d/%m/%Y"),
-            #                                                                                 history_end_date.strftime("%d/%m/%Y"),
-            #                                                                                 True))
-            #     history_dict = market_closing_rate_json['historical']
-            #     reverse_flag = True
-            # except Exception as historical_market_data:
-            #     print('Exception for historical_market_data : {}'.format(historical_market_data))
-            #     try:
-            #         currency_cross = ''.join(currency_cross_list[::-1])
-            #         market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
-            #                                                                                     history_start_date.strftime("%d/%m/%Y"),
-            #                                                                                     history_end_date.strftime("%d/%m/%Y"),
-            #                                                                                     True))
-            #         history_dict = market_closing_rate_json['historical']
-            #         reverse_flag = False
-            #     except Exception as historical_market_data_reverse:
-            #         print('Exception for historical_market_data_reverse : {}'.format(historical_market_data_reverse))
+            try:
+                market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                            history_start_date.strftime("%d/%m/%Y"),
+                                                                                            history_end_date.strftime("%d/%m/%Y"),
+                                                                                            True))
+                history_dict = market_closing_rate_json['historical']
+                reverse_flag = True
+            except Exception as historical_market_data:
+                print('Exception for historical_market_data : {}'.format(historical_market_data))
+                try:
+                    currency_cross = ''.join(currency_cross_list[::-1])
+                    market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,
+                                                                                                history_start_date.strftime("%d/%m/%Y"),
+                                                                                                history_end_date.strftime("%d/%m/%Y"),
+                                                                                                True))
+                    history_dict = market_closing_rate_json['historical']
+                    reverse_flag = False
+                except Exception as historical_market_data_reverse:
+                    print('Exception for historical_market_data_reverse : {}'.format(historical_market_data_reverse))
 
             if history_dict:
                 for transaction_pk in history_target_pk_list:
