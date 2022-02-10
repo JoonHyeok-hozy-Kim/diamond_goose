@@ -10,7 +10,9 @@ from django.urls import reverse
 from django.utils.text import Truncator
 from django.views.generic import DetailView, CreateView, ListView
 from django.views.generic.edit import FormMixin, DeleteView
-from pyecharts.charts import Line
+from pyecharts.charts import Line, Grid
+from pyecharts import options as opts
+from pyecharts.commons.utils import JsCode
 from rest_framework.views import APIView
 
 from dashboardapp.models import Dashboard
@@ -112,64 +114,123 @@ class ForeignCurrencyDetailView(DetailView, FormMixin):
                 transaction.market_closing_rate = '-'
         context.update({'queryset_transaction_list': queryset_transaction_list})
 
+        line_graph_url_list = ['http://']
+        ip_address = None
+        try:
+            from diamond_goose.settings.local import LOCAL_IP_ADDRESS
+            ip_address = LOCAL_IP_ADDRESS
+        except Exception as deploy_environment:
+            print('Fo Chart - deploy_environment : {}'.format(deploy_environment))
+            from diamond_goose.settings.deploy import DEPLOY_IP_ADDRESS
+            ip_address = DEPLOY_IP_ADDRESS
+
+        if ip_address:
+            line_graph_url_list.append(ip_address)
+            line_graph_url_list.append('/exchange/foreigncurrency_line_graph/')
+            line_graph_url_list.append(str(self.object.pk))
+            context.update({'line_graph_url': ''.join(line_graph_url_list)})
+
         # Update Foreign Currency Stats.
         self.object.update_statistics()
 
         return context
 
 
-def foreign_currency_line_graph(request) -> Line:
-    queryset_exchange_rate = ForeignCurrencyTransaction.objects.filter()
+def foreign_currency_line_graph(request, foreign_currency_pk) -> Line:
+    queryset_foreign_currency_transactions = ForeignCurrencyTransaction.objects.filter(foreign_currency_id=foreign_currency_pk).order_by('transaction_date')
 
-    x_data = []
-    y_data = []
-    color_list = []
-    for pension in queryset_pension:
-        x_data.append(pension.pension_master.pension_name)
-        y_data.append(pension.total_amount)
-        color_list.append(pension.pension_master.color_hex)
-    data_pair = [list(z) for z in zip(x_data, y_data)]
-    data_pair.sort(key=lambda x: x[1])
+    transaction_date_list = []
+    my_exchange_rate_list = []
+    market_exchange_rate_list = []
+    count = 0
+    for transaction in queryset_foreign_currency_transactions:
+        transaction_date_list.append(transaction.transaction_date.strftime("%Y.%m.%d"))
+        my_exchange_rate_list.append(transaction.my_accumulated_rate if transaction.my_accumulated_rate is not None else 0)
+        market_exchange_rate_list.append(transaction.market_closing_rate if transaction.my_accumulated_rate is not None else 0)
 
-    pie_chart = (
-        Pie()
-        .add(
-            series_name="Pension Composition",
-            data_pair=data_pair,
-            radius=["40%", "70%"],
-            # rosetype="radius",
-            center=["50%", "55%"],
-            label_opts=opts.LabelOpts(is_show=False, position="center"),
-        )
-        .set_colors(
-            color_list
-        )
+        if count == 0:
+            upper_bound = max(transaction.my_accumulated_rate, transaction.market_closing_rate)
+            lower_bound = min(transaction.my_accumulated_rate, transaction.market_closing_rate)
+        else:
+            if max(transaction.my_accumulated_rate, transaction.market_closing_rate) > upper_bound:
+                upper_bound = max(transaction.my_accumulated_rate, transaction.market_closing_rate)
+            if min(transaction.my_accumulated_rate, transaction.market_closing_rate) < lower_bound:
+                lower_bound = min(transaction.my_accumulated_rate, transaction.market_closing_rate)
+        count += 1
+
+    color_list = ['#00B0F0', '#FFC000']
+    area_color_js = (
+        "new echarts.graphic.LinearGradient(0, 0, 0, 1, "
+        "[{offset: 0, color: '#eb64fb'}, {offset: 1, color: '#3fbbff0d'}], false)"
+    )
+    line_graph = (
+        Line()
         .set_global_opts(
-            title_opts=opts.TitleOpts(
-                title="Pension Composition",
-                pos_left="center",
-                pos_top="5",
-                title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
-            ),
-            legend_opts=opts.LegendOpts(pos_left="left",
-                                        pos_top="center",
-                                        orient="vertical",
-                                        textstyle_opts=opts.TextStyleOpts(color="#fff")),
+            title_opts=opts.TitleOpts(title="Exchange History",
+                                      title_textstyle_opts=opts.TextStyleOpts(color='#FFFFFF', font_size=25)),
+            xaxis_opts=opts.AxisOpts(type_='category',
+                                     boundary_gap=False,
+                                     axislabel_opts=opts.LabelOpts(margin=20, color="#FFFFFF", rotate=15),
+                                     axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color='#FFFFFF')),
+                                     axistick_opts=opts.AxisTickOpts(
+                                         is_show=True,
+                                         length=6,
+                                         linestyle_opts=opts.LineStyleOpts(color="#FFFFFF")),
+                                     ),
+            yaxis_opts=opts.AxisOpts(max_=upper_bound+5,
+                                     min_=lower_bound-5,
+                                     axislabel_opts=opts.LabelOpts(color='#FFFFFF'),
+                                     axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color='#FFFFFF')),
+                                     splitline_opts=opts.SplitLineOpts(
+                                         is_show=True,
+                                         linestyle_opts=opts.LineStyleOpts(color="#FFFFFF1F")
+                                     ),
+                                     ),
+            tooltip_opts=opts.TooltipOpts(background_color='#FFF'),
+            legend_opts=opts.LegendOpts(is_show=True,
+                                        pos_right='right',
+                                        pos_top='center',
+                                        textstyle_opts=opts.TextStyleOpts(color='#FFFFFF'),
+                                        orient='vertical',
+                                        legend_icon=False),
         )
-        .set_series_opts(
-            tooltip_opts=opts.TooltipOpts(
-                trigger="item", formatter="{b}: {c} ({d}%)"
-            ),
-            label_opts=opts.LabelOpts(color="#fff"),
+        .set_colors(color_list)
+        .add_xaxis(xaxis_data=transaction_date_list)
+        .add_yaxis(
+            series_name='My Rate',
+            y_axis=my_exchange_rate_list,
+            is_symbol_show=False,
+            label_opts=opts.LabelOpts(is_show=True, position="top", color="white"),
+            linestyle_opts=opts.LineStyleOpts(type_='solid', width=3),
         )
+        .add_yaxis(
+            series_name='MKT Rate',
+            y_axis=market_exchange_rate_list,
+            is_symbol_show=False,
+            linestyle_opts=opts.LineStyleOpts(type_='solid', width=2.5),
+        )
+    )
+
+    grid = (
+        Grid()
+        .add(line_graph,
+             grid_opts=opts.GridOpts(
+                 pos_top="20%",
+                 pos_left="3%",
+                 pos_right="10%",
+                 pos_bottom="5%",
+                 is_contain_label=True,
+             ))
         .dump_options_with_quotes()
     )
-    return pie_chart
+
+    return grid
 
 
 class ForeignCurrencyLineGraphView(APIView):
     def get(self, request, *args, **kwargs):
-        return json_response(json.loads(foreign_currency_line_graph(request)))
+        foreign_currency_pk = request.__dict__['parser_context']['kwargs']['foreign_currency_pk']
+        return json_response(json.loads(foreign_currency_line_graph(request, foreign_currency_pk)))
 
 
 def foreign_currency_refresh(request):

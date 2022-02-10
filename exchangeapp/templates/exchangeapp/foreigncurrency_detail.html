@@ -32,8 +32,8 @@
                 {% include 'exchangeapp/foreigncurrency_summary.html' with foreign_currency=target_foreign_currency %}
             </div>
 
-            <div style="border: 1px solid white; width: 80%; height: 20rem; margin-bottom: 1rem; color: #FFFFFF;">
-                환율 관련 Graph 영역
+            <div style="width: 80%; height: 25rem; margin-bottom: 1rem; color: #FFFFFF;">
+                {% include 'exchangeapp/foreigncurrency_line_graph.html' with line_graph_url=line_graph_url %}
             </div>
 
             <div>

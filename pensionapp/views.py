@@ -10,7 +10,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.text import Truncator
 from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.edit import FormMixin, DeleteView, UpdateView
-from pyecharts.charts import Bar, Pie
+from pyecharts.charts import Pie
 from pyecharts import options as opts
 from rest_framework.views import APIView
 
@@ -112,18 +112,18 @@ def pension_pie_chart(request) -> Pie:
                 title="Pension Composition",
                 pos_left="center",
                 pos_top="5",
-                title_textstyle_opts=opts.TextStyleOpts(color="#fff"),
+                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF"),
             ),
             legend_opts=opts.LegendOpts(pos_left="left",
                                         pos_top="center",
                                         orient="vertical",
-                                        textstyle_opts=opts.TextStyleOpts(color="#fff")),
+                                        textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
         )
         .set_series_opts(
             tooltip_opts=opts.TooltipOpts(
                 trigger="item", formatter="{b}: {c} ({d}%)"
             ),
-            label_opts=opts.LabelOpts(color="#fff"),
+            label_opts=opts.LabelOpts(color="#FFFFFF"),
         )
         .dump_options_with_quotes()
     )

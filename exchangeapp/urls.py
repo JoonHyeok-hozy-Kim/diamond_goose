@@ -3,7 +3,7 @@ from django.urls import path
 from exchangeapp.views import MyExchangeDetailView, ForeignCurrencyCreateView, MyExchangeCurrencyMasterListView, \
     MyExchangeCurrencyMasterDetailView, ForeignCurrencyDeleteView, ForeignCurrencyDetailView, \
     ForeignCurrencyTransactionCreateView, ForeignCurrencyTransactionDeleteView, foreign_currency_transaction_delete_all, \
-    foreign_currency_refresh
+    foreign_currency_refresh, ForeignCurrencyLineGraphView
 
 app_name = 'exchangeapp'
 
@@ -17,6 +17,8 @@ urlpatterns = [
     path('foreigncurrency_delete/<int:pk>', ForeignCurrencyDeleteView.as_view(), name='foreigncurrency_delete'),
     path('foreigncurrency_detail/<int:pk>', ForeignCurrencyDetailView.as_view(), name='foreigncurrency_detail'),
     path('foreigncurrency_refresh/', foreign_currency_refresh, name='foreigncurrency_refresh'),
+
+    path('foreigncurrency_line_graph/<int:foreign_currency_pk>', ForeignCurrencyLineGraphView.as_view(), name='foreigncurrency_line_graph'),
 
     path('foreigncurrencytransaction_create/', ForeignCurrencyTransactionCreateView.as_view(), name='foreigncurrencytransaction_create'),
     path('foreigncurrencytransaction_delete/<int:pk>', ForeignCurrencyTransactionDeleteView.as_view(), name='foreigncurrencytransaction_delete'),

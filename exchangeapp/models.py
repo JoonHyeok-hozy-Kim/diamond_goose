@@ -171,6 +171,10 @@ class ForeignCurrency(models.Model):
                 history_end_date = transaction.transaction_date
                 history_target_pk_list.append(transaction.pk)
 
+            # Insert or Update my_accumulated_rate
+            target_transaction = ForeignCurrencyTransaction.objects.filter(pk=transaction.pk)
+            target_transaction.update(my_accumulated_rate=accumulated_exchange_rate_mv)
+
         # Insert market_closing_rate for checked transactions
         if history_start_date is not None and history_end_date is not None:
             currency_cross_list = [
@@ -216,6 +220,7 @@ class ForeignCurrency(models.Model):
                                                                                        dict_element['close']))
 
 
+
         target_foreign_currency.update(current_amount=current_amount)
         target_foreign_currency.update(total_realized_profit=total_realized_profit)
 
@@ -249,6 +254,7 @@ class ForeignCurrencyTransaction(models.Model):
     amount = models.FloatField(default=0, null=False)
     exchange_rate = models.FloatField(default=0, null=False)
     market_closing_rate = models.FloatField(null=True)
+    my_accumulated_rate = models.FloatField(null=True)
     applied_flag = models.BooleanField(default=False, null=False)
     note = models.CharField(max_length=100, default='-', null=True)
     transaction_date = models.DateTimeField(null=False)
