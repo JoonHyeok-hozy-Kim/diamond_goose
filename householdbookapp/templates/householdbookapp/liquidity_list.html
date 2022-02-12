@@ -28,91 +28,76 @@
             </div>
         </div>
 
-        <div style="margin: 0 1rem; display: block;">
-            <div style="display: inline-block; width: 40rem;">
-                {% include 'householdbookapp/liquidity_pie_chart.html' %}
-            </div>
-
-            <div style="display: inline-block; min-height: 21rem;">
-                <div style="margin-bottom: 1rem;">
-{#                    <table class="portfolioapp_inverted_table">#}
-{#                        <tr class="portfolioapp_inverted_table_tr">#}
-{#                            <th class="portfolioapp_inverted_table_th">Total Amount</th>#}
-{#                        </tr>#}
-{#                        <tr class="portfolioapp_inverted_table_tr">#}
-{#                            <td class="portfolioapp_inverted_table_td" style="text-align: end;">#}
-{#                                {% if main_currency_code == 'KRW' %}#}
-{#                                    {{ total_liquidity_amount|currency_krw }}#}
-{#                                {% elif main_currency_code == 'USD' %}#}
-{#                                    {{ total_liquidity_amount|currency_usd }}#}
-{#                                {% else %}#}
-{#                                    {{ total_liquidity_amount|intcomma }}#}
-{#                                {% endif %}#}
-{#                            </td>#}
-{#                        </tr>#}
-{#                    </table>#}
+        <div style="margin: 0 1rem; display: block; color: #FFFFFF;">
+            {% if queryset_my_liquidities %}
+                <div style="display: inline-block; width: 40rem; vertical-align: top;">
+                    {% include 'householdbookapp/liquidity_pie_chart.html' %}
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <table style="border: 1px solid black;  color: #FFFFFF;">
-                        <colgroup>
-                            <col span="1" style="width: 10rem;">
-                            <col span="1" style="width: 15rem;">
-                            <col span="1" style="width: 6rem;">
-                            <col span="1" style="width: 11rem;">
-                            <col span="1" style="width: 11rem;">
-                            <col span="1" style="width: 2.5rem;">
-                            <col span="1" style="width: 2.5rem;">
-                        </colgroup>
-                        <tr style="text-align: center; background-color: #007D8A">
-                            <th style="border: 1px solid black;">Type</th>
-                            <th style="border: 1px solid black;">Name</th>
-                            <th style="border: 1px solid black;">Currency</th>
-                            <th style="border: 1px solid black;">Amount</th>
-                            <th style="border: 1px solid black;">Amount (Main Curr)</th>
-                            <th style="border: 1px solid black;">Edit</th>
-                            <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
-                        </tr>
-                        {% for liquidity in queryset_my_liquidities %}
-                            <tr style="text-align: center; background-color: #264257">
-                                <td style="text-align: center; border: 1px solid black;">
-                                    {{ liquidity.liquidity_type }}
-                                </td>
-                                <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
-                                    {{ liquidity.liquidity_name }}
-                                </td>
-                                <td style="text-align: center; border: 1px solid black;">
-                                    {{ liquidity.currency.currency_code }}
-                                </td>
-                                <td style="text-align: end; border: 1px solid black; text-indent: 0.3rem;">
-                                    {% if liquidity.currency.currency_code == 'KRW' %} {{ liquidity.amount|currency_krw }}
-                                    {% elif liquidity.currency.currency_code == 'USD' %} {{ liquidity.amount|currency_usd }}
-                                    {% else %} {{ liquidity.amount|intcomma }}
-                                    {% endif %}
-                                </td>
-                                <td style="text-align: end; border: 1px solid black; text-indent: 0.3rem;">
-                                    {% if main_currency_code == 'KRW' %} {{ liquidity.amount_exchanged|currency_krw }}
-                                    {% elif main_currency_code == 'USD' %} {{ liquidity.amount_exchanged|currency_usd }}
-                                    {% else %} {{ liquidity.amount_exchanged|intcomma }}
-                                    {% endif %}
-                                </td>
-                                <td style="text-align: center; border: 1px solid black; text-align: center; justify-content: center;">
-                                    <a href="{% url 'householdbookapp:liquidity_update' pk=liquidity.pk %}" style="color: #FFFFFF;">
-                                        <span class="material-icons">edit</span>
-                                    </a>
-                                </td>
-                                <td style="text-align: center; border: 1px solid black;">
-                                    <a href="{% url 'householdbookapp:liquidity_delete' pk=liquidity.pk %}" style="color: #FA0067; font-weight: bold; text-decoration: none;">
-                                        X
-                                    </a>
-                                </td>
+                <div style="display: inline-block; min-height: 21rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <table style="border: 1px solid black;  color: #FFFFFF;">
+                            <colgroup>
+                                <col span="1" style="width: 10rem;">
+                                <col span="1" style="width: 15rem;">
+                                <col span="1" style="width: 6rem;">
+                                <col span="1" style="width: 11rem;">
+                                <col span="1" style="width: 11rem;">
+                                <col span="1" style="width: 2.5rem;">
+                                <col span="1" style="width: 2.5rem;">
+                            </colgroup>
+                            <tr style="text-align: center; background-color: #007D8A">
+                                <th style="border: 1px solid black;">Type</th>
+                                <th style="border: 1px solid black;">Name</th>
+                                <th style="border: 1px solid black;">Currency</th>
+                                <th style="border: 1px solid black;">Amount</th>
+                                <th style="border: 1px solid black;">Amount (Main Curr)</th>
+                                <th style="border: 1px solid black;">Edit</th>
+                                <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            {% for liquidity in queryset_my_liquidities %}
+                                <tr style="text-align: center; background-color: #264257">
+                                    <td style="text-align: center; border: 1px solid black;">
+                                        {{ liquidity.liquidity_type }}
+                                    </td>
+                                    <td style="text-align: start; border: 1px solid black; text-indent: 0.3rem;">
+                                        {{ liquidity.liquidity_name }}
+                                    </td>
+                                    <td style="text-align: center; border: 1px solid black;">
+                                        {{ liquidity.currency.currency_code }}
+                                    </td>
+                                    <td style="text-align: end; border: 1px solid black; text-indent: 0.3rem;">
+                                        {% if liquidity.currency.currency_code == 'KRW' %} {{ liquidity.amount|currency_krw }}
+                                        {% elif liquidity.currency.currency_code == 'USD' %} {{ liquidity.amount|currency_usd }}
+                                        {% else %} {{ liquidity.amount|intcomma }}
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: end; border: 1px solid black; text-indent: 0.3rem;">
+                                        {% if main_currency_code == 'KRW' %} {{ liquidity.amount_exchanged|currency_krw }}
+                                        {% elif main_currency_code == 'USD' %} {{ liquidity.amount_exchanged|currency_usd }}
+                                        {% else %} {{ liquidity.amount_exchanged|intcomma }}
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center; border: 1px solid black; text-align: center; justify-content: center;">
+                                        <a href="{% url 'householdbookapp:liquidity_update' pk=liquidity.pk %}" style="color: #FFFFFF;">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                    </td>
+                                    <td style="text-align: center; border: 1px solid black;">
+                                        <a href="{% url 'householdbookapp:liquidity_delete' pk=liquidity.pk %}" style="color: #FA0067; font-weight: bold; text-decoration: none;">
+                                            X
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+                    </div>
 
                 </div>
-
-            </div>
+            {% else %}
+                No Liquidity yet. Please add one.
+            {% endif %}
         </div>
     </div>
 
