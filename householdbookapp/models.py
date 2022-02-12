@@ -36,7 +36,38 @@ class Liquidity(models.Model):
         target_liquidity = Liquidity.objects.filter(pk=self.pk)
         for foreign_currency in queryset_my_foreign_currencies:
             if self.currency == foreign_currency.currency_master:
+                foreign_currency.update_statistics()
+                foreign_currency.refresh_from_db()
                 amount_exchanged = self.amount * foreign_currency.current_exchange_rate
                 target_liquidity.update(amount_exchanged=amount_exchanged)
                 return
         target_liquidity.update(amount_exchanged=self.amount)
+
+
+class Debt(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='debt')
+    dashboard = models.ForeignKey(Dashboard, on_delete=models.CASCADE, related_name='debt')
+    debt_name = models.CharField(max_length=100, default='debt', null=False)
+    long_term_debt_flag = models.BooleanField(default=False, null=False)
+    currency = models.ForeignKey(CurrencyMaster, on_delete=models.CASCADE, related_name='debt')
+    amount = models.FloatField(default=0, null=False)
+    amount_exchanged = models.FloatField(default=0, null=False)
+    creation_date = models.DateTimeField(auto_now=True)
+    last_update_date = models.DateTimeField(auto_now_add=True)
+
+    def update_statistics(self):
+        self.amount_exchanged_calculation()
+        self.refresh_from_db()
+
+    def amount_exchanged_calculation(self):
+        queryset_my_foreign_currencies = ForeignCurrency.objects.filter(owner=self.owner,
+                                                                        dashboard=self.dashboard)
+        target_debt = Debt.objects.filter(pk=self.pk)
+        for foreign_currency in queryset_my_foreign_currencies:
+            if self.currency == foreign_currency.currency_master:
+                foreign_currency.update_statistics()
+                foreign_currency.refresh_from_db()
+                amount_exchanged = self.amount * foreign_currency.current_exchange_rate
+                target_debt.update(amount_exchanged=amount_exchanged)
+                return
+        target_debt.update(amount_exchanged=self.amount)
