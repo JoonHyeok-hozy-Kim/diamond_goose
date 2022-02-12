@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/portfolioapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+
+        <div style="display: block">
+            <div style="display: block; margin-bottom: 1rem;">
+                <a href="{% url 'dashboardapp:detail' pk=dashboard_pk %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">show_chart</span>
+                </a>
+            </div>
+            <div style="display: block">
+                <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">Householdbook</h3>
+            </div>
+        </div>
+
+        <div style="margin: 1rem; color: #FFFFFF">
+            <div style="margin-bottom: 1rem; height: 20rem; border: 1px solid white;">
+                Summary Statistics and Graph TBD
+            </div>
+            <div style="margin-bottom: 1rem; display: block">
+                <div style="display: inline-block; margin-right: 1rem; width: 30%; border: 1px solid white;">
+                    <div style="display: block">
+                        <h5 style="display: inline-block; margin: 1rem; color: #FFFFFF; font-weight: bolder;">Liquidity Management</h5>
+                        <a href="{% url 'householdbookapp:liquidity_list' %}" class="btn btn-success btn-sm">
+                            <span class="material-icons">savings</span>
+                        </a>
+                    </div>
+                    <div style="display: block">
+                        {% include 'householdbookapp/liquidity_pie_chart.html' with pie_chart_url=pie_chart_url %}
+                    </div>
+                </div>
+                <div style="display: inline-block; margin-right: 1rem; width: 30%; border: 1px solid white;">
+                    <h5 style="display: inline-block; margin: 1rem; color: #FFFFFF; font-weight: bolder;">Debt Management</h5>
+                    <a href="" class="btn btn-warning btn-sm">
+                        <span class="material-icons">credit_card</span>
+                    </a>
+                </div>
+                <div style="display: inline-block; margin-right: 1rem; width: 30%; border: 1px solid white;">
+                    <h5 style="display: inline-block; margin: 1rem; color: #FFFFFF; font-weight: bolder;">Income/Expense Management</h5>
+                    <a href="" class="btn btn-danger btn-sm">
+                        <span class="material-icons">sync_alt</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+{% endblock %}

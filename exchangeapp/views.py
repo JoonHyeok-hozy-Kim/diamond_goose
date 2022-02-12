@@ -1,5 +1,7 @@
 import datetime
 import json
+from time import sleep
+
 import investpy as ip
 from datetime import timedelta
 
@@ -288,7 +290,7 @@ class ForeignCurrencyTransactionCreateView(CreateView):
             market_closing_rate = round(market_closing_rate_json['historical'][0]['close'], 2)
         except Exception as historical_market_data:
             print('Exception for historical_market_data : {}'.format(historical_market_data))
-
+            sleep(5)
             try:
                 currency_cross = ''.join(currency_cross_list[::-1])
                 market_closing_rate_json = json.loads(ip.get_currency_cross_historical_data(currency_cross,

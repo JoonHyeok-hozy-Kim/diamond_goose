@@ -258,10 +258,10 @@ class MinValueFloat(models.FloatField):
 
 
 TRANSACTION_TYPE_CHOICES = (
-    ('BUY', '매수'),
-    ('SELL', '매도'),
-    ('DIVIDEND', '배당금'),
-    ('SPLIT', '액면분할'),
+    ('BUY', 'Buy'),
+    ('SELL', 'Sell'),
+    ('DIVIDEND', 'Dividend'),
+    ('SPLIT', 'Split'),
 )
 
 
