@@ -164,10 +164,12 @@ class LiquidityListView(ListView):
 
         queryset_my_liquidities = Liquidity.objects.filter(owner=self.request.user,
                                                            dashboard=dashboard_pk)
+        for liquidity in queryset_my_liquidities:
+            liquidity.update_statistics()
         total_liquidity_amount = 0
 
         for liquidity in queryset_my_liquidities:
-            liquidity.update_statistics()
+            # liquidity.update_statistics()
             total_liquidity_amount += liquidity.amount_exchanged
         context.update({'queryset_my_liquidities': queryset_my_liquidities})
         context.update({'total_liquidity_amount': total_liquidity_amount})
