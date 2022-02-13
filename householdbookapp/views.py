@@ -5,8 +5,9 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from pyecharts.charts import Pie
+from pyecharts.charts import Pie, Grid, Scatter, Line
 from pyecharts import options as opts
+from pyecharts.faker import Faker
 from rest_framework.views import APIView
 
 from dashboardapp.models import Dashboard
@@ -28,10 +29,9 @@ class HouseholdbookHomeView(ListView):
         dashboard_pk = queryset_my_dashboard.pk
         context.update({'dashboard_pk': dashboard_pk})
 
-        # Chart URLs
+        # Chart URL
         ip_address = None
-        liquidity_pie_chart_url_list = ['http://']
-        debt_pie_chart_url_list = ['http://']
+        householdbook_chart_url_list = ['http://']
         try:
             from diamond_goose.settings.local import LOCAL_IP_ADDRESS
             ip_address = LOCAL_IP_ADDRESS
@@ -41,15 +41,114 @@ class HouseholdbookHomeView(ListView):
             ip_address = DEPLOY_IP_ADDRESS
 
         if ip_address:
-            liquidity_pie_chart_url_list.append(ip_address)
-            liquidity_pie_chart_url_list.append('/householdbook/liquidity_pie_chart/')
-            context.update({'liquidity_pie_chart_url_list': ''.join(liquidity_pie_chart_url_list)})
-
-            debt_pie_chart_url_list.append(ip_address)
-            debt_pie_chart_url_list.append('/householdbook/debt_pie_chart/')
-            context.update({'debt_pie_chart_url_list': ''.join(debt_pie_chart_url_list)})
+            householdbook_chart_url_list.append(ip_address)
+            householdbook_chart_url_list.append('/householdbook/householdbook_chart/')
+            context.update({'householdbook_chart_url_list': ''.join(householdbook_chart_url_list)})
 
         return context
+
+
+class HouseholdbookChartView(APIView):
+    def get(self, request, *args, **kwargs):
+
+        chart_element_position = {
+            'liquidity_pie_chart_position': ["30%", "60%"],
+            'liquidity_title_position_left': "0%",
+            'liquidity_legend_position_left': "0%",
+
+            'debt_pie_chart_position': ["80%", "60%"],
+            'debt_title_position_left': "51%",
+            'debt_legend_position_left': "51%",
+        }
+
+
+        liquidity_pie_chart_data = liquidity_pie_chart_data_generator(request)
+        debt_pie_chart_data = debt_pie_chart_data_generator(request)
+        for color in debt_pie_chart_data['color_list']:
+            liquidity_pie_chart_data['color_list'].append(color)
+
+        liquidity_pie_chart = Pie()
+        liquidity_pie_chart.add(
+            series_name="Liquidity Composition",
+            data_pair=liquidity_pie_chart_data['data_pair'],
+            radius=["40%", "70%"],
+            # rosetype="radius",
+            center=chart_element_position['liquidity_pie_chart_position'],
+            label_opts=opts.LabelOpts(is_show=False, position="center"),
+        )
+        liquidity_pie_chart.set_colors(
+            liquidity_pie_chart_data['color_list']
+        )
+
+        liquidity_pie_chart.set_global_opts(
+            title_opts=opts.TitleOpts(
+                title=liquidity_pie_chart_data['total_amount_text'],
+                pos_left=chart_element_position['liquidity_title_position_left'],
+                pos_top="5",
+                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
+            ),
+            legend_opts=opts.LegendOpts(pos_left=chart_element_position['liquidity_legend_position_left'],
+                                        pos_top="center",
+                                        orient="vertical",
+                                        textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
+        )
+        liquidity_pie_chart.set_series_opts(
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item", formatter="{b}: {c} ({d}%)"
+            ),
+            label_opts=opts.LabelOpts(color="#FFFFFF"),
+        )
+
+
+        print(debt_pie_chart_data['color_list'])
+        debt_pie_chart = Pie()
+        debt_pie_chart.add(
+            series_name="Liquidity Composition",
+            data_pair=debt_pie_chart_data['data_pair'],
+            radius=["40%", "70%"],
+            # rosetype="radius",
+            center=chart_element_position['debt_pie_chart_position'],
+            label_opts=opts.LabelOpts(is_show=False, position="center"),
+        )
+
+        debt_pie_chart.set_colors(
+            debt_pie_chart_data['color_list']
+        )
+
+        debt_pie_chart.set_global_opts(
+            title_opts=opts.TitleOpts(
+                title=debt_pie_chart_data['total_amount_text'],
+                pos_left=chart_element_position['debt_title_position_left'],
+                pos_top="5",
+                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
+            ),
+            legend_opts=opts.LegendOpts(pos_left=chart_element_position['debt_legend_position_left'],
+                                        pos_top="center",
+                                        orient="vertical",
+                                        textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
+        )
+
+        debt_pie_chart.set_series_opts(
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item", formatter="{b}: {c} ({d}%)"
+            ),
+            label_opts=opts.LabelOpts(color="#FFFFFF"),
+        )
+
+        grid = (
+            Grid()
+            .add(
+                liquidity_pie_chart,
+                grid_opts=opts.GridOpts(pos_left="55%")
+            )
+            .add(
+                debt_pie_chart,
+                grid_opts=opts.GridOpts(pos_right="55%")
+            )
+            .dump_options_with_quotes()
+        )
+
+        return json_response(json.loads(grid))
 
 
 class LiquidityListView(ListView):
@@ -179,7 +278,7 @@ def currency_format(amount, currency_master):
     return ''.join(result_text_list)
 
 
-def liquidity_pie_chart(request) -> Pie:
+def liquidity_pie_chart_data_generator(request):
     queryset_liquidity = Liquidity.objects.filter(owner=request.user)
     x_data = []
     y_data = []
@@ -198,23 +297,31 @@ def liquidity_pie_chart(request) -> Pie:
     queryset_dashboard = Dashboard.objects.get(owner=request.user)
     total_amount_text = ''.join(['Total Amount : ',
                                 currency_format(total_amount, queryset_dashboard.main_currency)])
+    return {
+        'data_pair': data_pair,
+        'color_list': color_list,
+        'total_amount_text': total_amount_text,
+    }
 
-    pie_chart = (
-        Pie()
-        .add(
+
+def liquidity_pie_chart(request, dump_option=False) -> Pie:
+    liquidity_pie_chart_data = liquidity_pie_chart_data_generator(request)
+    pie_chart = Pie()
+    pie_chart.add(
             series_name="Liquidity Composition",
-            data_pair=data_pair,
+            data_pair=liquidity_pie_chart_data['data_pair'],
             radius=["40%", "70%"],
             # rosetype="radius",
             center=["60%", "60%"],
             label_opts=opts.LabelOpts(is_show=False, position="center"),
         )
-        .set_colors(
-            color_list
+    pie_chart.set_colors(
+            liquidity_pie_chart_data['color_list']
         )
-        .set_global_opts(
+
+    pie_chart.set_global_opts(
             title_opts=opts.TitleOpts(
-                title=total_amount_text,
+                title=liquidity_pie_chart_data['total_amount_text'],
                 pos_left="left",
                 pos_top="5",
                 title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
@@ -224,20 +331,23 @@ def liquidity_pie_chart(request) -> Pie:
                                         orient="vertical",
                                         textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
         )
-        .set_series_opts(
+    pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
                 trigger="item", formatter="{b}: {c} ({d}%)"
             ),
             label_opts=opts.LabelOpts(color="#FFFFFF"),
         )
-        .dump_options_with_quotes()
-    )
-    return pie_chart
+    dump_pie_chart = pie_chart.dump_options_with_quotes()
+
+    if dump_option:
+        return dump_pie_chart
+    else:
+        return pie_chart
 
 
 class LiquidityPieChartView(APIView):
     def get(self, request, *args, **kwargs):
-        return json_response(json.loads(liquidity_pie_chart(request)))
+        return json_response(json.loads(liquidity_pie_chart(request, dump_option=True)))
 
 
 class DebtListView(ListView):
@@ -319,7 +429,7 @@ class DebtDeleteView(DeleteView):
         return reverse('householdbookapp:debt_list')
 
 
-def debt_pie_chart(request) -> Pie:
+def debt_pie_chart_data_generator(request):
     queryset_debt = Debt.objects.filter(owner=request.user)
     x_data = []
     y_data = []
@@ -339,22 +449,32 @@ def debt_pie_chart(request) -> Pie:
     total_amount_text = ''.join(['Total Amount : ',
                                 currency_format(total_amount, queryset_dashboard.main_currency)])
 
-    pie_chart = (
-        Pie()
-        .add(
+    return {
+        'data_pair': data_pair,
+        'color_list': color_list,
+        'total_amount_text': total_amount_text,
+    }
+
+
+def debt_pie_chart(request, dump_option=False) -> Pie:
+    debt_pie_chart_data = debt_pie_chart_data_generator(request)
+    pie_chart = Pie()
+    pie_chart.add(
             series_name="Liquidity Composition",
-            data_pair=data_pair,
+            data_pair=debt_pie_chart_data['data_pair'],
             radius=["40%", "70%"],
             # rosetype="radius",
             center=["60%", "60%"],
             label_opts=opts.LabelOpts(is_show=False, position="center"),
         )
-        .set_colors(
-            color_list
+
+    pie_chart.set_colors(
+            debt_pie_chart_data['color_list']
         )
-        .set_global_opts(
+
+    pie_chart.set_global_opts(
             title_opts=opts.TitleOpts(
-                title=total_amount_text,
+                title=debt_pie_chart_data['total_amount_text'],
                 pos_left="left",
                 pos_top="5",
                 title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
@@ -364,18 +484,23 @@ def debt_pie_chart(request) -> Pie:
                                         orient="vertical",
                                         textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
         )
-        .set_series_opts(
+
+    pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
                 trigger="item", formatter="{b}: {c} ({d}%)"
             ),
             label_opts=opts.LabelOpts(color="#FFFFFF"),
         )
-        .dump_options_with_quotes()
-    )
-    return pie_chart
+
+    dump_pie_chart = pie_chart.dump_options_with_quotes()
+
+    if dump_option:
+        return dump_pie_chart
+    else:
+        return pie_chart
 
 
 class DebtPieChartView(APIView):
     def get(self, request, *args, **kwargs):
-        return json_response(json.loads(debt_pie_chart(request)))
+        return json_response(json.loads(debt_pie_chart(request, dump_option=True)))
 

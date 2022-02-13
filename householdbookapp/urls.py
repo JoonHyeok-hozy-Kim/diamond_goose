@@ -2,13 +2,14 @@ from django.urls import path
 
 from householdbookapp.views import LiquidityListView, HouseholdbookHomeView, LiquidityCreateView, LiquidityUpdateView, \
     LiquidityDeleteView, LiquidityPieChartView, DebtListView, DebtCreateView, DebtUpdateView, DebtDeleteView, \
-    DebtPieChartView
+    DebtPieChartView, HouseholdbookChartView
 
 app_name = "householdbookapp"
 
 urlpatterns = [
 
     path('householdbook_home/', HouseholdbookHomeView.as_view(), name='householdbook_home'),
+    path('householdbook_chart/', HouseholdbookChartView.as_view(), name='householdbook_chart'),
 
     path('liquidity_list/', LiquidityListView.as_view(), name='liquidity_list'),
     path('liquidity_create/', LiquidityCreateView.as_view(), name='liquidity_create'),

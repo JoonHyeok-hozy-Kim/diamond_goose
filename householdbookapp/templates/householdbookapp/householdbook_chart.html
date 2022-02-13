@@ -7,9 +7,9 @@
 <div style="margin: 1rem;">
 
     <div>
-        <div id="liquidity_pie" style="width: 40rem; height: 19rem;"></div>
+        <div id="householdbook_chart" style="width: 80rem; height: 19rem;"></div>
         <script>
-            var chart = echarts.init(document.getElementById('liquidity_pie'), 'white', {renderer: 'canvas'});
+            var chart = echarts.init(document.getElementById('householdbook_chart'), 'white', {renderer: 'canvas'});
 
             $(
                 function () {
@@ -20,7 +20,7 @@
             function fetchData() {
                 $.ajax({
                     type: "GET",
-                    url: "{{ liquidity_pie_chart_url_list }}",
+                    url: "{{ householdbook_chart_url_list }}",
                     dataType: 'json',
                     success: function (result) {
                         chart.setOption(result.data);
