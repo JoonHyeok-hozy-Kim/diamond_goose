@@ -2,7 +2,8 @@ from django.urls import path
 
 from householdbookapp.views import LiquidityListView, HouseholdbookHomeView, LiquidityCreateView, LiquidityUpdateView, \
     LiquidityDeleteView, LiquidityPieChartView, DebtListView, DebtCreateView, DebtUpdateView, DebtDeleteView, \
-    DebtPieChartView, HouseholdbookChartView
+    DebtPieChartView, HouseholdbookChartView, IncomeExpenseListView, IncomeExpenseCreateView, IncomeExpenseDeleteView, \
+    IncomeExpenseUpdateView
 
 app_name = "householdbookapp"
 
@@ -22,5 +23,11 @@ urlpatterns = [
     path('debt_update/<int:pk>', DebtUpdateView.as_view(), name='debt_update'),
     path('debt_delete/<int:pk>', DebtDeleteView.as_view(), name='debt_delete'),
     path('debt_pie_chart/', DebtPieChartView.as_view(), name='debt_pie_chart'),
+
+    path('income_expense_list/', IncomeExpenseListView.as_view(), name='income_expense_list'),
+    path('income_expense_create/', IncomeExpenseCreateView.as_view(), name='income_expense_create'),
+    path('income_expense_update/<int:pk>', IncomeExpenseUpdateView.as_view(), name='income_expense_update'),
+    path('income_expense_delete/<int:pk>', IncomeExpenseDeleteView.as_view(), name='income_expense_delete'),
+    # path('income_expense_pie_chart/', IncomeExpensePieChartView.as_view(), name='income_expense_pie_chart'),
 
 ]

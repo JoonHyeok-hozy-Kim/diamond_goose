@@ -5,6 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import FormMixin
 from pyecharts.charts import Pie, Grid, Scatter, Line
 from pyecharts import options as opts
 from pyecharts.faker import Faker
@@ -13,8 +14,8 @@ from rest_framework.views import APIView
 from dashboardapp.models import Dashboard
 from diamond_goose.pyecharts import json_response
 from exchangeapp.models import ForeignCurrency
-from householdbookapp.forms import LiquidityCreationForm, DebtCreationForm
-from householdbookapp.models import Liquidity, Debt
+from householdbookapp.forms import LiquidityCreationForm, DebtCreationForm, IncomeExpenseCreationForm
+from householdbookapp.models import Liquidity, Debt, IncomeExpense
 from masterinfoapp.models import CurrencyMaster
 
 
@@ -52,13 +53,15 @@ class HouseholdbookChartView(APIView):
     def get(self, request, *args, **kwargs):
 
         chart_element_position = {
-            'liquidity_pie_chart_position': ["30%", "60%"],
+            'liquidity_pie_chart_position': ["19%", "60%"],
             'liquidity_title_position_left': "0%",
             'liquidity_legend_position_left': "0%",
 
-            'debt_pie_chart_position': ["80%", "60%"],
-            'debt_title_position_left': "51%",
-            'debt_legend_position_left': "51%",
+            'debt_pie_chart_position': ["50%", "60%"],
+            'debt_title_position_left': "32%",
+            'debt_legend_position_left': "32%",
+
+            'title_font_size': 20,
         }
 
 
@@ -85,7 +88,8 @@ class HouseholdbookChartView(APIView):
                 title=liquidity_pie_chart_data['total_amount_text'],
                 pos_left=chart_element_position['liquidity_title_position_left'],
                 pos_top="5",
-                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
+                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF",
+                                                        font_size=chart_element_position['title_font_size']),
             ),
             legend_opts=opts.LegendOpts(pos_left=chart_element_position['liquidity_legend_position_left'],
                                         pos_top="center",
@@ -120,7 +124,8 @@ class HouseholdbookChartView(APIView):
                 title=debt_pie_chart_data['total_amount_text'],
                 pos_left=chart_element_position['debt_title_position_left'],
                 pos_top="5",
-                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF", font_size=20),
+                title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF",
+                                                        font_size=chart_element_position['title_font_size']),
             ),
             legend_opts=opts.LegendOpts(pos_left=chart_element_position['debt_legend_position_left'],
                                         pos_top="center",
@@ -505,4 +510,64 @@ def debt_pie_chart(request, dump_option=False) -> Pie:
 class DebtPieChartView(APIView):
     def get(self, request, *args, **kwargs):
         return json_response(json.loads(debt_pie_chart(request, dump_option=True)))
+
+
+class IncomeExpenseListView(ListView, FormMixin):
+    model = IncomeExpense
+    form_class = IncomeExpenseCreationForm
+    template_name = 'householdbookapp/income_expense_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(IncomeExpenseListView, self).get_context_data(**kwargs)
+
+        queryset_my_dashboard = Dashboard.objects.get(owner=self.request.user)
+        dashboard_pk = queryset_my_dashboard.pk
+        context.update({'dashboard_pk': dashboard_pk})
+
+        queryset_my_income_expenses = IncomeExpense.objects.filter(owner=self.request.user,
+                                                                   dashboard=dashboard_pk)
+        for income_expense in queryset_my_income_expenses:
+            if (income_expense.total_income_amount == 0 or income_expense.total_expense_amount == 0 or
+                income_expense.total_savings_amount == 0 or income_expense.monthly_savings_rate == 0):
+                income_expense.update_statistics()
+                income_expense.refresh_from_db()
+        context.update({'queryset_my_income_expenses': queryset_my_income_expenses})
+
+        return context
+
+
+class IncomeExpenseCreateView(CreateView):
+    model = IncomeExpense
+    form_class = IncomeExpenseCreationForm
+    template_name = 'householdbookapp/income_expense_create.html'
+
+    def form_valid(self, form):
+        temp_income_expense = form.save(commit=False)
+        temp_income_expense.owner = self.request.user
+        temp_income_expense.dashboard = Dashboard.objects.get(owner=self.request.user)
+        temp_income_expense.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('householdbookapp:income_expense_list')
+
+
+class IncomeExpenseUpdateView(UpdateView):
+    model = IncomeExpense
+    form_class = IncomeExpenseCreationForm
+    template_name = 'householdbookapp/income_expense_update.html'
+    context_object_name = 'target_income_expense'
+
+    def get_success_url(self):
+        return reverse('householdbookapp:income_expense_list')
+
+
+class IncomeExpenseDeleteView(DeleteView):
+    model = IncomeExpense
+    template_name = 'householdbookapp/income_expense_delete.html'
+    context_object_name = 'target_income_expense'
+
+    def get_success_url(self):
+        return reverse('householdbookapp:income_expense_list')
 
