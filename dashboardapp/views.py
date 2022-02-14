@@ -173,6 +173,8 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_y_data.append(pension.total_cash_amount)
         large_color_list.append(pension_color)
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
+    for i in range(2):
+        large_data_pair.pop()
 
     small_x_data = ['Total Asset']
     small_y_data = [total_asset_amount]
@@ -186,7 +188,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         else:
             small_color_list.append("#FA0067")
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
-    # large_color_list.extend(small_color_list)
+    large_color_list.extend(small_color_list)
 
     return {
         'large_data_pair': large_data_pair,
