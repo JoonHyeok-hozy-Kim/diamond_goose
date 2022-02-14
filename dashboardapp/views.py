@@ -233,8 +233,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
 
     line_graph = Line()
     line_graph.add_xaxis(xaxis_data=line_x_data)
-    color_list.extend(large_color_list)
-    color_list.extend(small_color_list)
 
     for statistic in line_y_data:
         line_graph.add_yaxis(
@@ -275,6 +273,10 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     dump_line_graph = line_graph.dump_options_with_quotes()
 
     # Pie Graphs
+    color_list_len = len(color_list)
+    for i in range(color_list_len):
+        color_list.pop(-1)
+    color_list.extend(large_color_list)
     large_pie_chart = Pie()
     large_pie_chart.add(
             series_name="Asset Composition",
@@ -282,10 +284,10 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["40%", "70%"],
             label_opts=opts.LabelOpts(is_show=True, position="center"),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["15%", "50%"],
+            center=["16.5%", "50%"],
         )
     large_pie_chart.set_colors(
-            large_color_list
+            color_list
         )
     large_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
@@ -296,13 +298,16 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     large_pie_chart.set_global_opts(
         title_opts=opts.TitleOpts(title='Leverage : '+leverage_rate,
                                   pos_top="40%",
-                                  pos_left="16%",
+                                  pos_left="14.5%",
                                   title_textstyle_opts=opts.TextStyleOpts(color="#FA0067",
                                                                           font_size=15)),
         legend_opts=opts.LegendOpts(is_show=False),
     )
 
-
+    color_list_len = len(color_list)
+    for i in range(color_list_len):
+        color_list.pop(-1)
+    color_list.extend(small_color_list)
     small_pie_chart = Pie()
     small_pie_chart.add(
             series_name="Leverage Status",
@@ -310,10 +315,10 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["30%", "40%"],
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["15%", "50%"],
+            center=["16.5%", "50%"],
         )
     small_pie_chart.set_colors(
-        small_color_list
+        color_list
     )
     small_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
@@ -484,7 +489,7 @@ def asset_history_excel_upload(request):
 
 
 def asset_history_line_graph_data_generator(request, dashboard_pk):
-    queryset_asset_history = AssetHistory.objects.filter(dashboard=dashboard_pk).order_by('capture_date')
+
     x_data = []
     line_y_data = [
         {'name': 'Asset', 'data_set': []},
@@ -496,6 +501,7 @@ def asset_history_line_graph_data_generator(request, dashboard_pk):
 
     max_y_value = 0
 
+    queryset_asset_history = AssetHistory.objects.filter(dashboard=dashboard_pk).order_by('capture_date')
     for asset_history in queryset_asset_history:
         x_data.append(asset_history.capture_date.strftime("%Y-%m-%d"))
 
@@ -515,6 +521,39 @@ def asset_history_line_graph_data_generator(request, dashboard_pk):
             if statistic['name'] =='Investment'      :     statistic['data_set'].append(asset_history.total_investment_amount)
             if statistic['name'] =='Net Capital'     :     statistic['data_set'].append(asset_history.net_capital_amount)
             if statistic['name'] =='Dept'            :     statistic['data_set'].append(asset_history.total_debt_amount)
+
+
+    # Current Data Set
+    today = datetime.today().strftime("%Y-%m-%d")
+    queryset_my_liquidities = Liquidity.objects.filter(dashboard=dashboard_pk)
+    queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
+    queryset_my_portfolio = Portfolio.objects.get(dashboard=dashboard_pk)
+
+    current_liquidity_amount = 0
+    for liquidity in queryset_my_liquidities:
+        current_liquidity_amount += liquidity.amount_exchanged
+
+    current_debt_amount = 0
+    for debt in queryset_my_debts:
+        current_debt_amount += debt.amount_exchanged
+
+    current_investment_amount = queryset_my_portfolio.current_value
+    current_total_asset_amount = current_liquidity_amount + current_investment_amount
+    current_net_capital = current_total_asset_amount - current_debt_amount
+
+    print(today)
+    print('{} / {} / {} / {} / {}'.format(current_total_asset_amount,
+                                          current_liquidity_amount,
+                                          current_investment_amount,
+                                          current_net_capital,
+                                          current_debt_amount))
+    x_data.append(today)
+    for statistic in line_y_data:
+        if statistic['name'] == 'Asset'      :     statistic['data_set'].append(current_total_asset_amount)
+        if statistic['name'] == 'Liquidity'  :     statistic['data_set'].append(current_liquidity_amount)
+        if statistic['name'] == 'Investment' :     statistic['data_set'].append(current_investment_amount)
+        if statistic['name'] == 'Net Capital':     statistic['data_set'].append(current_net_capital)
+        if statistic['name'] == 'Dept'       :     statistic['data_set'].append(current_debt_amount)
 
     return {
         'x_data': x_data,
