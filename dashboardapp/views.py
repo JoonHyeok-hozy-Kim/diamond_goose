@@ -142,11 +142,12 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     large_y_data = []
     large_color_list = []
     total_asset_amount = 0
+
     queryset_liquidity = Liquidity.objects.filter(dashboard=dashboard_pk)
     for liquidity in queryset_liquidity:
         large_x_data.append(liquidity.liquidity_name)
         large_y_data.append(liquidity.amount_exchanged)
-        large_color_list.append("#00C484")
+        large_color_list.append("#068CD6")
         total_asset_amount += liquidity.amount_exchanged
 
     queryset_portfolio = Portfolio.objects.get(dashboard=dashboard_pk)
@@ -204,6 +205,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             ),
             label_opts=opts.LabelOpts(color="#FFFFFF"),
         )
+    large_pie_chart.set_global_opts(legend_opts=opts.LegendOpts(is_show=False))
 
 
     small_data_pair, small_color_list = chart_base_data['small_data_pair'], chart_base_data['small_color_list']
