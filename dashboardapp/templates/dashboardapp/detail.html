@@ -15,7 +15,7 @@
             <h5 style="display: inline-block; margin-right: 1rem; color: #FFFFFF;">D+{{ d_day_count }}</h5>
             <div style="display: inline-block">
                 {% if target_portfolio_pk %}
-                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-info">
+                    <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-light">
                         <span class="material-icons">table_chart</span>
                     </a>
                 {% else %}
@@ -24,11 +24,11 @@
                     </div>
                 {% endif %}
 
-                <a href="{% url 'householdbookapp:householdbook_home' %}" class="btn btn-success">
+                <a href="{% url 'householdbookapp:householdbook_home' %}" class="btn btn-light">
                     <span class="material-icons">home</span>
                 </a>
 
-                <a href="{% url 'exchangeapp:myexchange_detail' pk=target_dashboard.pk %}" class="btn btn-info">
+                <a href="{% url 'exchangeapp:myexchange_detail' pk=target_dashboard.pk %}" class="btn btn-light">
                     <span class="material-icons">currency_exchange</span>
                 </a>
             </div>
