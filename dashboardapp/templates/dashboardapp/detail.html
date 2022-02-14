@@ -34,6 +34,12 @@
             </div>
         </div>
 
+        <div style="border: 1px solid white; color: #FA0067">
+            {% for pension in pension_list %}
+                <div style="display: inline-block">{{ pension }}</div>
+            {% endfor %}
+        </div>
+
 
         {% if target_portfolio_pk %}
             <div>

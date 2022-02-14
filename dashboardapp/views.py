@@ -109,6 +109,23 @@ class DashboardDetailView(DetailView, FormMixin):
             asset_summary_pie_chart_url_list.append('/dashboard/detail_asset_summary_pie_chart/')
             context.update({'asset_summary_pie_chart_url_list': ''.join(asset_summary_pie_chart_url_list)})
 
+        pension_list = []
+        queryset_my_pensions = Pension.objects.filter(portfolio=queryset_my_portfolio.pk)
+        for pension in queryset_my_pensions:
+            queryset_my_pension_assets = PensionAsset.objects.filter(pension=pension.pk)
+            for pension_asset in queryset_my_pension_assets:
+                if pension_asset.position_opened_flag:
+                    temp_list = [
+                        pension_asset.pension.pension_master.pension_name,
+                        pension_asset.asset_master.name,
+                        pension_asset.total_amount_exchanged,
+                        pension_asset.asset_master.asset_type_master.color_hex,
+                    ]
+                    pension_list.append(temp_list)
+        context.update({
+            'pension_list': pension_list,
+        })
+
         return context
 
     def set_format_mask(self, amount):
