@@ -154,11 +154,15 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
                                               position_opened_flag=True,
                                               quantity__gt=0).order_by('asset_master__asset_type')
     for asset in queryset_my_assets:
-        if asset.quantity > 0 and asset.position_opened_flag:
-            large_x_data.append(asset.asset_master.name)
-            large_y_data.append(asset.total_amount_exchanged)
-            large_color_list.append(asset.asset_master.asset_type_master.color_hex)
-            total_asset_amount += asset.total_amount_exchanged
+        # if asset.quantity > 0 and asset.position_opened_flag:
+        #     large_x_data.append(asset.asset_master.name)
+        #     large_y_data.append(asset.total_amount_exchanged)
+        #     large_color_list.append(asset.asset_master.asset_type_master.color_hex)
+        #     total_asset_amount += asset.total_amount_exchanged
+        large_x_data.append(asset.asset_master.name)
+        large_y_data.append(asset.total_amount_exchanged)
+        large_color_list.append(asset.asset_master.asset_type_master.color_hex)
+        total_asset_amount += asset.total_amount_exchanged
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
 
     small_x_data = ['Total Asset']
