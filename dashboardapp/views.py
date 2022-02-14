@@ -152,7 +152,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     queryset_portfolio = Portfolio.objects.get(dashboard=dashboard_pk)
     queryset_my_assets = Asset.objects.filter(portfolio=queryset_portfolio.pk,
                                               position_opened_flag=True,
-                                              quantity__gt=0)
+                                              quantity__gt=0).order_by('asset_master__asset_type')
     for asset in queryset_my_assets:
         if asset.quantity > 0 and asset.position_opened_flag:
             large_x_data.append(asset.asset_master.name)
