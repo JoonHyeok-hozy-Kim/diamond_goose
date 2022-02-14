@@ -216,9 +216,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
         )
-    small_pie_chart.set_colors(
-        small_color_list
-    )
     small_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
                 trigger="item", formatter="{b}: {c} ({d}%)"
