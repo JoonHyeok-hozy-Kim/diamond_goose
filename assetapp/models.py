@@ -6,6 +6,8 @@ from django.db import models
 # Create your models here.
 from django.db.models import Q
 
+from dashboardapp.models import Dashboard
+from exchangeapp.models import ForeignCurrency
 from masterinfoapp.models import AssetMaster
 from pensionapp.models import Pension
 from portfolioapp.models import Portfolio
@@ -62,6 +64,7 @@ class Asset(models.Model):
     quantity = models.FloatField(default=0, null=False)
     trade_stack_for_fifo = ListField(null=True)
     total_amount = models.FloatField(default=0, null=False)
+    total_amount_exchanged = models.FloatField(default=0, null=False)
     total_realized_profit_amount = models.FloatField(default=0, null=False)
     total_dividend_amount = models.FloatField(default=0, null=False)
     average_purchase_price_mv = models.FloatField(default=0, null=False)
@@ -80,6 +83,11 @@ class Asset(models.Model):
         else:
             self.calculate_from_transaction()
         self.refresh_from_db()
+
+    def amount_exchanger(self, dashboard_pk, amount, currency):
+        queryset_my_foreign_currencies = ForeignCurrency.objects.get(dashboard=dashboard_pk,
+                                                                     currency_master=currency)
+        return amount * queryset_my_foreign_currencies.current_exchange_rate
 
     def calculate_from_transaction(self):
 
@@ -150,9 +158,20 @@ class Asset(models.Model):
 
 
         final_quantity = temp_quantity
+        total_amount = final_quantity*self.asset_master.current_price
 
         target_asset_instance.update(quantity=final_quantity)
-        target_asset_instance.update(total_amount=final_quantity*self.asset_master.current_price)
+        target_asset_instance.update(total_amount=total_amount)
+
+        queryset_my_dashboard = Dashboard.objects.get(pk=self.portfolio.dashboard.pk)
+        if self.asset_master.currency == queryset_my_dashboard.main_currency:
+            total_amount_exchanged = total_amount
+        else:
+            total_amount_exchanged = self.amount_exchanger(queryset_my_dashboard.pk,
+                                                           total_amount,
+                                                           self.asset_master.currency)
+        target_asset_instance.update(total_amount_exchanged=total_amount_exchanged)
+
         target_asset_instance.update(total_realized_profit_amount=total_realized_profit_amount)
         target_asset_instance.update(total_dividend_amount=total_dividend_amount)
 

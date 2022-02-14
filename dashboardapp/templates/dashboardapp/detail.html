@@ -10,12 +10,9 @@
 
     <div style="margin: 1rem;">
 
-        <div>
+        <div style="margin-bottom: 2rem;">
             <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">My Dashboard</h3>
             <h5 style="display: inline-block; margin-right: 1rem; color: #FFFFFF;">D+{{ d_day_count }}</h5>
-        </div>
-
-        <div style="margin: 1rem;">
             <div style="display: inline-block">
                 {% if target_portfolio_pk %}
                     <a href="{% url 'portfolioapp:portfolio_detail' pk=target_portfolio_pk %}" class="btn btn-info">
@@ -36,6 +33,44 @@
                 </a>
             </div>
         </div>
+
+
+        {% if target_portfolio_pk %}
+            <div style="color: #FFFFFF;">
+                <h5>My Economic Status on {{ date_today }}</h5>
+                <table class="dashboardapp_inverted_table" style="margin: 0; display: inline-block">
+                    <tr class="dashboardapp_inverted_table_tr" style="font-size: 1.5rem; background-color: #081321;">
+                        <th class="dashboardapp_inverted_table_th" style="height: 3.2rem; width: 9rem; background-color: #068CD6;">Total Asset</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 3.2rem; width: 9rem; background-color: #FF9C00;">Net Capital</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 3.2rem; width: 9rem; background-color: #FA0067;">Total Debt</th>
+                    </tr>
+                    <tr class="dashboardapp_inverted_table_tr" style="font-size: 1.5rem; background-color: #081321">
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 3.2rem; width: 10rem; background-color: #264257;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 3.2rem; width: 10rem; background-color: #264257;">{{ net_capital_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 3.2rem; width: 10rem; background-color: #264257;">{{ total_debt_amount }}</td>
+                    </tr>
+                    <tr class="dashboardapp_inverted_table_tr" style="font-size: 1rem; background-color: #264257">
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #00C484;">Liquidity</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #264257;">Risk Asset</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #328BAB;">Real Estate</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #FF9C00;">Guardian</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #300600;">LT Debt</th>
+                        <th class="dashboardapp_inverted_table_th" style="height: 1.6rem; width: 7rem; background-color: #5C0B00;">ST Debt</th>
+                    </tr>
+                    <tr class="dashboardapp_inverted_table_tr" style="font-size: 1rem;">
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #00C484;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #264257;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #328BAB;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #FF9C00;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #300600;">{{ total_asset_amount }}</td>
+                        <td class="dashboardapp_inverted_table_td" style="text-align: end; height: 1.6rem; width: 8rem; background-color: #5C0B00;">{{ total_asset_amount }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="height: 40rem; border: 1px solid white;">
+                {% include 'dashboardapp/detail_asset_summary_pie_chart.html' %}
+            </div>
+        {% endif %}
     </div>
 
 

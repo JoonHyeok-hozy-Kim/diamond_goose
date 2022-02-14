@@ -3,3 +3,9 @@
     font-family: 'Nanum Gothic', sans-serif;
     color: #FFFFFF
 }
+
+
+.dashboardapp_inverted_table { border-collapse: collapse; color:#FFFFFF; }
+.dashboardapp_inverted_table_tr { display: block; float: left;}
+.dashboardapp_inverted_table_th { display: block; border: 1px solid black; text-align: center;}
+.dashboardapp_inverted_table_td { display: block; border: 1px solid black; text-align: end;}
