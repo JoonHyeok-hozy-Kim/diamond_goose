@@ -1,0 +1,30 @@
+{% load static %}
+{% block extrahead %}
+    <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+{% endblock %}
+
+
+<div style="width: 100%; height: 100%;">
+    <div id="grid" style="width: 100%; height: 100%;"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('grid'), 'white', {renderer: 'canvas'});
+
+        $(
+            function () {
+                fetchData(chart);
+            }
+        );
+
+        function fetchData() {
+            $.ajax({
+                type: "GET",
+                url: "{{ grid_chart_url_list }}",
+                dataType: 'json',
+                success: function (result) {
+                    chart.setOption(result.data);
+                }
+            });
+        }
+    </script>
+</div>

@@ -1,0 +1,33 @@
+
+<form href="{% url 'householdbookapp:income_expense_tabular_insert' %}" method="post">
+    {% csrf_token %}
+    {% for form in tabular_form_set %}
+        <tr>
+            <td colspan="2" style="border: 1px solid black; text-align: center; background-color: #264257;">
+                <input type="submit" class="btn btn-light btn-sm" value="Insert">
+            </td>
+            <td>{{ form.period_name }}</td>
+            <td style="border: 1px solid black; background-color: #007D8A"></td>
+            <td style="border: 1px solid black; background-color: #007D8A"></td>
+            <td style="border: 1px solid black; background-color: #068CD6"></td>
+            <td>{{ form.income_labor }}</td>
+            <td>{{ form.income_capital }}</td>
+            <td>{{ form.income_etc }}</td>
+            <td style="border: 1px solid black; background-color: #C65911"></td>
+            <td>{{ form.expense_housing_communication }}</td>
+            <td>{{ form.expense_living }}</td>
+            <td>{{ form.expense_grocery }}</td>
+            <td>{{ form.expense_shopping }}</td>
+            <td>{{ form.expense_leisure }}</td>
+            <td>{{ form.expense_health }}</td>
+            <td>{{ form.expense_largess }}</td>
+            <td>{{ form.expense_transportation }}</td>
+            <td>{{ form.expense_alcohol }}</td>
+            <td>{{ form.expense_education }}</td>
+            <td>{{ form.expense_car }}</td>
+            <td>{{ form.expense_financial }}</td>
+            <td>{{ form.expense_love_affair }}</td>
+            <td>{{ form.expense_etc }}</td>
+        </tr>
+    {% endfor %}
+</form>

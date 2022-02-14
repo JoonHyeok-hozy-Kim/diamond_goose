@@ -133,7 +133,6 @@ class AssetTransactionDeleteView(DeleteView):
         return reverse('assetapp:asset_detail', kwargs={'pk': self.object.asset.pk})
 
 
-
 def assettransaction_delete_all(request):
 
     asset_pk = request.GET['asset_pk']
