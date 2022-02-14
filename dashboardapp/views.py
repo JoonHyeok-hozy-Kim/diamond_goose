@@ -193,9 +193,6 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
             small_color_list.append("#FA0067")
         total_debt_amount += debt.amount_exchanged
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
-    for i in range(2):
-        large_color_list.pop(-1)
-    large_color_list.extend(small_color_list)
 
     leverage_rate = 0
     if total_asset_amount > 0:
@@ -237,6 +234,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     line_graph = Line()
     line_graph.add_xaxis(xaxis_data=line_x_data)
     color_list.extend(large_color_list)
+    color_list.extend(small_color_list)
 
     for statistic in line_y_data:
         line_graph.add_yaxis(
