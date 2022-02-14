@@ -186,6 +186,8 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         else:
             small_color_list.append("#FA0067")
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
+    for i in range(2):
+        large_color_list.pop(-1)
     large_color_list.extend(small_color_list)
 
     return {
