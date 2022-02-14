@@ -14,12 +14,13 @@ from pyecharts.charts import Pie, Grid
 from pyecharts import options as opts
 from rest_framework.views import APIView
 
-from assetapp.models import Asset
+from assetapp.models import Asset, PensionAsset
 from dashboardapp.decorators import dashboard_ownership_required
 from dashboardapp.forms import DashboardCreationForm
 from dashboardapp.models import Dashboard
 from diamond_goose.pyecharts import json_response
 from householdbookapp.models import Liquidity, Debt
+from pensionapp.models import Pension
 from portfolioapp.forms import PortfolioCreationForm
 from portfolioapp.models import Portfolio
 
@@ -158,19 +159,31 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_y_data.append(asset.total_amount_exchanged)
         large_color_list.append(asset.asset_master.asset_type_master.color_hex)
         total_asset_amount += asset.total_amount_exchanged
+
+    queryset_my_pensions = Pension.objects.filter(portfolio=queryset_portfolio.pk)
+    for pension in queryset_my_pensions:
+        queryset_my_pension_assets = PensionAsset.objects.filter(pension=pension.pk)
+        for pension_asset in queryset_my_pension_assets:
+            large_x_data.append(pension_asset.asset_master.name)
+            large_y_data.append(pension_asset.total_amount_exchanged)
+            pension_color = pension_asset.asset_master.asset_type_master.color_hex
+            large_color_list.append(pension_color)
+        large_x_data.append(pension.pension_master.pension_name+' Cash')
+        large_y_data.append(pension.total_cash_amount)
+        large_color_list.append(pension_color)
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
 
     small_x_data = ['Total Asset']
     small_y_data = [total_asset_amount]
-    small_color_list = ["#264257"]
+    small_color_list = ["#17344A"]
     queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
     for debt in queryset_my_debts:
         small_x_data.append(debt.debt_name)
         small_y_data.append(debt.amount_exchanged)
         if debt.long_term_debt_flag:
-            small_color_list.append("#300600")
+            small_color_list.append("#FA0067")
         else:
-            small_color_list.append("#5C0B00")
+            small_color_list.append("#FA0067")
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
     large_color_list += small_color_list
 
@@ -219,7 +232,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             tooltip_opts=opts.TooltipOpts(
                 trigger="item", formatter="{b}: {c} ({d}%)"
             ),
-            label_opts=opts.LabelOpts(color="#FFFFFF"),
+            label_opts=opts.LabelOpts(is_show=False),
         )
     small_pie_chart.set_global_opts(legend_opts=opts.LegendOpts(is_show=False))
 
