@@ -173,8 +173,6 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_y_data.append(pension.total_cash_amount)
         large_color_list.append(pension_color)
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
-    for i in range(2):
-        large_data_pair.pop()
 
     small_x_data = ['Total Asset']
     small_y_data = [total_asset_amount]
@@ -201,7 +199,11 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
 def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     queryset_my_dashboard = Dashboard.objects.get(owner=request.user)
     chart_base_data = asset_summary_pie_chart_data_generator(request, queryset_my_dashboard.pk)
-    large_data_pair, large_color_list = chart_base_data['large_data_pair'], chart_base_data['large_color_list']
+    large_data_pair = chart_base_data['large_data_pair']
+    large_color_list = chart_base_data['large_color_list']
+    small_data_pair = chart_base_data['small_data_pair']
+    small_color_list = chart_base_data['small_color_list']
+
     large_pie_chart = Pie()
     large_pie_chart.add(
             series_name="Asset Composition",
@@ -222,7 +224,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     large_pie_chart.set_global_opts(legend_opts=opts.LegendOpts(is_show=False))
 
 
-    small_data_pair, small_color_list = chart_base_data['small_data_pair'], chart_base_data['small_color_list']
     small_pie_chart = Pie()
     small_pie_chart.add(
             series_name="Leverage Status",
