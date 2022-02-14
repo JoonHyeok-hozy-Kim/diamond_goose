@@ -67,7 +67,6 @@ class DashboardDetailView(DetailView, FormMixin):
             context.update({'target_portfolio_pk': queryset_my_portfolio.pk})
 
             queryset_my_liquidities = Liquidity.objects.filter(dashboard=self.object.pk)
-
             for liquidity in queryset_my_liquidities:
                 total_liquidity_amount += liquidity.amount_exchanged
             total_asset_amount += queryset_my_portfolio.current_value + total_liquidity_amount
@@ -152,7 +151,8 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
 
     queryset_portfolio = Portfolio.objects.get(dashboard=dashboard_pk)
     queryset_my_assets = Asset.objects.filter(portfolio=queryset_portfolio.pk,
-                                              position_opened_flag=True)
+                                              position_opened_flag=True,
+                                              quantity__gt=0)
     for asset in queryset_my_assets:
         large_x_data.append(asset.asset_master.name)
         large_y_data.append(asset.total_amount_exchanged)
