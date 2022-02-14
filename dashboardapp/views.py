@@ -164,10 +164,11 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     for pension in queryset_my_pensions:
         queryset_my_pension_assets = PensionAsset.objects.filter(pension=pension.pk)
         for pension_asset in queryset_my_pension_assets:
-            large_x_data.append(pension_asset.asset_master.name)
-            large_y_data.append(pension_asset.total_amount_exchanged)
-            pension_color = pension_asset.asset_master.asset_type_master.color_hex
-            large_color_list.append(pension_color)
+            if pension_asset.position_opened_flag:
+                large_x_data.append(pension_asset.asset_master.name)
+                large_y_data.append(pension_asset.total_amount_exchanged)
+                pension_color = pension_asset.asset_master.asset_type_master.color_hex
+                large_color_list.append(pension_color)
         large_x_data.append(pension.pension_master.pension_name+' Cash')
         large_y_data.append(pension.total_cash_amount)
         large_color_list.append(pension_color)
