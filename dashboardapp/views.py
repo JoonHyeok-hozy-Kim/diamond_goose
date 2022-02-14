@@ -177,6 +177,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     small_x_data = ['Total Asset']
     small_y_data = [total_asset_amount]
     small_color_list = ["#17344A"]
+    total_debt_amount = 0
     queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
     for debt in queryset_my_debts:
         small_x_data.append(debt.debt_name)
@@ -185,16 +186,22 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
             small_color_list.append("#FA0067")
         else:
             small_color_list.append("#FA0067")
+        total_debt_amount += debt.amount_exchanged
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
     for i in range(2):
         large_color_list.pop(-1)
     large_color_list.extend(small_color_list)
+
+    leverage_rate = 0
+    if total_asset_amount > 0:
+        leverage_rate = total_debt_amount/total_asset_amount
 
     return {
         'large_data_pair': large_data_pair,
         'large_color_list': large_color_list,
         'small_data_pair': small_data_pair,
         'small_color_list': small_color_list,
+        'leverage_rate': str(round(leverage_rate*100, 2))+'%',
     }
 
 
@@ -205,6 +212,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     large_color_list = chart_base_data['large_color_list']
     small_data_pair = chart_base_data['small_data_pair']
     small_color_list = chart_base_data['small_color_list']
+    leverage_rate = chart_base_data['leverage_rate']
 
     large_pie_chart = Pie()
     large_pie_chart.add(
@@ -212,7 +220,8 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             data_pair=large_data_pair,
             radius=["40%", "70%"],
             label_opts=opts.LabelOpts(is_show=True, position="center"),
-            itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1)
+            itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
+            center=["20%", "50%"],
         )
     large_pie_chart.set_colors(
             large_color_list
@@ -223,7 +232,14 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             ),
             label_opts=opts.LabelOpts(color="#FFFFFF"),
         )
-    large_pie_chart.set_global_opts(legend_opts=opts.LegendOpts(is_show=False))
+    large_pie_chart.set_global_opts(
+        title_opts=opts.TitleOpts(title='Leverage : '+leverage_rate,
+                                  pos_top="40%",
+                                  pos_left="16%",
+                                  title_textstyle_opts=opts.TextStyleOpts(color="#FA0067",
+                                                                          font_size=15)),
+        legend_opts=opts.LegendOpts(is_show=False),
+    )
 
 
     small_pie_chart = Pie()
@@ -233,6 +249,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["30%", "40%"],
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
+            center=["20%", "50%"],
         )
     small_pie_chart.set_colors(
         small_color_list
@@ -249,12 +266,12 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     grid.add(
         chart=large_pie_chart,
         grid_opts=opts.GridOpts(pos_top="60%",
-                                pos_right="10%")
+                                pos_left="10%")
     )
     grid.add(
         chart=small_pie_chart,
         grid_opts=opts.GridOpts(pos_top="60%",
-                                pos_right="10%")
+                                pos_left="10%")
     )
     dump_grid = grid.dump_options_with_quotes()
 
