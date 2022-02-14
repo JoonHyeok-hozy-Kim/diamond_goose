@@ -233,6 +233,9 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
 
     line_graph = Line()
     line_graph.add_xaxis(xaxis_data=line_x_data)
+    initial_color_len = len(color_list)
+    color_list.extend(large_color_list)
+    color_list.extend(small_color_list)
 
     for statistic in line_y_data:
         line_graph.add_yaxis(
@@ -273,10 +276,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     dump_line_graph = line_graph.dump_options_with_quotes()
 
     # Pie Graphs
-    color_list_len = len(color_list)
-    for i in range(color_list_len):
-        color_list.pop(-1)
-    color_list.extend(large_color_list)
     large_pie_chart = Pie()
     large_pie_chart.add(
             series_name="Asset Composition",
@@ -287,7 +286,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             center=["16.5%", "50%"],
         )
     large_pie_chart.set_colors(
-            color_list
+            large_color_list
         )
     large_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
@@ -304,10 +303,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
         legend_opts=opts.LegendOpts(is_show=False),
     )
 
-    color_list_len = len(color_list)
-    for i in range(color_list_len):
-        color_list.pop(-1)
-    color_list.extend(small_color_list)
     small_pie_chart = Pie()
     small_pie_chart.add(
             series_name="Leverage Status",
@@ -318,7 +313,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             center=["16.5%", "50%"],
         )
     small_pie_chart.set_colors(
-        color_list
+        small_color_list
     )
     small_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
@@ -541,12 +536,6 @@ def asset_history_line_graph_data_generator(request, dashboard_pk):
     current_total_asset_amount = current_liquidity_amount + current_investment_amount
     current_net_capital = current_total_asset_amount - current_debt_amount
 
-    print(today)
-    print('{} / {} / {} / {} / {}'.format(current_total_asset_amount,
-                                          current_liquidity_amount,
-                                          current_investment_amount,
-                                          current_net_capital,
-                                          current_debt_amount))
     x_data.append(today)
     for statistic in line_y_data:
         if statistic['name'] == 'Asset'      :     statistic['data_set'].append(current_total_asset_amount)
