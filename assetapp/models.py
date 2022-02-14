@@ -251,6 +251,18 @@ class Asset(models.Model):
         asset.update(quantity=my_balance)
         total_amount = my_balance * self.asset_master.current_price
         asset.update(total_amount=total_amount)
+
+        queryset_my_dashboard = Dashboard.objects.get(pk=self.portfolio.dashboard.pk)
+        if self.asset_master.currency == queryset_my_dashboard.main_currency:
+            total_amount_exchanged = total_amount
+        else:
+            total_amount_exchanged = self.amount_exchanger(queryset_my_dashboard.pk,
+                                                           total_amount,
+                                                           self.asset_master.currency)
+        asset.update(total_amount_exchanged=total_amount_exchanged)
+
+
+
         asset.update(average_purchase_price_mv=my_avg_buy_price)
         asset.update(average_purchase_price_fifo=my_avg_buy_price)
         rate_of_return = 0
