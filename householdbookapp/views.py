@@ -709,7 +709,7 @@ def income_expense_excel_download(request):
         return response
 
     except Exception as identifier:
-        print('upload_dashin: excel_export', identifier)
+        print('income_expense_excel_download: excel_export', identifier)
 
 
 class IncomeExpenseExcelUploadButton(ListView):

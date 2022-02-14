@@ -1,23 +1,28 @@
 import json
 from datetime import datetime
 
+import pandas as pd
+import pytz
 from django import utils
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, ListView
 from django.views.generic.edit import FormMixin
-from pyecharts.charts import Pie, Grid
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+from pyecharts.charts import Pie, Grid, Line
 from pyecharts import options as opts
 from rest_framework.views import APIView
 
 from assetapp.models import Asset, PensionAsset
 from dashboardapp.decorators import dashboard_ownership_required
 from dashboardapp.forms import DashboardCreationForm
-from dashboardapp.models import Dashboard
+from dashboardapp.models import Dashboard, AssetHistory
 from diamond_goose.pyecharts import json_response
 from householdbookapp.models import Liquidity, Debt
 from pensionapp.models import Pension
@@ -207,6 +212,8 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
 
 def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     queryset_my_dashboard = Dashboard.objects.get(owner=request.user)
+
+    # Pie Graph Data
     chart_base_data = asset_summary_pie_chart_data_generator(request, queryset_my_dashboard.pk)
     large_data_pair = chart_base_data['large_data_pair']
     large_color_list = chart_base_data['large_color_list']
@@ -214,6 +221,62 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     small_color_list = chart_base_data['small_color_list']
     leverage_rate = chart_base_data['leverage_rate']
 
+    # AssetHistory Line Graph
+    line_base_data = asset_history_line_graph_data_generator(request, queryset_my_dashboard.pk)
+    line_x_data = line_base_data['x_data']
+    line_y_data = line_base_data['line_y_data']
+    max_y_value = line_base_data['max_y_value']
+    color_list = [
+        '#068CD6',
+        '#00C484',
+        '#007D8A',
+        '#FF9C00',
+        '#FA0067',
+    ]
+
+    line_graph = Line()
+    line_graph.add_xaxis(xaxis_data=line_x_data)
+    color_list.extend(large_color_list)
+
+    for statistic in line_y_data:
+        line_graph.add_yaxis(
+            series_name=statistic['name'],
+            y_axis=statistic['data_set'],
+            is_symbol_show=False,
+            linestyle_opts=opts.LineStyleOpts(type_='solid', width=2),
+        )
+    line_graph.set_colors(
+        color_list
+    )
+    line_graph.set_global_opts(
+        title_opts=opts.TitleOpts(title="Asset History",
+                                  title_textstyle_opts=opts.TextStyleOpts(color='#FFFFFF', font_size=25),
+                                  pos_left="35%"),
+        xaxis_opts=opts.AxisOpts(type_='category',
+                                 boundary_gap=False,
+                                 axislabel_opts=opts.LabelOpts(margin=20, color="#FFFFFF", rotate=15),
+                                 axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color='#FFFFFF')),
+                                 axistick_opts=opts.AxisTickOpts(
+                                     is_show=True,
+                                     length=6,
+                                     linestyle_opts=opts.LineStyleOpts(color="#FFFFFF")),
+                                 ),
+        yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(color='#FFFFFF'),
+                                 axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color='#FFFFFF')),
+                                 splitline_opts=opts.SplitLineOpts(
+                                     is_show=True,
+                                     linestyle_opts=opts.LineStyleOpts(color="#FFFFFF1F")
+                                 )),
+        tooltip_opts=opts.TooltipOpts(background_color='#FFF'),
+        legend_opts=opts.LegendOpts(is_show=True,
+                                    pos_left='55%',
+                                    pos_top='2%',
+                                    textstyle_opts=opts.TextStyleOpts(color='#FFFFFF'),
+                                    legend_icon=False),
+    )
+    dump_line_graph = line_graph.dump_options_with_quotes()
+
+    # Pie Graphs
     large_pie_chart = Pie()
     large_pie_chart.add(
             series_name="Asset Composition",
@@ -221,7 +284,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["40%", "70%"],
             label_opts=opts.LabelOpts(is_show=True, position="center"),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["20%", "50%"],
+            center=["15%", "50%"],
         )
     large_pie_chart.set_colors(
             large_color_list
@@ -249,7 +312,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["30%", "40%"],
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["20%", "50%"],
+            center=["15%", "50%"],
         )
     small_pie_chart.set_colors(
         small_color_list
@@ -264,6 +327,12 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
 
     grid = Grid()
     grid.add(
+        chart=line_graph,
+        grid_opts=opts.GridOpts(pos_top="10%",
+                                pos_right="5%",
+                                width="55%")
+    )
+    grid.add(
         chart=large_pie_chart,
         grid_opts=opts.GridOpts(pos_top="60%",
                                 pos_left="10%")
@@ -273,6 +342,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
         grid_opts=opts.GridOpts(pos_top="60%",
                                 pos_left="10%")
     )
+
     dump_grid = grid.dump_options_with_quotes()
 
     if dump_option:
@@ -284,3 +354,172 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
 class AssetSummaryPieChartView(APIView):
     def get(self, request, *args, **kwargs):
         return json_response(json.loads(asset_summary_pie_chart(self.request, dump_option=True)))
+
+
+class AssetHistoryListView(ListView):
+    model = AssetHistory
+    template_name = 'dashboardapp/asset_history_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(AssetHistoryListView, self).get_context_data(**kwargs)
+
+        amount_column_width_px = 110
+        table_width_px = 2*70 + amount_column_width_px*6
+        queryset_my_dashboard = Dashboard.objects.get(owner=self.request.user)
+        queryset_my_asset_history = AssetHistory.objects.filter(owner=self.request.user,
+                                                                dashboard=queryset_my_dashboard.pk).order_by('-capture_date')
+        for asset_history in queryset_my_asset_history:
+            asset_history.capture_date = asset_history.capture_date.strftime("%Y-%m-%d")
+        context.update({
+            'table_width_px': str(table_width_px)+'px',
+            'amount_column_width_px': str(amount_column_width_px)+'px',
+            'dashboard_pk': queryset_my_dashboard.pk,
+            'queryset_my_asset_history': queryset_my_asset_history,
+        })
+
+        return context
+
+
+def asset_history_excel_download(request):
+    if request.method == 'POST':
+        dashboard_pk = request.POST['dashboard_pk']
+    queryset_asset_history = AssetHistory.objects.filter(dashboard=dashboard_pk).order_by('-capture_date')
+
+    try:
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = "transactions"
+        output_row_count = 1
+
+        # Header Insert
+        worksheet.cell(row=output_row_count, column=1, value="capture_date")
+        worksheet.cell(row=output_row_count, column=2, value="total_asset_amount")
+        worksheet.cell(row=output_row_count, column=3, value="total_liquidity_amount")
+        worksheet.cell(row=output_row_count, column=4, value="total_investment_amount")
+        worksheet.cell(row=output_row_count, column=5, value="total_debt_amount")
+        worksheet.cell(row=output_row_count, column=6, value="net_capital_amount")
+
+        # Line Insert
+        for asset_history in queryset_asset_history:
+            output_row_count += 1
+            worksheet.cell(row=output_row_count, column=1, value=asset_history.capture_date.strftime("%Y-%m-%d"))
+            worksheet.cell(row=output_row_count, column=2, value=asset_history.total_asset_amount)
+            worksheet.cell(row=output_row_count, column=3, value=asset_history.total_liquidity_amount)
+            worksheet.cell(row=output_row_count, column=4, value=asset_history.total_investment_amount)
+            worksheet.cell(row=output_row_count, column=5, value=asset_history.total_debt_amount)
+            worksheet.cell(row=output_row_count, column=6, value=asset_history.net_capital_amount)
+
+        response = HttpResponse(content=save_virtual_workbook(workbook),
+                                content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=asset_history.xlsx'
+        return response
+
+    except Exception as identifier:
+        print('asset_history_excel_download: excel_export', identifier)
+
+
+class AssetHistoryExcelUploadButton(ListView):
+    model = AssetHistory
+    template_name = 'dashboardapp/asset_history_excel_upload.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(AssetHistoryExcelUploadButton, self).get_context_data(**kwargs)
+        context.update({
+            'user_id': self.request.user.id,
+            'dashboard_pk': Dashboard.objects.get(owner=self.request.user).pk,
+        })
+
+        return context
+
+
+def asset_history_excel_upload(request):
+    try:
+        if request.method == 'POST' and request.FILES['transaction_file']:
+            db_frame = pd.read_excel(request.FILES['transaction_file'], sheet_name=0).fillna('')
+            target_dashboard = Dashboard.objects.get(pk=request.POST['dashboard_pk'])
+    except Exception as identifier:
+        print('income_expense_excel_upload: excel_import', identifier)
+
+    try:
+        transaction_object_list = []
+        for row in db_frame.itertuples():
+            upload_format = {}
+            upload_format['capture_date'] = row[1]
+            upload_format['total_asset_amount'] = row[2]
+            upload_format['total_liquidity_amount'] = row[3]
+            upload_format['total_investment_amount'] = row[4]
+            upload_format['total_debt_amount'] = row[5]
+            upload_format['net_capital_amount'] = row[6]
+
+            tz = pytz.timezone('Asia/Seoul')
+            capture_date_raw = upload_format['capture_date'].to_pydatetime()
+            capture_date_timezone = tz.localize(capture_date_raw, is_dst=None).astimezone(pytz.utc)
+
+            print(upload_format)
+
+            obj = AssetHistory.objects.create(
+                owner=request.user,
+                dashboard=target_dashboard,
+                capture_date=capture_date_timezone,
+                total_asset_amount=upload_format['total_asset_amount'],
+                total_liquidity_amount=upload_format['total_liquidity_amount'],
+                total_investment_amount=upload_format['total_investment_amount'],
+                total_debt_amount=upload_format['total_debt_amount'],
+                net_capital_amount=upload_format['net_capital_amount'],
+            )
+
+            transaction_object_list.append(obj)
+
+        # Transaction COMMIT
+        for transaction in transaction_object_list:
+            try:
+                transaction.save()
+                print('Transaction Added :', transaction)
+            except Exception as identifier:
+                print('Exception in saving transaction.', identifier, transaction)
+                continue
+
+    except Exception as identifier:
+        print('asset_history_excel_upload: Transaction INSERT :', identifier)
+
+    return HttpResponseRedirect(reverse('dashboardapp:asset_history_list'))
+
+
+def asset_history_line_graph_data_generator(request, dashboard_pk):
+    queryset_asset_history = AssetHistory.objects.filter(dashboard=dashboard_pk).order_by('capture_date')
+    x_data = []
+    line_y_data = [
+        {'name': 'Asset', 'data_set': []},
+        {'name': 'Liquidity', 'data_set': []},
+        {'name': 'Investment', 'data_set': []},
+        {'name': 'Net Capital', 'data_set': []},
+        {'name': 'Dept', 'data_set': []},
+    ]
+
+    max_y_value = 0
+
+    for asset_history in queryset_asset_history:
+        x_data.append(asset_history.capture_date.strftime("%Y-%m-%d"))
+
+        max_y_value = max(
+            max_y_value,
+            max([
+                asset_history.total_asset_amount,
+                asset_history.total_liquidity_amount,
+                asset_history.total_investment_amount,
+                asset_history.total_debt_amount,
+                asset_history.net_capital_amount,
+            ]))
+
+        for statistic in line_y_data:
+            if statistic['name'] =='Asset'           :     statistic['data_set'].append(asset_history.total_asset_amount)
+            if statistic['name'] =='Liquidity'       :     statistic['data_set'].append(asset_history.total_liquidity_amount)
+            if statistic['name'] =='Investment'      :     statistic['data_set'].append(asset_history.total_investment_amount)
+            if statistic['name'] =='Net Capital'     :     statistic['data_set'].append(asset_history.net_capital_amount)
+            if statistic['name'] =='Dept'            :     statistic['data_set'].append(asset_history.total_debt_amount)
+
+    return {
+        'x_data': x_data,
+        'line_y_data': line_y_data,
+        'max_y_value': round(max_y_value * 1.1),
+    }

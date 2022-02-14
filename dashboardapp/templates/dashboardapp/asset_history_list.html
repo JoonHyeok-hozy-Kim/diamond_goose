@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load format_mask_assetapp %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfo.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/assetapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 2rem 2rem">
+        <div style="margin: 1rem auto;">
+            <div style="display: block; margin-bottom: 1rem;">
+                <a href="{% url 'dashboardapp:detail' pk=dashboard_pk %}" class="btn btn-info btn-sm">
+                    <span class="material-icons">show_chart</span>
+                </a>
+            </div>
+        </div>
+{#        <div style="display: block; margin: 1rem auto; width: 100%; height: 40rem; color: #FFFFFF;">#}
+{#            {% include 'householdbookapp/income_expense_grid_chart.html' %}#}
+{#        </div>#}
+
+        {% if 1 %}
+        <div>
+            <div style="display: block;">
+                <div style="display: block;">
+                    <h3 style="display: inline-block; margin: 0 1rem 1rem 0; vertical-align: top; color: #FFFFFF;">Asset History</h3>
+                    <a href="" class="btn btn-light btn-sm" style="display: inline-block; vertical-align: top;">
+                        <span class="material-icons" style="vertical-align: center;">add</span>
+                    </a>
+                    <div style="display: inline-block; vertical-align: top;">
+                        {% include 'dashboardapp/asset_history_excel_download.html' %}
+                    </div>
+                    <a href="{% url 'dashboardapp:asset_history_excel_upload_button' %}"
+                       class="btn btn-warning btn" style="display: inline-block; vertical-align: top;">
+                        Upload
+                    </a>
+                </div>
+                <div style="display: block; width: {{ table_width_px }};">
+                    <table class="asset_transaction_table">
+                        <colgroup>
+                            <col style="width: 70px;">
+                            <col style="width: 70px;">
+                            <col style="width: {{ amount_column_width_px }};">
+                            <col style="width: {{ amount_column_width_px }};">
+                            <col style="width: {{ amount_column_width_px }};">
+                            <col style="width: {{ amount_column_width_px }};">
+                            <col style="width: {{ amount_column_width_px }};">
+                            <col style="width: {{ amount_column_width_px }};">
+                        </colgroup>
+                        <tr>
+                            <th class="asset_transaction_table_th" style="background-color: #007D8A;">Edit</th>
+                            <th style="align-content: center; border: 1px solid black; background-color: #007D8A; color: #FA0067;">
+{#                                {% include 'householdbookapp/income_expense_delete_all.html' with dashboard_pk=dashboard_pk %}#}
+                            </th>
+                            <th class="asset_transaction_table_th" style="background-color: #007D8A;">Period</th>
+                            <th class="asset_transaction_table_th" style="background-color: #007D8A;">Asset</th>
+                            <th class="asset_transaction_table_th" style="background-color: #007D8A;">Liquidity</th>
+                            <th class="asset_transaction_table_th" style="background-color: #068CD6;">Investment</th>
+                            <th class="asset_transaction_table_th" style="background-color: #068CD6;">Net Capital</th>
+                            <th class="asset_transaction_table_th" style="background-color: #068CD6;">Dept</th>
+                        </tr>
+
+{#                        {% include 'householdbookapp/income_expense_tabular_input.html' %}#}
+
+                        {% if queryset_my_asset_history %}
+                            {% for asset_history in queryset_my_asset_history %}
+                                <tr>
+                                    <td class= "asset_transaction_table_td_center">
+                                        <a href="" style="color: #FFFFFF;">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                    </td>
+                                    <td class= "asset_transaction_table_td_center">
+                                        <a href="" style="text-decoration: none; color: #FA0067; font-weight: bold;">
+                                            X
+                                        </a>
+                                    </td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.capture_date }}</td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.total_asset_amount|currency_krw }}</td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.total_liquidity_amount|currency_krw }}</td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.total_investment_amount|currency_krw }}</td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.net_capital_amount|currency_krw }}</td>
+                                    <td class= "asset_transaction_table_td_center">{{ asset_history.total_debt_amount|currency_krw }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

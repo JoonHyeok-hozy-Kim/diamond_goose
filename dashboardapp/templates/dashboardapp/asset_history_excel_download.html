@@ -1,0 +1,9 @@
+{% load bootstrap4 %}
+
+<form action="{% url 'dashboardapp:asset_history_excel_download' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="x_content">
+        <button type="submit" class="btn btn-warning btn" >Download</button>
+        <input type="hidden" name="dashboard_pk" value={{ dashboard_pk }}>
+    </div>
+</form>
