@@ -1,0 +1,11 @@
+{% load bootstrap4 %}
+
+<div style="align-content: center;">
+    <form action="{% url 'dashboardapp:asset_history_delete_all' %}" method="get">
+        {% csrf_token %}
+        <input type="hidden" name="dashboard_pk" value="{{ dashboard_pk }}">
+        <button type="submit" style="border: none; background-color: #007D8A; color: #FA0067;">
+            <span class="material-icons">delete</span>
+        </button>
+    </form>
+</div>

@@ -32,6 +32,12 @@ class AssetHistoryCreationForm(ModelForm):
             'capture_date': widgets.DateTimeInput(attrs={'type': 'date'}),
         }
 
+
+class AssetHistoryCaptureForm(ModelForm):
+    class Meta:
+        model = AssetHistory
+        fields = []
+
 # capture_date
 # total_asset_amount
 # total_liquidity_amount

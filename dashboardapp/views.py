@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 import pytz
@@ -12,16 +12,16 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DetailView, ListView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, UpdateView, DeleteView
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-from pyecharts.charts import Pie, Grid, Line
+from pyecharts.charts import Pie, Grid, Line, Page
 from pyecharts import options as opts
 from rest_framework.views import APIView
 
 from assetapp.models import Asset, PensionAsset
 from dashboardapp.decorators import dashboard_ownership_required
-from dashboardapp.forms import DashboardCreationForm
+from dashboardapp.forms import DashboardCreationForm, AssetHistoryCreationForm, AssetHistoryCaptureForm
 from dashboardapp.models import Dashboard, AssetHistory
 from diamond_goose.pyecharts import json_response
 from householdbookapp.models import Liquidity, Debt
@@ -223,6 +223,9 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     line_x_data = line_base_data['x_data']
     line_y_data = line_base_data['line_y_data']
     max_y_value = line_base_data['max_y_value']
+
+    line_graph = Line()
+    line_graph.add_xaxis(xaxis_data=line_x_data)
     color_list = [
         '#068CD6',
         '#00C484',
@@ -230,22 +233,18 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
         '#FF9C00',
         '#FA0067',
     ]
-
-    line_graph = Line()
-    line_graph.add_xaxis(xaxis_data=line_x_data)
-    initial_color_len = len(color_list)
-    color_list.extend(large_color_list)
-    color_list.extend(small_color_list)
-
+    color_idx = 0
     for statistic in line_y_data:
         line_graph.add_yaxis(
             series_name=statistic['name'],
             y_axis=statistic['data_set'],
             is_symbol_show=False,
-            linestyle_opts=opts.LineStyleOpts(type_='solid', width=2),
+            linestyle_opts=opts.LineStyleOpts(type_='solid', width=2, color=color_list[color_idx]),
+            label_opts=opts.LabelOpts(color=color_list[color_idx], font_weight='bold')
         )
+        color_idx += 1
     line_graph.set_colors(
-        color_list
+        large_color_list
     )
     line_graph.set_global_opts(
         title_opts=opts.TitleOpts(title="Asset History",
@@ -264,9 +263,12 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
                                  axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color='#FFFFFF')),
                                  splitline_opts=opts.SplitLineOpts(
                                      is_show=True,
-                                     linestyle_opts=opts.LineStyleOpts(color="#FFFFFF1F")
-                                 )),
-        tooltip_opts=opts.TooltipOpts(background_color='#FFF'),
+                                     linestyle_opts=opts.LineStyleOpts(color="#FFFFFF1F")),
+                                 axispointer_opts=opts.AxisPointerOpts(is_show=True,
+                                                                       label=opts.LabelOpts(color="#081321",
+                                                                                            font_weight='bold')),
+                                 ),
+        tooltip_opts=opts.TooltipOpts(background_color='#FFFFFF', textstyle_opts=opts.TextStyleOpts(color="#081321")),
         legend_opts=opts.LegendOpts(is_show=True,
                                     pos_left='55%',
                                     pos_top='2%',
@@ -297,12 +299,13 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     large_pie_chart.set_global_opts(
         title_opts=opts.TitleOpts(title='Leverage : '+leverage_rate,
                                   pos_top="40%",
-                                  pos_left="14.5%",
+                                  pos_left="13%",
                                   title_textstyle_opts=opts.TextStyleOpts(color="#FA0067",
                                                                           font_size=15)),
         legend_opts=opts.LegendOpts(is_show=False),
     )
 
+    large_color_list.extend(small_color_list)
     small_pie_chart = Pie()
     small_pie_chart.add(
             series_name="Leverage Status",
@@ -313,7 +316,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             center=["16.5%", "50%"],
         )
     small_pie_chart.set_colors(
-        small_color_list
+        large_color_list
     )
     small_pie_chart.set_series_opts(
             tooltip_opts=opts.TooltipOpts(
@@ -352,7 +355,6 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
 class AssetSummaryPieChartView(APIView):
     def get(self, request, *args, **kwargs):
         return json_response(json.loads(asset_summary_pie_chart(self.request, dump_option=True)))
-
 
 class AssetHistoryListView(ListView):
     model = AssetHistory
@@ -549,3 +551,92 @@ def asset_history_line_graph_data_generator(request, dashboard_pk):
         'line_y_data': line_y_data,
         'max_y_value': round(max_y_value * 1.1),
     }
+
+
+class AssetHistoryUpdateView(UpdateView):
+    model = AssetHistory
+    form_class = AssetHistoryCreationForm
+    template_name = 'dashboardapp/asset_history_update.html'
+    context_object_name = 'target_asset_history'
+
+    def get_success_url(self):
+        return reverse('dashboardapp:asset_history_list')
+
+
+class AssetHistoryDeleteView(DeleteView):
+    model = AssetHistory
+    template_name = 'dashboardapp/asset_history_delete.html'
+    context_object_name = 'target_asset_history'
+
+    def get_success_url(self):
+        return reverse('dashboardapp:asset_history_list')
+
+
+def asset_history_delete_all(request):
+    dashboard_pk = request.GET['dashboard_pk']
+    queryset_asset_history = AssetHistory.objects.filter(owner=request.user,
+                                                         dashboard=dashboard_pk)
+    delete_count = 0
+    deleted_periods_list = []
+    for asset_history in queryset_asset_history:
+        delete_count += 1
+        deleted_periods_list.append(asset_history.capture_date.strftime(" %Y-%m-%d"))
+        asset_history.delete()
+    print('Delete Income/Expense : {}'.format(','.join(deleted_periods_list)))
+
+    return HttpResponseRedirect(reverse('dashboardapp:asset_history_list'))
+
+
+def asset_history_capture(request):
+
+    my_dashboard = Dashboard.objects.get(owner=request.user)
+
+    tz = pytz.timezone('Asia/Seoul')
+    yesterday_raw = datetime.today()-timedelta(1)
+    yesterday = tz.localize(yesterday_raw, is_dst=None).astimezone(pytz.utc)
+
+    try:
+        existing_asset_history = AssetHistory.objects.filter(capture_date__gt=(yesterday))
+    except Exception as existing_asset_history_search:
+        print('asset_history_capture - existing_asset_history : {}'.format(existing_asset_history_search))
+
+    if existing_asset_history:
+        for asset_history in existing_asset_history:
+            if asset_history.capture_date.strftime("%Y%m%d") == datetime.today().strftime("%Y%m%d"):
+                asset_history.delete()
+                print('Asset History Delete : {} / {}'.format(asset_history.capture_date,
+                                                              asset_history.total_asset_amount))
+
+    queryset_my_liquidities = Liquidity.objects.filter(dashboard=my_dashboard.pk)
+    total_liquidity_amount = 0
+    for liquidity in queryset_my_liquidities:
+        total_liquidity_amount += liquidity.amount_exchanged
+
+    total_investment_amount = 0
+    try:
+        my_portfolio = Portfolio.objects.get(dashboard=my_dashboard.pk)
+        my_portfolio.update_statistics(price_update=True)
+        total_investment_amount += my_portfolio.current_value
+    except Exception as my_portfolio_search:
+        print('asset_history_capture - my_portfolio : {}'.format(my_portfolio_search))
+
+    queryset_my_debts = Debt.objects.filter(dashboard=my_dashboard.pk)
+    total_debt_amount = 0
+    for debt in queryset_my_debts:
+        total_debt_amount += debt.amount_exchanged
+
+    temp_asset_history = AssetHistory.objects.create(
+        owner=request.user,
+        dashboard=my_dashboard,
+        capture_date=tz.localize(datetime.today(), is_dst=None).astimezone(pytz.utc),
+        total_asset_amount=(total_liquidity_amount+total_investment_amount),
+        total_liquidity_amount=total_liquidity_amount,
+        total_investment_amount=total_investment_amount,
+        total_debt_amount=total_debt_amount,
+        net_capital_amount=(total_liquidity_amount+total_investment_amount-total_debt_amount),
+    )
+    temp_asset_history.save()
+
+    return HttpResponseRedirect(reverse('dashboardapp:detail', kwargs={'pk': my_dashboard.pk}))
+
+

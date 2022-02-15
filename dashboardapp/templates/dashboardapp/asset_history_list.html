@@ -53,7 +53,7 @@
                         <tr>
                             <th class="asset_transaction_table_th" style="background-color: #007D8A;">Edit</th>
                             <th style="align-content: center; border: 1px solid black; background-color: #007D8A; color: #FA0067;">
-{#                                {% include 'householdbookapp/income_expense_delete_all.html' with dashboard_pk=dashboard_pk %}#}
+                                {% include 'dashboardapp/asset_history_delete_all.html' with dashboard_pk=dashboard_pk %}
                             </th>
                             <th class="asset_transaction_table_th" style="background-color: #007D8A;">Period</th>
                             <th class="asset_transaction_table_th" style="background-color: #007D8A;">Asset</th>
@@ -69,12 +69,12 @@
                             {% for asset_history in queryset_my_asset_history %}
                                 <tr>
                                     <td class= "asset_transaction_table_td_center">
-                                        <a href="" style="color: #FFFFFF;">
+                                        <a href="{% url 'dashboardapp:asset_history_update' pk=asset_history.pk %}" style="color: #FFFFFF;">
                                             <span class="material-icons">edit</span>
                                         </a>
                                     </td>
                                     <td class= "asset_transaction_table_td_center">
-                                        <a href="" style="text-decoration: none; color: #FA0067; font-weight: bold;">
+                                        <a href="{% url 'dashboardapp:asset_history_delete' pk=asset_history.pk %}" style="text-decoration: none; color: #FA0067; font-weight: bold;">
                                             X
                                         </a>
                                     </td>
