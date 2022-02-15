@@ -92,7 +92,6 @@ def pension_pie_chart(request) -> Pie:
         y_data.append(pension.total_amount)
         color_list.append(pension.pension_master.color_hex)
     data_pair = [list(z) for z in zip(x_data, y_data)]
-    data_pair.sort(key=lambda x: x[1])
 
     pie_chart = (
         Pie()

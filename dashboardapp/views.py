@@ -305,6 +305,8 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
         legend_opts=opts.LegendOpts(is_show=False),
     )
 
+    for i in range(2):
+        large_color_list.pop(-1)
     large_color_list.extend(small_color_list)
     small_pie_chart = Pie()
     small_pie_chart.add(
