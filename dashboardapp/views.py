@@ -249,7 +249,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     line_graph.set_global_opts(
         title_opts=opts.TitleOpts(title="Asset History",
                                   title_textstyle_opts=opts.TextStyleOpts(color='#FFFFFF', font_size=25),
-                                  pos_left="35%"),
+                                  pos_left="37%"),
         xaxis_opts=opts.AxisOpts(type_='category',
                                  boundary_gap=False,
                                  axislabel_opts=opts.LabelOpts(margin=20, color="#FFFFFF", rotate=15),
@@ -267,6 +267,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
                                  axispointer_opts=opts.AxisPointerOpts(is_show=True,
                                                                        label=opts.LabelOpts(color="#081321",
                                                                                             font_weight='bold')),
+                                 position="right",
                                  ),
         tooltip_opts=opts.TooltipOpts(background_color='#FFFFFF', textstyle_opts=opts.TextStyleOpts(color="#081321")),
         legend_opts=opts.LegendOpts(is_show=True,
@@ -285,7 +286,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["40%", "70%"],
             label_opts=opts.LabelOpts(is_show=True, position="center"),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["16.5%", "50%"],
+            center=["22%", "50%"],
         )
     large_pie_chart.set_colors(
             large_color_list
@@ -299,7 +300,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     large_pie_chart.set_global_opts(
         title_opts=opts.TitleOpts(title='Leverage : '+leverage_rate,
                                   pos_top="40%",
-                                  pos_left="13%",
+                                  pos_left="17%",
                                   title_textstyle_opts=opts.TextStyleOpts(color="#FA0067",
                                                                           font_size=15)),
         legend_opts=opts.LegendOpts(is_show=False),
@@ -315,7 +316,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["30%", "40%"],
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["16.5%", "50%"],
+            center=["22%", "50%"],
         )
     small_pie_chart.set_colors(
         large_color_list
@@ -338,12 +339,12 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     grid.add(
         chart=large_pie_chart,
         grid_opts=opts.GridOpts(pos_top="60%",
-                                pos_left="10%")
+                                pos_left="15%")
     )
     grid.add(
         chart=small_pie_chart,
         grid_opts=opts.GridOpts(pos_top="60%",
-                                pos_left="10%")
+                                pos_left="15%")
     )
 
     dump_grid = grid.dump_options_with_quotes()

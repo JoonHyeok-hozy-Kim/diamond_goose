@@ -938,9 +938,10 @@ class IncomeExpenseGridChartView(APIView):
                 max_=chart_base_data['max_income_expense'],
                 position="left",
                 axisline_opts=opts.AxisLineOpts(
-                    linestyle_opts=opts.LineStyleOpts(color="#FFFFFF")
-                ),
+                    linestyle_opts=opts.LineStyleOpts(color="#FFFFFF")),
                 axislabel_opts=opts.LabelOpts(formatter="{value}"),
+                axispointer_opts=opts.AxisPointerOpts(is_show=True, label=opts.LabelOpts(color="#081321",
+                                                                                         font_weight='bold'))
             )
         )
 
@@ -955,14 +956,19 @@ class IncomeExpenseGridChartView(APIView):
                     linestyle_opts=opts.LineStyleOpts(color="#FFFFFF")
                 ),
                 axislabel_opts=opts.LabelOpts(formatter="{value}"),
+                axispointer_opts=opts.AxisPointerOpts(is_show=True, label=opts.LabelOpts(color="#081321",
+                                                                                         font_weight='bold'))
             )
         )
 
         bar_graph.set_global_opts(
             title_opts=opts.TitleOpts(title="Income Expense Summary",
                                       title_textstyle_opts=opts.TextStyleOpts(color="#FFFFFF")),
-            tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            tooltip_opts=opts.TooltipOpts(trigger="axis",
+                                          axis_pointer_type="cross"),
             xaxis_opts=opts.AxisOpts(axisline_opts=opts.AxisLineOpts(linestyle_opts=opts.LineStyleOpts(color="#FFFFFF"))),
+            yaxis_opts=opts.AxisOpts(axispointer_opts=opts.AxisPointerOpts(label=opts.LabelOpts(color="#081321",
+                                                                                                font_weight='bold'))),
             legend_opts=opts.LegendOpts(textstyle_opts=opts.TextStyleOpts(color="#FFFFFF"))
         )
 
