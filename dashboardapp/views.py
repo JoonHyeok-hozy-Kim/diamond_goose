@@ -249,7 +249,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     line_graph.set_global_opts(
         title_opts=opts.TitleOpts(title="Asset History",
                                   title_textstyle_opts=opts.TextStyleOpts(color='#FFFFFF', font_size=25),
-                                  pos_left="37%"),
+                                  pos_left="38%"),
         xaxis_opts=opts.AxisOpts(type_='category',
                                  boundary_gap=False,
                                  axislabel_opts=opts.LabelOpts(margin=20, color="#FFFFFF", rotate=15),
@@ -286,7 +286,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["40%", "70%"],
             label_opts=opts.LabelOpts(is_show=True, position="center"),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["22%", "50%"],
+            center=["21%", "50%"],
         )
     large_pie_chart.set_colors(
             large_color_list
@@ -316,7 +316,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
             radius=["30%", "40%"],
             label_opts=opts.LabelOpts(is_show=False,),
             itemstyle_opts=opts.ItemStyleOpts(border_color="#081321", border_width=1),
-            center=["22%", "50%"],
+            center=["21%", "50%"],
         )
     small_pie_chart.set_colors(
         large_color_list
