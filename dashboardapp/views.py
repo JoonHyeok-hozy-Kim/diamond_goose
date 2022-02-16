@@ -594,7 +594,7 @@ def asset_history_capture(request):
     my_dashboard = Dashboard.objects.get(owner=request.user)
 
     tz = pytz.timezone('Asia/Seoul')
-    yesterday_raw = datetime.today()-timedelta(1)
+    yesterday_raw = datetime.today()-timedelta(2)
     yesterday = tz.localize(yesterday_raw, is_dst=None).astimezone(pytz.utc)
     today = tz.localize(datetime.today(), is_dst=None).astimezone(pytz.utc)
 
@@ -605,7 +605,7 @@ def asset_history_capture(request):
 
     if existing_asset_history:
         for asset_history in existing_asset_history:
-            if asset_history.capture_date.strftime("%Y%m%d") == datetime.today().strftime("%Y%m%d"):
+            if asset_history.capture_date.strftime("%Y%m%d") == today.strftime("%Y%m%d"):
                 asset_history.delete()
                 print('Asset History Delete : {} / {}'.format(asset_history.capture_date,
                                                               asset_history.total_asset_amount))
