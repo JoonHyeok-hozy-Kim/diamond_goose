@@ -383,11 +383,11 @@ class DebtListView(ListView):
 
         for debt in queryset_my_debts:
             debt.update_statistics()
+            total_debt_amount += debt.amount_exchanged
             if debt.long_term_debt_flag:
                 debt.debt_term = 'Long'
             else:
                 debt.debt_term = 'Short'
-            total_debt_amount += debt.amount_exchanged
         context.update({'queryset_my_debts': queryset_my_debts})
         context.update({'total_debt_amount': total_debt_amount})
         context.update({'main_currency_code': queryset_my_dashboard.main_currency.currency_code})

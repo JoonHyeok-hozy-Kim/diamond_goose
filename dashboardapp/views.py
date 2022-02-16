@@ -273,7 +273,7 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
                                     pos_left='55%',
                                     pos_top='2%',
                                     textstyle_opts=opts.TextStyleOpts(color='#FFFFFF'),
-                                    legend_icon=False),
+                                    legend_icon=False,),
     )
     dump_line_graph = line_graph.dump_options_with_quotes()
 
@@ -366,12 +366,12 @@ class AssetHistoryListView(ListView):
         context = super(AssetHistoryListView, self).get_context_data(**kwargs)
 
         amount_column_width_px = 110
-        table_width_px = 2*70 + amount_column_width_px*6
+        table_width_px = 70*2 + 180 + amount_column_width_px*5
         queryset_my_dashboard = Dashboard.objects.get(owner=self.request.user)
         queryset_my_asset_history = AssetHistory.objects.filter(owner=self.request.user,
                                                                 dashboard=queryset_my_dashboard.pk).order_by('-capture_date')
         for asset_history in queryset_my_asset_history:
-            asset_history.capture_date = asset_history.capture_date.strftime("%Y-%m-%d")
+            asset_history.capture_date = asset_history.capture_date.strftime("%Y-%m-%d %H:%M:%S")
         context.update({
             'table_width_px': str(table_width_px)+'px',
             'amount_column_width_px': str(amount_column_width_px)+'px',
@@ -596,6 +596,7 @@ def asset_history_capture(request):
     tz = pytz.timezone('Asia/Seoul')
     yesterday_raw = datetime.today()-timedelta(1)
     yesterday = tz.localize(yesterday_raw, is_dst=None).astimezone(pytz.utc)
+    today = tz.localize(datetime.today(), is_dst=None).astimezone(pytz.utc)
 
     try:
         existing_asset_history = AssetHistory.objects.filter(capture_date__gt=(yesterday))
@@ -630,7 +631,7 @@ def asset_history_capture(request):
     temp_asset_history = AssetHistory.objects.create(
         owner=request.user,
         dashboard=my_dashboard,
-        capture_date=tz.localize(datetime.today(), is_dst=None).astimezone(pytz.utc),
+        capture_date=today,
         total_asset_amount=(total_liquidity_amount+total_investment_amount),
         total_liquidity_amount=total_liquidity_amount,
         total_investment_amount=total_investment_amount,
