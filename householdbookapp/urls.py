@@ -4,7 +4,8 @@ from householdbookapp.views import LiquidityListView, HouseholdbookHomeView, Liq
     LiquidityDeleteView, LiquidityPieChartView, DebtListView, DebtCreateView, DebtUpdateView, DebtDeleteView, \
     DebtPieChartView, HouseholdbookChartView, IncomeExpenseListView, IncomeExpenseCreateView, IncomeExpenseDeleteView, \
     IncomeExpenseUpdateView, IncomeExpenseTabularInsert, income_expense_delete_all, income_expense_excel_download, \
-    IncomeExpenseExcelUploadButton, income_expense_excel_upload, IncomeExpenseGridChartView
+    IncomeExpenseExcelUploadButton, income_expense_excel_upload, IncomeExpenseGridChartView, BuyNowPayLaterCreateView, \
+    BuyNowPayLaterDeleteView, BuyNowPayLaterUpdateView
 
 app_name = "householdbookapp"
 
@@ -35,5 +36,9 @@ urlpatterns = [
     path('income_expense_excel_upload_button/', IncomeExpenseExcelUploadButton.as_view(), name='income_expense_excel_upload_button'),
     path('income_expense_excel_upload/', income_expense_excel_upload, name='income_expense_excel_upload'),
     path('income_expense_grid_chart/', IncomeExpenseGridChartView.as_view(), name='income_expense_grid_chart'),
+
+    path('bnpl_create/', BuyNowPayLaterCreateView.as_view(), name='bnpl_create'),
+    path('bnpl_delete/<int:pk>', BuyNowPayLaterDeleteView.as_view(), name='bnpl_delete'),
+    path('bnpl_update/<int:pk>', BuyNowPayLaterUpdateView.as_view(), name='bnpl_update'),
 
 ]

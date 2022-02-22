@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms import widgets
 
-from householdbookapp.models import Liquidity, Debt, IncomeExpense
+from householdbookapp.models import Liquidity, Debt, IncomeExpense, BuyNowPayLater
 
 
 class LiquidityCreationForm(ModelForm):
@@ -79,3 +79,22 @@ class IncomeExpenseTabularInsertForm(forms.Form):
     expense_financial = forms.FloatField()
     expense_love_affair = forms.FloatField()
     expense_etc = forms.FloatField()
+
+
+class BuyNowPayLaterCreationForm(ModelForm):
+    class Meta:
+        model = BuyNowPayLater
+        fields = [
+            'item_name',
+            'currency',
+            'total_amount',
+            'discount_amount',
+            'purchase_period',
+            'paying_months',
+            'note',
+        ]
+
+        widgets = {
+            'purchase_period': widgets.DateTimeInput(attrs={'type': 'month'}),
+        }
+

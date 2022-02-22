@@ -23,9 +23,10 @@ from dashboardapp.models import Dashboard
 from diamond_goose.pyecharts import json_response
 from exchangeapp.models import ForeignCurrency
 from householdbookapp.forms import LiquidityCreationForm, DebtCreationForm, IncomeExpenseCreationForm, \
-    IncomeExpenseTabularInsertForm
-from householdbookapp.models import Liquidity, Debt, IncomeExpense
+    IncomeExpenseTabularInsertForm, BuyNowPayLaterCreationForm
+from householdbookapp.models import Liquidity, Debt, IncomeExpense, BuyNowPayLater
 from masterinfoapp.models import CurrencyMaster
+from diamond_goose.factory import format_mask_currency
 
 
 class HouseholdbookHomeView(ListView):
@@ -406,6 +407,37 @@ class DebtListView(ListView):
             debt_pie_chart_url_list.append(ip_address)
             debt_pie_chart_url_list.append('/householdbook/debt_pie_chart/')
             context.update({'debt_pie_chart_url_list': ''.join(debt_pie_chart_url_list)})
+
+        queryset_bnpls = BuyNowPayLater.objects.filter(owner=self.request.user,
+                                                       dashboard=dashboard_pk).order_by('end_flag',
+                                                                                        'purchase_period')
+        bnpl_summary = {
+            'total_amount': 0,
+            'discount_amount': 0,
+            'real_remaining_amount': 0,
+            'real_monthly_payment_amount': 0,
+        }
+        for bnpl in queryset_bnpls:
+            bnpl.update_statistics()
+            if not bnpl.end_flag:
+                bnpl_summary['total_amount'] += bnpl.total_amount
+                bnpl_summary['discount_amount'] += bnpl.discount_amount
+                bnpl_summary['real_remaining_amount'] += bnpl.real_remaining_amount
+                bnpl_summary['real_monthly_payment_amount'] += bnpl.real_monthly_payment_amount
+            bnpl.payment_count = str(round(bnpl.current_payment_count))+' / '+str(round(bnpl.paying_months))
+            bnpl.total_amount = format_mask_currency(bnpl.total_amount, bnpl.currency)
+            bnpl.discount_amount = format_mask_currency(bnpl.discount_amount, bnpl.currency)
+            bnpl.real_remaining_amount = format_mask_currency(bnpl.real_remaining_amount, bnpl.currency)
+            bnpl.real_monthly_payment_amount = format_mask_currency(bnpl.real_monthly_payment_amount, bnpl.currency)
+            bnpl.end_flag = 'Y' if bnpl.end_flag else 'N'
+
+        context.update({'queryset_bnpls': queryset_bnpls})
+
+        bnpl_summary['total_amount'] = format_mask_currency(bnpl_summary['total_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['discount_amount'] = format_mask_currency(bnpl_summary['discount_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['real_remaining_amount'] = format_mask_currency(bnpl_summary['real_remaining_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['real_monthly_payment_amount'] = format_mask_currency(bnpl_summary['real_monthly_payment_amount'], queryset_my_dashboard.main_currency)
+        context.update({'bnpl_summary': bnpl_summary})
 
         return context
 
@@ -989,3 +1021,38 @@ class IncomeExpenseGridChartView(APIView):
         bar_graph_dump = bar_graph.dump_options_with_quotes()
 
         return json_response(json.loads(bar_graph_dump))
+
+
+class BuyNowPayLaterCreateView(CreateView):
+    model = BuyNowPayLater
+    form_class = BuyNowPayLaterCreationForm
+    template_name = 'householdbookapp/bnpl_create.html'
+
+    def form_valid(self, form):
+        temp_bnpl = form.save(commit=False)
+        temp_bnpl.owner = self.request.user
+        temp_bnpl.dashboard = Dashboard.objects.get(owner=self.request.user)
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('householdbookapp:debt_list')
+
+
+class BuyNowPayLaterDeleteView(DeleteView):
+    model = BuyNowPayLater
+    template_name = 'householdbookapp/bnpl_delete.html'
+    context_object_name = 'target_bnpl'
+
+    def get_success_url(self):
+        return reverse('householdbookapp:debt_list')
+
+
+class BuyNowPayLaterUpdateView(UpdateView):
+    model = BuyNowPayLater
+    form_class = BuyNowPayLaterCreationForm
+    template_name = 'householdbookapp/bnpl_update.html'
+    context_object_name = 'target_bnpl'
+
+    def get_success_url(self):
+        return reverse('householdbookapp:debt_list')

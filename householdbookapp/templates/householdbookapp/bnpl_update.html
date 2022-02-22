@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/masterinfoapp.css' %}">
+    {% endblock %}
+
+    <div style="max-width: 500px; margin: 4rem auto">
+        <div class="mb-2">
+            <h4 class="masterinfoapp_main_title">Update BNPL</h4>
+        </div>
+        <div style="color:#FFFFFF;">
+            <form action="{% url 'householdbookapp:bnpl_update' pk=target_bnpl.pk %}" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <input type="submit" class="btn btn-info" value="Update BPNL">
+                <a href="{% url 'householdbookapp:debt_list' %}" class="btn btn-light">취소</a>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

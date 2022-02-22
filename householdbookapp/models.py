@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -131,3 +133,58 @@ class IncomeExpense(models.Model):
 
         if sum([self.income_labor, self.income_capital, self.income_etc]) > 0:
             target_income_expense.update(monthly_savings_rate=self.total_savings_amount/sum([self.income_labor, self.income_capital, self.income_etc]))
+
+
+class BuyNowPayLater(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buy_now_pay_later')
+    dashboard = models.ForeignKey(Dashboard, on_delete=models.CASCADE, related_name='buy_now_pay_later')
+    currency = models.ForeignKey(CurrencyMaster, on_delete=models.CASCADE, related_name='buy_now_pay_later')
+    item_name = models.CharField(max_length=100, null=False)
+    total_amount = models.FloatField(default=0, null=False)
+    discount_amount = models.FloatField(default=0, null=False)
+    purchase_period = models.CharField(max_length=10, null=False)
+    paying_months = models.FloatField(default=0, null=False)
+    note = models.CharField(max_length=200, null=True)
+
+    current_payment_count = models.FloatField(default=0, null=False)
+    nominal_remaining_amount = models.FloatField(default=0, null=False)
+    nominal_monthly_payment_amount = models.FloatField(default=0, null=False)
+    real_remaining_amount = models.FloatField(default=0, null=False)
+    real_monthly_payment_amount = models.FloatField(default=0, null=False)
+    end_flag = models.BooleanField(default=False, null=False)
+
+    def update_statistics(self):
+        target_bnpl = BuyNowPayLater.objects.filter(pk=self.pk)
+
+        # current_payment_count
+        todays_year = int(datetime.datetime.today().strftime('%Y'))
+        todays_month = int(datetime.datetime.today().strftime('%m'))
+        purchase_year = int(self.purchase_period.split('-')[0])
+        purchase_month = int(self.purchase_period.split('-')[1])
+        month_diff = (todays_year-purchase_year)*12 + (todays_month-purchase_month) + 1
+        if month_diff > self.paying_months:
+            current_payment_count=self.paying_months
+        else:
+            current_payment_count=month_diff
+        target_bnpl.update(current_payment_count=current_payment_count)
+
+        if month_diff > self.paying_months+1:
+            target_bnpl.update(end_flag=True)
+        else:
+            target_bnpl.update(end_flag=False)
+
+        nominal_monthly_payment_amount = self.total_amount/self.paying_months
+        target_bnpl.update(nominal_monthly_payment_amount=nominal_monthly_payment_amount)
+        nominal_remaining_amount = self.total_amount - nominal_monthly_payment_amount*current_payment_count
+        target_bnpl.update(nominal_remaining_amount=nominal_remaining_amount)
+
+        real_purchase_amount = self.total_amount-self.discount_amount
+        real_monthly_payment_amount = real_purchase_amount/self.paying_months
+        target_bnpl.update(real_monthly_payment_amount=real_monthly_payment_amount)
+        real_remaining_amount = real_purchase_amount - real_monthly_payment_amount*current_payment_count
+        target_bnpl.update(real_remaining_amount=real_remaining_amount)
+
+
+
+
+
