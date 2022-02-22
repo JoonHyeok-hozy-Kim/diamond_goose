@@ -426,8 +426,12 @@ class DebtListView(ListView):
                 bnpl_summary['real_remaining_amount'] += bnpl.real_remaining_amount
                 bnpl_summary['real_monthly_payment_amount'] += bnpl.real_monthly_payment_amount
 
-            if len(bnpl.item_name) > 16:
-                bnpl.item_name = bnpl.item_name[0:16] + '...'
+            item_name_length = len(bnpl.item_name.encode('utf-8'))
+            if item_name_length > 16:
+                if item_name_length != len(bnpl.item_name):
+                    bnpl.item_name = bnpl.item_name[0:12] + '...'
+                else:
+                    bnpl.item_name = bnpl.item_name[0:17] + '...'
             bnpl.payment_count = str(round(bnpl.current_payment_count))+' / '+str(round(bnpl.paying_months))
             bnpl.total_amount = format_mask_currency(bnpl.total_amount, bnpl.currency)
             bnpl.discount_amount = format_mask_currency(bnpl.discount_amount, bnpl.currency)
@@ -1089,8 +1093,12 @@ class BuyNowPayLaterTotalListView(ListView):
             bnpl_summary['real_remaining_amount'] += bnpl.real_remaining_amount
             bnpl_summary['real_monthly_payment_amount'] += bnpl.real_monthly_payment_amount
 
-            if len(bnpl.item_name) > 16:
-                bnpl.item_name = bnpl.item_name[0:16]+'...'
+            item_name_length = len(bnpl.item_name.encode('utf-8'))
+            if item_name_length > 16:
+                if item_name_length != len(bnpl.item_name):
+                    bnpl.item_name = bnpl.item_name[0:12] + '...'
+                else:
+                    bnpl.item_name = bnpl.item_name[0:17] + '...'
             bnpl.payment_count = str(round(bnpl.current_payment_count))+' / '+str(round(bnpl.paying_months))
             bnpl.total_amount = format_mask_currency(bnpl.total_amount, bnpl.currency)
             bnpl.discount_amount = format_mask_currency(bnpl.discount_amount, bnpl.currency)
