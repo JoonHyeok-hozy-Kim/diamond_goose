@@ -144,7 +144,7 @@ class BuyNowPayLater(models.Model):
     discount_amount = models.FloatField(default=0, null=False)
     purchase_period = models.CharField(max_length=10, null=False)
     paying_months = models.FloatField(default=0, null=False)
-    note = models.CharField(max_length=200, null=True)
+    note = models.CharField(default=' - ', max_length=200, null=True)
 
     current_payment_count = models.FloatField(default=0, null=False)
     nominal_remaining_amount = models.FloatField(default=0, null=False)

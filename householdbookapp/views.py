@@ -409,8 +409,9 @@ class DebtListView(ListView):
             context.update({'debt_pie_chart_url_list': ''.join(debt_pie_chart_url_list)})
 
         queryset_bnpls = BuyNowPayLater.objects.filter(owner=self.request.user,
-                                                       dashboard=dashboard_pk).order_by('end_flag',
-                                                                                        'purchase_period')
+                                                       dashboard=dashboard_pk,
+                                                       end_flag=False).order_by('end_flag',
+                                                                                'purchase_period')
         bnpl_summary = {
             'total_amount': 0,
             'discount_amount': 0,
@@ -1056,3 +1057,47 @@ class BuyNowPayLaterUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('householdbookapp:debt_list')
+
+
+class BuyNowPayLaterTotalListView(ListView):
+    model = BuyNowPayLater
+    template_name = 'householdbookapp/bnpl_list_total.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(BuyNowPayLaterTotalListView, self).get_context_data(**kwargs)
+
+        queryset_my_dashboard = Dashboard.objects.get(owner=self.request.user)
+
+        queryset_bnpls = BuyNowPayLater.objects.filter(owner=self.request.user,
+                                                       dashboard=queryset_my_dashboard.pk).order_by('end_flag',
+                                                                                                    'purchase_period')
+
+        bnpl_summary = {
+            'total_amount': 0,
+            'discount_amount': 0,
+            'real_remaining_amount': 0,
+            'real_monthly_payment_amount': 0,
+        }
+        for bnpl in queryset_bnpls:
+            bnpl.update_statistics()
+            if not bnpl.end_flag:
+                bnpl_summary['total_amount'] += bnpl.total_amount
+                bnpl_summary['discount_amount'] += bnpl.discount_amount
+                bnpl_summary['real_remaining_amount'] += bnpl.real_remaining_amount
+                bnpl_summary['real_monthly_payment_amount'] += bnpl.real_monthly_payment_amount
+            bnpl.payment_count = str(round(bnpl.current_payment_count))+' / '+str(round(bnpl.paying_months))
+            bnpl.total_amount = format_mask_currency(bnpl.total_amount, bnpl.currency)
+            bnpl.discount_amount = format_mask_currency(bnpl.discount_amount, bnpl.currency)
+            bnpl.real_remaining_amount = format_mask_currency(bnpl.real_remaining_amount, bnpl.currency)
+            bnpl.real_monthly_payment_amount = format_mask_currency(bnpl.real_monthly_payment_amount, bnpl.currency)
+            bnpl.end_flag = 'Y' if bnpl.end_flag else 'N'
+
+        context.update({'queryset_bnpls': queryset_bnpls})
+
+        bnpl_summary['total_amount'] = format_mask_currency(bnpl_summary['total_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['discount_amount'] = format_mask_currency(bnpl_summary['discount_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['real_remaining_amount'] = format_mask_currency(bnpl_summary['real_remaining_amount'], queryset_my_dashboard.main_currency)
+        bnpl_summary['real_monthly_payment_amount'] = format_mask_currency(bnpl_summary['real_monthly_payment_amount'], queryset_my_dashboard.main_currency)
+        context.update({'bnpl_summary': bnpl_summary})
+
+        return context

@@ -5,7 +5,7 @@ from householdbookapp.views import LiquidityListView, HouseholdbookHomeView, Liq
     DebtPieChartView, HouseholdbookChartView, IncomeExpenseListView, IncomeExpenseCreateView, IncomeExpenseDeleteView, \
     IncomeExpenseUpdateView, IncomeExpenseTabularInsert, income_expense_delete_all, income_expense_excel_download, \
     IncomeExpenseExcelUploadButton, income_expense_excel_upload, IncomeExpenseGridChartView, BuyNowPayLaterCreateView, \
-    BuyNowPayLaterDeleteView, BuyNowPayLaterUpdateView
+    BuyNowPayLaterDeleteView, BuyNowPayLaterUpdateView, BuyNowPayLaterTotalListView
 
 app_name = "householdbookapp"
 
@@ -40,5 +40,6 @@ urlpatterns = [
     path('bnpl_create/', BuyNowPayLaterCreateView.as_view(), name='bnpl_create'),
     path('bnpl_delete/<int:pk>', BuyNowPayLaterDeleteView.as_view(), name='bnpl_delete'),
     path('bnpl_update/<int:pk>', BuyNowPayLaterUpdateView.as_view(), name='bnpl_update'),
+    path('bnpl_list_total/', BuyNowPayLaterTotalListView.as_view(), name='bnpl_list_total'),
 
 ]
