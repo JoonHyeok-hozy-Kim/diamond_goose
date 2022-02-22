@@ -425,6 +425,9 @@ class DebtListView(ListView):
                 bnpl_summary['discount_amount'] += bnpl.discount_amount
                 bnpl_summary['real_remaining_amount'] += bnpl.real_remaining_amount
                 bnpl_summary['real_monthly_payment_amount'] += bnpl.real_monthly_payment_amount
+
+            if len(bnpl.item_name) > 16:
+                bnpl.item_name = bnpl.item_name[0:16] + '...'
             bnpl.payment_count = str(round(bnpl.current_payment_count))+' / '+str(round(bnpl.paying_months))
             bnpl.total_amount = format_mask_currency(bnpl.total_amount, bnpl.currency)
             bnpl.discount_amount = format_mask_currency(bnpl.discount_amount, bnpl.currency)
