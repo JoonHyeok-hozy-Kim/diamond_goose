@@ -20,7 +20,7 @@
         <div>
             <table style="border: 1px solid black;  color: #081321;">
                 <colgroup>
-                    <col span="1" style="width: 10rem;">
+                    <col span="1" style="width: 13rem;">
                     <col span="1" style="width: 4rem;">
                     <col span="1" style="width: 8rem;">
                     <col span="1" style="width: 8rem;">
@@ -48,7 +48,11 @@
                     <th style="border: 1px solid black; background-color: #FA0067; color: #FFFFFF;"><span class="material-icons">delete</span></th>
                 </tr>
                 {% for bnpl in queryset_bnpls %}
+                    {% if bnpl.end_flag == 'Y' %}
+                    <tr style="text-align: center; background-color: #444444;">
+                    {% else %}
                     <tr style="text-align: center; background-color: #FFFCCC;">
+                    {% endif %}
                         <td style="text-align: center; border: 1px solid black;">{{ bnpl.item_name }}</td>
                         <td style="text-align: center; border: 1px solid black;">{{ bnpl.currency.currency_code }}</td>
                         <td style="text-align: center; border: 1px solid black;">{{ bnpl.total_amount }}</td>
