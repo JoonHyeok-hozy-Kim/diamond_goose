@@ -12,6 +12,9 @@
     <div style="margin: 1rem;">
         <div style="display: block;">
             <h3 style="display: inline-block; font-weight: bold; margin-right: 1rem; vertical-align: bottom; color: #FFFFFF;">Buy Now Pay Later</h3>
+            <a href="{% url 'householdbookapp:debt_list' %}" class="btn btn-warning btn-sm" style="vertical-align: top;">
+                <span class="material-icons">credit_card</span>
+            </a>
             <a href="{% url 'householdbookapp:bnpl_create' %}" class="btn btn-light btn-sm" style="vertical-align: top;">
                 <span class="material-icons">add</span>
             </a>
@@ -49,7 +52,7 @@
                 </tr>
                 {% for bnpl in queryset_bnpls %}
                     {% if bnpl.end_flag == 'Y' %}
-                    <tr style="text-align: center; background-color: #444444;">
+                    <tr style="text-align: center; background-color: #57FABF;">
                     {% else %}
                     <tr style="text-align: center; background-color: #FFFCCC;">
                     {% endif %}
