@@ -296,7 +296,9 @@ def currency_format(amount, currency_master):
 
 
 def liquidity_pie_chart_data_generator(request):
-    queryset_liquidity = Liquidity.objects.filter(owner=request.user)
+    queryset_dashboard = Dashboard.objects.get(owner=request.user)
+    queryset_liquidity = Liquidity.objects.filter(owner=request.user,
+                                                  dashboard=queryset_dashboard.pk)
     x_data = []
     y_data = []
     total_amount = 0
@@ -311,13 +313,13 @@ def liquidity_pie_chart_data_generator(request):
     color_list = color_list_generator('#002921', '#00FACC', queryset_liquidity.count())
 
     # total amount
-    queryset_dashboard = Dashboard.objects.get(owner=request.user)
     total_amount_text = ''.join(['Total Amount : ',
                                 currency_format(total_amount, queryset_dashboard.main_currency)])
     return {
         'data_pair': data_pair,
         'color_list': color_list,
-        'total_amount_text': total_amount_text,
+        # 'total_amount_text': total_amount_text,
+        'total_amount_text': total_amount,
     }
 
 
@@ -486,7 +488,9 @@ class DebtDeleteView(DeleteView):
 
 
 def debt_pie_chart_data_generator(request):
-    queryset_debt = Debt.objects.filter(owner=request.user)
+    queryset_dashboard = Dashboard.objects.get(owner=request.user)
+    queryset_debt = Debt.objects.filter(owner=request.user,
+                                        dashboard=queryset_dashboard.pk)
     x_data = []
     y_data = []
     total_amount = 0
@@ -501,7 +505,6 @@ def debt_pie_chart_data_generator(request):
     color_list = color_list_generator('#6B451A', '#F7A03B', queryset_debt.count())
 
     # total amount
-    queryset_dashboard = Dashboard.objects.get(owner=request.user)
     total_amount_text = ''.join(['Total Amount : ',
                                 currency_format(total_amount, queryset_dashboard.main_currency)])
 

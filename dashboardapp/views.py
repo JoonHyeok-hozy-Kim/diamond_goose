@@ -72,7 +72,8 @@ class DashboardDetailView(DetailView, FormMixin):
                                                           dashboard=self.object.pk)
             context.update({'target_portfolio_pk': queryset_my_portfolio.pk})
 
-            queryset_my_liquidities = Liquidity.objects.filter(dashboard=self.object.pk)
+            queryset_my_liquidities = Liquidity.objects.filter(owner=self.request.user,
+                                                               dashboard=self.object.pk)
             for liquidity in queryset_my_liquidities:
                 total_liquidity_amount += liquidity.amount_exchanged
             total_asset_amount += queryset_my_portfolio.current_value + total_liquidity_amount
@@ -80,7 +81,8 @@ class DashboardDetailView(DetailView, FormMixin):
         except Exception as identifier:
             print('Dashboard Detail my_portfolio query :', identifier)
 
-        queryset_my_debts = Debt.objects.filter(dashboard=self.object.pk)
+        queryset_my_debts = Debt.objects.filter(owner=self.request.user,
+                                                dashboard=self.object.pk)
         long_term_debt_amount = 0
         short_term_debt_amount = 0
         for debt in queryset_my_debts:
