@@ -125,6 +125,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     large_y_data = []
     large_color_list = []
     total_asset_amount = 0
+    large_pie_element_count = 0
 
     queryset_liquidity = Liquidity.objects.filter(dashboard=dashboard_pk)
     for liquidity in queryset_liquidity:
@@ -132,6 +133,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_y_data.append(liquidity.amount_exchanged)
         large_color_list.append("#068CD6")
         total_asset_amount += liquidity.amount_exchanged
+        large_pie_element_count += 1
 
     queryset_portfolio = Portfolio.objects.get(dashboard=dashboard_pk)
     queryset_my_assets = Asset.objects.filter(portfolio=queryset_portfolio.pk,
@@ -142,6 +144,7 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_y_data.append(asset.total_amount_exchanged)
         large_color_list.append(asset.asset_master.asset_type_master.color_hex)
         total_asset_amount += asset.total_amount_exchanged
+        large_pie_element_count += 1
 
     queryset_my_pensions = Pension.objects.filter(portfolio=queryset_portfolio.pk)
     for pension in queryset_my_pensions:
@@ -150,17 +153,28 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
             if pension_asset.position_opened_flag:
                 large_x_data.append(pension_asset.asset_master.name)
                 large_y_data.append(pension_asset.total_amount_exchanged)
+                total_asset_amount += pension_asset.total_amount_exchanged
                 pension_color = pension_asset.asset_master.asset_type_master.color_hex
                 large_color_list.append(pension_color)
+                large_pie_element_count += 1
         large_x_data.append(pension.pension_master.pension_name+' Cash')
         large_y_data.append(pension.total_cash_amount)
+        total_asset_amount += pension.total_cash_amount
         large_color_list.append(pension_color)
+        large_pie_element_count += 1
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
 
     small_x_data = []
     small_y_data = []
     small_color_list = []
     total_debt_amount = 0
+
+    # dummy data append due to large_colors
+    for i in range(large_pie_element_count):
+        small_x_data.append('')
+        small_y_data.append(0)
+
+    # Actual Debt data creation
     queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
     for debt in queryset_my_debts:
         small_x_data.append(debt.debt_name)
@@ -170,6 +184,8 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         else:
             small_color_list.append("#FA0067")
         total_debt_amount += debt.amount_exchanged
+
+    # Actual Net Capital data creation
     small_x_data.append('Net Capital')
     small_y_data.append(total_asset_amount-total_debt_amount)
     small_color_list = ["#17344A"]
@@ -287,8 +303,8 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
         legend_opts=opts.LegendOpts(is_show=False),
     )
 
-    for i in range(2):
-        large_color_list.pop(-1)
+    # for i in range(2):
+    #     large_color_list.pop(-1)
     large_color_list.extend(small_color_list)
     small_pie_chart = Pie()
     small_pie_chart.add(
