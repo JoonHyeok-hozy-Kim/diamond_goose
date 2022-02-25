@@ -179,9 +179,9 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         large_color_list.append(pension_color)
     large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
 
-    small_x_data = ['Total Asset']
-    small_y_data = [total_asset_amount]
-    small_color_list = ["#17344A"]
+    small_x_data = []
+    small_y_data = []
+    small_color_list = []
     total_debt_amount = 0
     queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
     for debt in queryset_my_debts:
@@ -192,6 +192,9 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         else:
             small_color_list.append("#FA0067")
         total_debt_amount += debt.amount_exchanged
+    small_x_data.append('Net Capital')
+    small_y_data.append(total_asset_amount-total_debt_amount)
+    small_color_list = ["#17344A"]
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
 
     leverage_rate = 0
