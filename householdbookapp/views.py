@@ -270,31 +270,6 @@ def color_list_generator(starting_hex, ending_hex, color_number):
     return result_list
 
 
-def currency_format(amount, currency_master):
-    result_text_list = [currency_master.currency_sign, ' ']
-    below_period = None
-    if currency_master.currency_code != 'KRW':
-        below_period = str(round(amount, 2)).split('.')[-1]
-
-    integer_list = []
-    while amount >= 1000:
-        temp_num_str = str(round(amount%1000))
-        while len(temp_num_str) < 3:
-            temp_num_str = '0' + temp_num_str
-        integer_list.append(temp_num_str)
-        amount /= 1000
-    integer_list.append(str(round(amount)))
-
-    for i in range(len(integer_list)):
-        result_text_list.append(integer_list[(i+1)*(-1)])
-        result_text_list.append(',')
-    result_text_list.pop(-1)
-    if below_period:
-        result_text_list.append('.')
-        result_text_list.append(below_period)
-    return ''.join(result_text_list)
-
-
 def liquidity_pie_chart_data_generator(request):
     queryset_dashboard = Dashboard.objects.get(owner=request.user)
     queryset_liquidity = Liquidity.objects.filter(owner=request.user,
@@ -314,12 +289,11 @@ def liquidity_pie_chart_data_generator(request):
 
     # total amount
     total_amount_text = ''.join(['Total Amount : ',
-                                currency_format(total_amount, queryset_dashboard.main_currency)])
+                                format_mask_currency(total_amount, queryset_dashboard.main_currency)])
     return {
         'data_pair': data_pair,
         'color_list': color_list,
-        # 'total_amount_text': total_amount_text,
-        'total_amount_text': total_amount,
+        'total_amount_text': total_amount_text,
     }
 
 
@@ -506,7 +480,7 @@ def debt_pie_chart_data_generator(request):
 
     # total amount
     total_amount_text = ''.join(['Total Amount : ',
-                                currency_format(total_amount, queryset_dashboard.main_currency)])
+                                format_mask_currency(total_amount, queryset_dashboard.main_currency)])
 
     return {
         'data_pair': data_pair,

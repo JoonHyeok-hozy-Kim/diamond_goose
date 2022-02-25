@@ -23,6 +23,7 @@ from assetapp.models import Asset, PensionAsset
 from dashboardapp.decorators import dashboard_ownership_required
 from dashboardapp.forms import DashboardCreationForm, AssetHistoryCreationForm, AssetHistoryCaptureForm
 from dashboardapp.models import Dashboard, AssetHistory
+from diamond_goose.factory import format_mask_currency
 from diamond_goose.pyecharts import json_response
 from householdbookapp.models import Liquidity, Debt
 from pensionapp.models import Pension
@@ -95,9 +96,9 @@ class DashboardDetailView(DetailView, FormMixin):
 
         context.update({
             'date_today': datetime.today().strftime('%Y.%m.%d'),
-            'total_asset_amount': self.set_format_mask(total_asset_amount),
-            'net_capital_amount': self.set_format_mask(net_capital_amount),
-            'total_debt_amount': self.set_format_mask(total_debt_amount),
+            'total_asset_amount': format_mask_currency(total_asset_amount, self.object.main_currency),
+            'net_capital_amount': format_mask_currency(net_capital_amount, self.object.main_currency),
+            'total_debt_amount': format_mask_currency(total_debt_amount, self.object.main_currency),
         })
 
 
@@ -117,31 +118,6 @@ class DashboardDetailView(DetailView, FormMixin):
             context.update({'asset_summary_pie_chart_url_list': ''.join(asset_summary_pie_chart_url_list)})
 
         return context
-
-    def set_format_mask(self, amount):
-        main_currency = self.object.main_currency
-        result_text_list = [main_currency.currency_sign, ' ']
-        below_period = None
-        if main_currency.currency_code != 'KRW':
-            below_period = str(round(amount, 2)).split('.')[-1]
-
-        integer_list = []
-        while amount >= 1000:
-            temp_num_str = str(round(amount%1000))
-            while len(temp_num_str) < 3:
-                temp_num_str = '0' + temp_num_str
-            integer_list.append(temp_num_str)
-            amount /= 1000
-        integer_list.append(str(round(amount)))
-
-        for i in range(len(integer_list)):
-            result_text_list.append(integer_list[(i+1)*(-1)])
-            result_text_list.append(',')
-        result_text_list.pop(-1)
-        if below_period:
-            result_text_list.append('.')
-            result_text_list.append(below_period)
-        return ''.join(result_text_list)
 
 
 def asset_summary_pie_chart_data_generator(request, dashboard_pk):

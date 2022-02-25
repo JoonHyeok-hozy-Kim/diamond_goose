@@ -8,12 +8,12 @@ def format_mask_currency(amount, currency_master):
 
     integer_list = []
     while amount >= 1000:
-        temp_num_str = str(round(amount % 1000))
+        temp_num_str = str(int(amount % 1000))
         while len(temp_num_str) < 3:
             temp_num_str = '0' + temp_num_str
         integer_list.append(temp_num_str)
         amount /= 1000
-    integer_list.append(str(round(amount)))
+    integer_list.append(str(int(amount)))
 
     for i in range(len(integer_list)):
         result_list.append(integer_list[(i + 1) * (-1)])
