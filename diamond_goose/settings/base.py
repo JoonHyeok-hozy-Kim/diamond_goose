@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'exchangeapp',
     'hozylabapp',
     'householdbookapp',
+    'basecampapp',
 ]
 
 MIDDLEWARE = [

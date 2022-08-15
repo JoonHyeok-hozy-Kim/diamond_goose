@@ -34,5 +34,6 @@ urlpatterns = [
     path('exchange/', include('exchangeapp.urls')),
     path('hozylab/', include('hozylabapp.urls')),
     path('householdbook/', include('householdbookapp.urls')),
+    path('basecamp/', include('basecampapp.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
