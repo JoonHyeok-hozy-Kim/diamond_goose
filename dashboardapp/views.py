@@ -20,6 +20,7 @@ from pyecharts import options as opts
 from rest_framework.views import APIView
 
 from assetapp.models import Asset, PensionAsset
+from basecampapp.views import fake_asset_summary_pie_chart_data_generator, fake_asset_history_line_graph_data_generator
 from dashboardapp.decorators import dashboard_ownership_required
 from dashboardapp.forms import DashboardCreationForm, AssetHistoryCreationForm, AssetHistoryCaptureForm
 from dashboardapp.models import Dashboard, AssetHistory
@@ -162,7 +163,6 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
         total_asset_amount += pension.total_cash_amount
         large_color_list.append(pension_color)
         large_pie_element_count += 1
-    large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
 
     small_x_data = []
     small_y_data = []
@@ -178,17 +178,24 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     queryset_my_debts = Debt.objects.filter(dashboard=dashboard_pk)
     for debt in queryset_my_debts:
         small_x_data.append(debt.debt_name)
+        large_x_data.append('')     # Padding for graph
         small_y_data.append(debt.amount_exchanged)
+        large_y_data.append(0)      # Padding for graph
         if debt.long_term_debt_flag:
-            small_color_list.append("#FA0067")
+            large_color_list.append("#FA0067")
         else:
-            small_color_list.append("#FA0067")
+            large_color_list.append("#FA0067")
         total_debt_amount += debt.amount_exchanged
 
     # Actual Net Capital data creation
     small_x_data.append('Net Capital')
+    large_x_data.append('')         # Padding for graph
     small_y_data.append(total_asset_amount-total_debt_amount)
-    small_color_list.append("#17344A")
+    large_y_data.append(0)          # Padding for graph
+    large_color_list.append("#17344A")
+
+
+    large_data_pair = [list(z) for z in zip(large_x_data, large_y_data)]
     small_data_pair = [list(z) for z in zip(small_x_data, small_y_data)]
 
     leverage_rate = 0
@@ -204,11 +211,15 @@ def asset_summary_pie_chart_data_generator(request, dashboard_pk):
     }
 
 
-def asset_summary_pie_chart(request, dump_option=False) -> Pie:
-    queryset_my_dashboard = Dashboard.objects.get(owner=request.user)
+def asset_summary_pie_chart(request, dump_option=False, simulation_flag=False) -> Pie:
+    if not simulation_flag:
+        queryset_my_dashboard = Dashboard.objects.get(owner=request.user)
 
     # Pie Graph Data
-    chart_base_data = asset_summary_pie_chart_data_generator(request, queryset_my_dashboard.pk)
+    if simulation_flag:
+        chart_base_data = fake_asset_summary_pie_chart_data_generator()
+    else:
+        chart_base_data = asset_summary_pie_chart_data_generator(request, queryset_my_dashboard.pk)
     large_data_pair = chart_base_data['large_data_pair']
     large_color_list = chart_base_data['large_color_list']
     small_data_pair = chart_base_data['small_data_pair']
@@ -216,7 +227,10 @@ def asset_summary_pie_chart(request, dump_option=False) -> Pie:
     leverage_rate = chart_base_data['leverage_rate']
 
     # AssetHistory Line Graph
-    line_base_data = asset_history_line_graph_data_generator(request, queryset_my_dashboard.pk)
+    if simulation_flag:
+        line_base_data = fake_asset_history_line_graph_data_generator()
+    else:
+        line_base_data = asset_history_line_graph_data_generator(request, queryset_my_dashboard.pk)
     line_x_data = line_base_data['x_data']
     line_y_data = line_base_data['line_y_data']
     max_y_value = line_base_data['max_y_value']
