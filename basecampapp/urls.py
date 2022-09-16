@@ -1,6 +1,6 @@
 from django.urls import path
 
-from basecampapp.views import about_this_view, diamond_goose_home_view, SimulationAssetSummaryPieChartView, contact_view
+from basecampapp.views import about_this_view, diamond_goose_home_view, SimulationAssetSummaryPieChartView
 
 app_name = "basecampapp"
 
