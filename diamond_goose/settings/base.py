@@ -124,8 +124,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # login/logout URL에 ?next 값이 지정되지 않은 경우, 아래 url로 갈 수 있도록 해줌.
-LOGIN_REDIRECT_URL = reverse_lazy('accountapp:temp_welcome')
-LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:temp_welcome')
+LOGIN_REDIRECT_URL = reverse_lazy('basecampapp:diamond_goose_home')
+LOGOUT_REDIRECT_URL = reverse_lazy('basecampapp:diamond_goose_home')
 
 # Media 관련 설정
 ## 미디어의 실제 디렉토리
