@@ -6,23 +6,24 @@
 
     {% block extrahead %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/accountapp.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/basecampapp.css' %}">
     {% endblock %}
 
     <div style="max-width: 80%; margin: 4rem auto">
         <div class="mb-2">
-            <h4 class="accountapp_main_title">Structure</h4>
+            <h3 style="color: #FFFFFF;">Diamond Goose is powered by</h3>
         </div>
-        <div style="display:block; height: 30rem; ">
-            <div style="display: inline-block; height: 95%; width: 38%; margin-left: 0; margin-right: 2%; vertical-align: top;">
+        <div style="display:block; height: 30rem; margin-top: 4rem;">
+            <div class="reactive_hover" style="display: inline-block; height: 95%; width: 38%; margin-left: 0; margin-right: 2%; vertical-align: top;">
                 <a href="https://www.docker.com/"><img src="{% static 'images/structure_docker.png' %}" style="display: inline-block; max-height: 80%; max-width: 80%; margin-left: 1rem; margin-right: 1.5rem; vertical-align: center;"></a>
             </div>
             <div style="display: inline-block; height: 95%; width: 58%; margin-right: 0; horiz-align: right;">
-                <div style="display: block">
-                    <a href="https://go.mariadb.com/"><img src="{% static 'images/structure_maria_db.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-right: 4%; margin-bottom: 1.5rem; vertical-align: center;"></a>
-                    <a href="https://www.djangoproject.com/"><img src="{% static 'images/structure_django.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-right: 0%; margin-bottom: 1.5rem; vertical-align: center;"></a>
-                    <a href="https://www.nginx.com/"><img src="{% static 'images/structure_nginx.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-bottom: 1.5rem; vertical-align: center;"></a>
-                </div>
-                <div style="display: block">
+
+                <div class="reactive_hover" style="display: inline; margin-left: .5rem;"><a href="https://go.mariadb.com/"><img src="{% static 'images/structure_maria_db.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-right: 4%; margin-bottom: 1.5rem; vertical-align: center;"></a></div>
+                <div class="reactive_hover" style="display: inline; margin-left: .5rem;"><a href="https://www.djangoproject.com/"><img src="{% static 'images/structure_django.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-right: 0%; margin-bottom: 1.5rem; vertical-align: center;"></a></div>
+                <div class="reactive_hover" style="display: inline; margin-left: .5rem;"><a href="https://www.nginx.com/"><img src="{% static 'images/structure_nginx.png' %}" style="display: inline-block; max-height: 90%; max-width: 30%; margin-bottom: 1.5rem; vertical-align: center;"></a></div>
+
+                <div class="reactive_hover" style="display: block; margin-top: 4rem;">
                     <a href="https://gunicorn.org/"><img src="{% static 'images/structure_guniorn.png' %}" style="display: inline-block; max-height: 90%; max-width: 80%; margin-bottom: 1.5rem; horiz-align: center;"></a>
                 </div>
             </div>

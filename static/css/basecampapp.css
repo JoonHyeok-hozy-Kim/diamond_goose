@@ -1,0 +1,7 @@
+.reactive_hover img {
+    transition: all 0.2s linear;
+}
+
+.reactive_hover:hover img {
+    transform: scale(1.4);
+}
