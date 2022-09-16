@@ -26,7 +26,7 @@ class AssetMasterListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(AssetMasterListView, self).get_context_data(**kwargs)
 
-        query_asset_master_list = AssetMaster.objects.all().order_by('asset_type', 'ticker')
+        query_asset_master_list = AssetMaster.objects.all().order_by('asset_type_master__asset_type_code', 'ticker')
         for asset_master in query_asset_master_list:
             asset_master.name = Truncator(asset_master.name).chars(29)
         context.update({'query_asset_master_list': query_asset_master_list})
