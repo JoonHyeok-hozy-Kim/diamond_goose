@@ -193,3 +193,6 @@ def fake_asset_history_line_graph_data_generator():
         'line_y_data': line_y_data,
         'max_y_value': round(max_y_value * 1.1),
     }
+
+# def contact_view(request):
+#     return render(request, 'basecampapp/contact.html')
