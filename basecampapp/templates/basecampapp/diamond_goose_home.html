@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {% load static %}
+    {% block extrahead %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/dashboardapp.css' %}">
+    {% endblock %}
+
+    <div style="margin: 1rem;">
+        <div style="margin: 3rem;">
+            <p style="color: #FFFFFF; font-size: 1.5rem;">
+                Welcome to Diamond Goose. <br>
+                You can manage your financial asset status for free. <br>
+                Visualized summary of your financial status will be presented! <br>
+                Check the sample page below. <br>
+            </p>
+        </div>
+        <br>
+
+        <h2 style="display: inline-block; margin-left: 1rem; color: #666666; font-weight: bolder;">Sample Page</h2>
+        <hr style="color: #FFFFFF; font-weight: bold">
+        <br>
+
+        <div style="margin: 1rem;">
+            <div style="margin-bottom: 2rem;">
+                <h3 style="display: inline-block; margin-right: 1rem; color: #FFFFFF; font-weight: bolder;">Sample Dashboard</h3>
+                <h5 style="display: inline-block; margin-right: 1rem; color: #FFFFFF;">D+{{ d_day_count }}</h5>
+                <div style="display: inline-block">
+                    <div href="" class="btn btn-light btn-sm">
+                        <span class="material-icons">table_chart</span>
+                    </div>
+
+                    <div href="" class="btn btn-light btn-sm">
+                        <span class="material-icons">home</span>
+                    </div>
+
+                    <div href="" class="btn btn-light btn-sm">
+                        <span class="material-icons">currency_exchange</span>
+                    </div>
+
+                    <div href="" class="btn btn-warning btn-sm">
+                        <span class="material-icons">add_a_photo</span>
+                    </div>
+                    <div href="" class="btn btn-warning">
+                        Asset History Management
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                {% include 'dashboardapp/detail_asset_summary_table.html' %}
+            </div>
+            <div style="height: 40rem;">
+                {% include 'dashboardapp/detail_asset_summary_pie_chart.html' %}
+            </div>
+        </div>
+
+    </div>
+
+
+{% endblock %}

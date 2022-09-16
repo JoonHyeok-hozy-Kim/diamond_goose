@@ -12,6 +12,10 @@
         </div>
 
         <div style="margin-left:2rem; font-size: 1.5rem;">
+             <a href="{% url 'basecampapp:diamond_goose_home' %}" class="link-info" style="text-decoration-line: none;">
+                <span>Home</span>
+            </a> |
+
             {% if user.is_authenticated %}
                 {% if user.dashboard %}
                     <a href="{% url 'dashboardapp:detail' pk=user.pk %}" class="link-info" style="text-decoration-line: none;">

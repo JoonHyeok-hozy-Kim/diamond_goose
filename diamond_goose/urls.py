@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from accountapp.views import temp_welcome_view
-from masterinfoapp.views import AssetMasterListView
+from basecampapp.views import diamond_goose_home_view
 
 urlpatterns = [
-    path('', AssetMasterListView.as_view(), name='home'),
+    # path('', AssetMasterListView.as_view(), name='home'),
+    path('', diamond_goose_home_view, name='diamond_goose_home'),
 
     path('admin/', admin.site.urls),
     path('accounts/', include('accountapp.urls')),
