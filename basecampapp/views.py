@@ -16,7 +16,7 @@ def about_this_view(request):
     # return render(request, 'accountapp/temp_welcome.html')
 
 def diamond_goose_home_view(request):
-    total_asset_amount = float(randint(80000000, 100000000)) + .64
+    total_asset_amount = randint(8000000000, 10000000000) / 100
     capital_rate = randint(90, 95) / 100
 
     dollar_object = CurrencyMaster.objects.get(currency_code='USD')
