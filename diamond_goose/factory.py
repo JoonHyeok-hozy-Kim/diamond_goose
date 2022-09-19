@@ -5,6 +5,8 @@ def format_mask_currency(amount, currency_master):
     below_period = None
     if currency_master.currency_code != 'KRW':
         below_period = str(round(amount, 2)).split('.')[-1]
+        if len(below_period) == 1:
+            below_period += '0'
 
     integer_list = []
     while amount >= 1000:
